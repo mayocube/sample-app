@@ -1,7 +1,7 @@
 import { DataGrid } from '@mui/x-data-grid';
 import './App.css';
-import { AppBar, Box, Button, Container, FormControl, FormLabel, Grid, IconButton, MenuItem, OutlinedInput, Select, TextField, ThemeProvider, Toolbar, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { AppBar, Box, Button, Container, FormControl, FormLabel, Grid, IconButton, MenuItem,  Select, TextField, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CachedIcon from '@mui/icons-material/Cached';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
@@ -10,29 +10,11 @@ import theme from './Util/theme';
 import MenuIcon from '@mui/icons-material/Menu';
 
 function App() {
-  const [personName, setPersonName] = React.useState([]);
-  const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-  ];
-
+  const [age, setAge] = React.useState(0);
   const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
+    setAge(event.target.value);
   };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -63,7 +45,7 @@ function App() {
           <Grid item xs={2} marginTop={2}>
             <FormControl sx={{ width: "100%" }}>
               <FormLabel>Brand</FormLabel>
-              <Select value={0}>
+              <Select value={age} onChange={handleChange}>
                 <MenuItem value={0}>Select one</MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -74,7 +56,7 @@ function App() {
           <Grid item xs={2} marginTop={2}>
             <FormControl sx={{ width: "100%" }}>
               <FormLabel>Priority</FormLabel>
-              <Select value={0}>
+              <Select value={age} onChange={handleChange}>
                 <MenuItem value={0}>Select one</MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -85,7 +67,7 @@ function App() {
           <Grid item xs={2} marginTop={2}>
             <FormControl sx={{ width: "100%" }}>
               <FormLabel>Agent</FormLabel>
-              <Select value={0}>
+              <Select value={age} onChange={handleChange}>
                 <MenuItem value={0}>Select one</MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -96,7 +78,7 @@ function App() {
           <Grid item xs={2} marginTop={2}>
             <FormControl sx={{ width: "100%" }}>
               <FormLabel>Age</FormLabel>
-              <Select value={0}>
+              <Select value={age} onChange={handleChange}>
                 <MenuItem value={0}>Select one</MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -107,7 +89,7 @@ function App() {
           <Grid item xs={2} marginTop={2}>
             <FormControl sx={{ width: "100%" }}>
               <FormLabel>Status</FormLabel>
-              <Select value={0}>
+              <Select value={age} onChange={handleChange}>
                 <MenuItem value={0}>Select one</MenuItem>
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -118,7 +100,7 @@ function App() {
           
           <Grid item xs={12} lg={12} marginTop={1} display={"flex"} alignItems={"center"} justifyContent={"space-between"}  paddingBottom={0} marginBottom={0} paddingLeft={0} paddingRight={0}>
             <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1}>
-              <Button color='default' startIcon={<DeleteIcon />}>Delete</Button>
+              <Button color='default' startIcon={<DeleteOutlinedIcon />}>Delete</Button>
               <Button color='default' startIcon={<NotificationsNoneIcon />}>Set Priority</Button>
               <Button color='default' startIcon={<PersonOutlineIcon />}>Assign</Button>
             </Box>
@@ -129,7 +111,7 @@ function App() {
           </Grid>
         </Grid>
       </Container>
-      <Box maxWidth={"100%"}>
+      <Box className={"custom-grid"} maxWidth={"100%"}>
         <DataGrid
           columns={[
             { field: 'Brand', headerName: 'Brand' },
@@ -141,7 +123,13 @@ function App() {
             { field: 'CustomerEmail', headerName: 'Customer Email', type: 'number'  },
           ]}
           rows={[
-            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 }
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+            { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },{ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
           ]}
           initialState={{
             pagination: {
@@ -150,6 +138,7 @@ function App() {
           }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
+          sx={{ width: "100%" }}
         />
       </Box>
     </ThemeProvider>
