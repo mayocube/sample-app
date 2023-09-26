@@ -4,13 +4,14 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CachedIcon from '@mui/icons-material/Cached';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import React from 'react';
+import React, { useState } from 'react';
 import theme from './Util/theme';
 import MenuIcon from '@mui/icons-material/Menu';
 import CustomSelect from './components/CustomSelect';
 import { DataGrid } from '@mui/x-data-grid';
 
 function App() {
+  const [selectedValue, setSelectedValue] = React.useState({ brand: 0, priority: 0, agent: 0, age: 0, status: 0 });
   
   return (
     <ThemeProvider theme={theme}>
@@ -44,6 +45,8 @@ function App() {
               <Typography variant="textLabel" sx={{ textTransform: "uppercase" }}>Brand</Typography>
               <CustomSelect 
                 name='brand' 
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
                 items={[
                   {text:"Select one", value: 0},
                   {text:"Ten", value: 10},
@@ -58,6 +61,8 @@ function App() {
               <Typography variant="textLabel" sx={{ textTransform: "uppercase" }}>Priority</Typography>
               <CustomSelect 
                 name='priority' 
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
                 items={[
                   {text:"Select one", value: 0},
                   {text:"Ten", value: 10},
@@ -72,6 +77,8 @@ function App() {
               <Typography variant="textLabel" sx={{ textTransform: "uppercase" }}>Agent</Typography>
               <CustomSelect 
                 name='agent' 
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
                 items={[
                   {text:"Select one", value: 0},
                   {text:"Ten", value: 10},
@@ -86,6 +93,8 @@ function App() {
               <Typography variant="textLabel" sx={{ textTransform: "uppercase" }}>Age</Typography>
               <CustomSelect 
                 name='age' 
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
                 items={[
                   {text:"Select one", value: 0},
                   {text:"Ten", value: 10},
@@ -100,6 +109,8 @@ function App() {
               <Typography variant="textLabel" sx={{ textTransform: "uppercase" }}>Status</Typography>
               <CustomSelect 
                 name='status' 
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
                 items={[
                   {text:"Select one", value: 0},
                   {text:"Ten", value: 10},
