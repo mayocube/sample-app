@@ -16,17 +16,17 @@
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Medium.woff") format('woff');
 }
 @font-face {
-  font-family: "Twilio-Sans-Mon";
+  font-family: "Twilio-Sans-Mono";
   font-weight : 600;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Bold.woff") format('woff');
 }
 @font-face {
-  font-family: "Twilio-Sans-Mon";
+  font-family: "Twilio-Sans-Mono";
   font-weight : 700;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Heavy.woff") format('woff');
 }
 @font-face {
-  font-family: "Twilio-Sans-Mon";
+  font-family: "Twilio-Sans-Mono";
   font-weight : 800;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Extrabold.woff") format('woff');
 }
@@ -41,4 +41,51 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+.navBar{
+min-height: 46px !important;
+}
+.navTitle{
+  font-size: 18px !important;
+  line-height: 28px !important;
+  font-weight: 400 !important;
+}
+.Headertitle{
+font-size: 20px !important;
+font-weight: 600 !important;
+line-height: 28px !important;
+letter-spacing: -2 !important;
+}
+.headerBtns{
+  gap: 20px !important;
+}
+.headerBtn{
+  min-width: 100px !important;
+  min-height: 36px !important;
+  border-radius: 24px !important;
+  padding: 10px !important;
+  gap: 10px !important;
+}
+.customSelects, .customInputs{
+  gap: 4px !important;
+}
+.customSelectTitle, .customInputTitle{
+  min-width: 320px !important;
+  min-height: 20px !important;
+}
+.custom-select, .custom-Input{
+  min-width: 252px !important;
+  min-height: 36px !important;
+  gap: 10px !important;
+ padding: 8px, 12px, 8px, 12px !important;
+}
+.actionBtn{
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+  color: #606B85 !important;
+}
+.actionIcon{
+  width: 20px !important;
+  height: 20px !important;
 }

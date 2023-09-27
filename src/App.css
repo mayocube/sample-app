@@ -3,7 +3,6 @@ body{ background: #FAFAFA; }
 .custom-grid{ height:calc(100vh - 312px) }
 .custom-grid .MuiDataGrid-columnHeaders{ background-color: #fff;padding: 0px 12px; }
 .custom-grid .MuiDataGrid-row{ margin:5px 10px;width: calc(100% - 45px) !important; background-color: #fff;border: 1px solid #d9d9d9;border-radius: 10px; }
-.custom-grid .MuiDataGrid-row > div{ min-height: 55px !important; }
-
+.custom-grid .MuiDataGrid-row > div{ min-height: 20px !important; }
 .custom-select .MuiSvgIcon-root{ background-color: #F4F4F6;height: 23px;width:23px;margin:0 9px;border-radius: 5px;cursor: pointer; }
 
