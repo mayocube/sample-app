@@ -96,3 +96,6 @@ font-weight: 500;
 line-height: 20px !important;
 color: #5C5C5C !important;
 }
+.css-18lpkjc-MuiAutocomplete-root .MuiOutlinedInput-root{
+  padding: 0px !important;
+} 

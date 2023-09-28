@@ -4,7 +4,7 @@ import { Autocomplete, Container, FormControl, Grid, TextField, Typography } fro
 import Header from '../components/Header'
 import CustomSelect from '../components/CustomSelect'
 import Actions from '../components/Actions'
-import { getAllAgents } from '../EndPoint/EndPoints'
+import { getAllAgents, getmntasks } from '../EndPoint/EndPoints'
 import CustomInput from '../components/CustomInput'
 import { getData, saveData } from '../Util/indexedDBService'
 const Dashboard = () => {
@@ -12,22 +12,46 @@ const Dashboard = () => {
     // eslint-disable-next-line
     const [data, setData] = useState([]);
     const [agent, setAgent] = useState([])
-    console.log(agent);
     const getAgents = async () => {
         const res = await getAllAgents()
         if (res) {
             setAgent(res?.data?.data)
         }
+        const restasks = await getmntasks();
+        if (restasks) {
+            console.log(restasks.data.data);
+        }
 
     }
-
-    const handleRefresh = () => {
+    console.log("logo==>", data);
+    const getnmTasksData = async () => {
+        const res = await getData()
+        if (res.length === 0) {
+            const restasks = await getmntasks();
+            if (restasks) {
+                console.log(restasks.data.data);
+                setData(restasks?.data?.data)
+                saveData(restasks?.data?.data);
+            }
+            else {
+                setData(setData)
+            }
+        }
+    }
+    const handleRefresh = async () => {
         // fetch('https://62eb-104-189-117-104.ngrok-free.app/nmagents')
         //     .then((response) => response.json())
         //     .then((fetchedData) => {
         //         setData(fetchedData);
         //         saveData(fetchedData);
         //     });
+        const restasks = await getmntasks();
+        if (restasks) {
+            console.log(restasks.data.data);
+            setData(restasks?.data?.data)
+            saveData(restasks?.data?.data);
+        }
+
     };
     useEffect(() => {
         getAgents()
@@ -45,6 +69,10 @@ const Dashboard = () => {
         //         setData(storedData);
         //     }
         // });
+        getnmTasksData()
+
+
+
     }, [])
 
     return (
