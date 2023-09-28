@@ -1,3 +1,3 @@
-import { Get } from "../Util/RequestHandler";
+import { Get, Post } from "../Util/RequestHandler";
 
-export const getAllAgents = () => Get(`nmtasks`)
+export const getAllAgents = () => Post(`nmagents`, {})

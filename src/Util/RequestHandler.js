@@ -13,3 +13,13 @@ export const Get = async (path) => {
     }
 
 }
+export const Post = async (path) => {
+    try {
+        const response = await axios.post(`${url}${path}`, { headers: customHeaders })
+        return response
+
+    } catch (err) {
+        throw new Error(err.message);
+    }
+
+}

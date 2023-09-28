@@ -89,3 +89,10 @@ letter-spacing: -2 !important;
   width: 20px !important;
   height: 20px !important;
 }
+.css-1hucnu1-MuiFormLabel-root-MuiInputLabel-root{
+top:-10px !important;
+font-size: 14px !important;
+font-weight: 500;
+line-height: 20px !important;
+color: #5C5C5C !important;
+}
