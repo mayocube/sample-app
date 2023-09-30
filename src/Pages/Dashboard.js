@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useReducer, useState } from 'react'
 import NavBar from '../components/NavBar'
 import { Autocomplete, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
 import Header from '../components/Header'
@@ -7,8 +7,15 @@ import Actions from '../components/Actions'
 import { getAllAgents, getmntasks } from '../EndPoint/EndPoints'
 import CustomInput from '../components/CustomInput'
 import { getData, saveData } from '../Util/indexedDBService'
+import DataTable from '../components/DataTable'
+import { formReducer } from '../Util/RequestHandler'
 const Dashboard = () => {
-    const [selectedValue, setSelectedValue] = React.useState({ brand: 0, priority: 0, agent: 0, age: 0, status: 0 });
+    const [formData, setFormData] = useReducer(formReducer, {
+        priority: "",
+        brand: "",
+        status: "",
+        age: ""
+    });
     // eslint-disable-next-line
     const [data, setData] = useState([]);
     const [agent, setAgent] = useState([])
@@ -17,34 +24,64 @@ const Dashboard = () => {
         if (res) {
             setAgent(res?.data?.data)
         }
-        const restasks = await getmntasks();
-        if (restasks) {
-            console.log(restasks.data.data);
-        }
-
     }
-    console.log("logo==>", data);
     const getnmTasksData = async () => {
+        // const pageSize = 20;
+        // let pageNo = 1;
+        // let pageToken = null;
+        // let allData = [];
         const res = await getData()
+
+        // try {
+        //     while (pageNo < 10) {
+        //         let args = {}
+        //         if (pageNo > 1) {
+        //             args = { pageNo, pageSize, pageToken }
+        //         }
+        //         const data = await getmntasks(args);
+        //         console.log(data?.data);
+        //         args.pageToken = data?.data?.pageToken
+        //         console.log(data?.data?.data);
+        //         if (!data || data.length === 0) {
+        //             break;
+        //         }
+        //         allData = allData.concat({ ...[data, pageNo] });
+        //         setData(data?.data?.data)
+        //         saveData(data?.data?.data)
+        //         // console.log(all);
+        //         pageNo++;
+        //         if (data.length < pageSize) {
+        //             break;
+        //         }
+        //     }
+        // } catch (err) {
+        //     console.log("message" + err);
+        // }
+
+
+
+
+
+
+
+
+
+
         if (res.length === 0) {
             const restasks = await getmntasks();
             if (restasks) {
-                console.log(restasks.data.data);
                 setData(restasks?.data?.data)
                 saveData(restasks?.data?.data);
-            }
-            else {
-                setData(setData)
+                console.log("data from endPoint", restasks?.data?.data);
             }
         }
+        else {
+            setData(res)
+            console.log("data from db", res);
+        }
     }
+    // eslint-disable-next-line
     const handleRefresh = async () => {
-        // fetch('https://62eb-104-189-117-104.ngrok-free.app/nmagents')
-        //     .then((response) => response.json())
-        //     .then((fetchedData) => {
-        //         setData(fetchedData);
-        //         saveData(fetchedData);
-        //     });
         const restasks = await getmntasks();
         if (restasks) {
             console.log(restasks.data.data);
@@ -55,25 +92,43 @@ const Dashboard = () => {
     };
     useEffect(() => {
         getAgents()
-        // getData().then((storedData) => {
-        //     if (storedData.length === 0) {
-        //         // Data not in IndexedDB, fetch it from the API
-        //         fetch('https://62eb-104-189-117-104.ngrok-free.app/nmagents')
-        //             .then((response) => response.json())
-        //             .then((fetchedData) => {
-        //                 setData(fetchedData);
-        //                 saveData(fetchedData); // Store the fetched data in IndexedDB
-        //             });
-        //     } else {
-        //         // Data found in IndexedDB, use it
-        //         setData(storedData);
-        //     }
-        // });
         getnmTasksData()
-
-
-
     }, [])
+    const columns = useMemo(
+        () => [
+            {
+                label: "Brand",
+                accessor: "brand", // Update accessor key to "brand"
+            },
+            {
+                label: "Priority",
+                accessor: "priority", // Update accessor key to "priority"
+            },
+            {
+                label: "Agent",
+                accessor: "agent", // Update accessor key to "agent"
+            },
+            {
+                label: "Age",
+                accessor: "age", // Update accessor key to "age"
+            },
+            {
+                label: "Status",
+                accessor: "status", // Update accessor key to "status"
+            },
+            {
+                label: "Task Sid",
+                accessor: "taskSid", // Update accessor key to "taskSid"
+            },
+            {
+                label: "CustomerEmailId",
+                accessor: "customerEmailId", // Update accessor key to "customerEmailId"
+            },
+        ],
+        []
+    );
+
+
 
     return (
         <>
@@ -83,11 +138,12 @@ const Dashboard = () => {
                 <Grid container spacing={2} paddingBottom={1} paddingTop={0}>
                     <CustomInput title={'Customer email'} />
                     <CustomSelect title={"Brand"}
-                        name='priority'
-                        selectedValue={selectedValue}
-                        setSelectedValue={setSelectedValue}
+                        name='brand'
+                        value={formData["brand"]}
+                        onChange={setFormData}
+                        id="brand"
                         items={[
-                            { text: "Select one", value: 0 },
+                            { text: "Select one", value: "" },
                             { text: "Ten", value: 10 },
                             { text: "Twenty", value: 20 },
                             { text: "Thirty", value: 30 }
@@ -95,28 +151,16 @@ const Dashboard = () => {
                     />
                     <CustomSelect title={"Priority"}
                         name='priority'
-                        selectedValue={selectedValue}
-                        setSelectedValue={setSelectedValue}
+                        value={formData["priority"]}
+                        onChange={setFormData}
+                        id="priority"
                         items={[
-                            { text: "Select one", value: 0 },
-                            { text: "Ten", value: 10 },
-                            { text: "Twenty", value: 20 },
-                            { text: "Thirty", value: 30 }
+                            { text: "Select one", value: "" },
+                            { text: "Ten", value: 1 },
+                            { text: "Twenty", value: 10 },
+                            { text: "Thirty", value: 100 }
                         ]}
                     />
-                    {/* <CustomSelect title={"Agent"}
-                        name='priority'
-                        selectedValue={selectedValue}
-                        setSelectedValue={setSelectedValue}
-                        items={[
-                            { text: "Select one", value: 0 },
-                            { text: "Ten", value: 10 },
-                            { text: "Twenty", value: 20 },
-                            { text: "Thirty", value: 30 }
-                        ]}
-                    /> */}
-
-
                     <Grid item xs={2} marginTop={0}>
                         <FormControl className='customSelects' sx={{ width: "100%" }}>
                             <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase" }}>Agent</Typography>
@@ -137,22 +181,24 @@ const Dashboard = () => {
                         </FormControl>
                     </Grid>
                     <CustomSelect title={"Age"}
-                        name='priority'
-                        selectedValue={selectedValue}
-                        setSelectedValue={setSelectedValue}
+                        name='age'
+                        value={formData["age"]}
+                        onChange={setFormData}
+                        id="age"
                         items={[
-                            { text: "Select one", value: 0 },
-                            { text: "Ten", value: 10 },
-                            { text: "Twenty", value: 20 },
-                            { text: "Thirty", value: 30 }
+                            { text: "Select one", value: "" },
+                            { text: "Ten", value: 7825 },
+                            { text: "Twenty", value: 8122 },
+                            { text: "Thirty", value: 8131 }
                         ]}
                     />
                     <CustomSelect title={"Status"}
-                        name='priority'
-                        selectedValue={selectedValue}
-                        setSelectedValue={setSelectedValue}
+                        name='status'
+                        value={formData["status"]}
+                        onChange={setFormData}
+                        id="status"
                         items={[
-                            { text: "Select one", value: 0 },
+                            { text: "Select one", value: "" },
                             { text: "Ten", value: 10 },
                             { text: "Twenty", value: 20 },
                             { text: "Thirty", value: 30 }
@@ -161,6 +207,30 @@ const Dashboard = () => {
 
                     < Actions actionTime={"last updated 6 minutes ago"} />
                 </Grid>
+                {/* <Box maxWidth={"100%"}>
+                    <DataGrid
+                        columns={[
+                            { field: 'Brand', headerName: 'Brand' },
+                            { field: 'Priority', headerName: 'Priority' },
+                            { field: 'Agent', headerName: 'Agent', type: 'number' },
+                            { field: 'Age', headerName: 'Age', type: 'number' },
+                            { field: 'Status', headerName: 'Status', type: 'number' },
+                            { field: 'TaskSID', headerName: 'Task SID', type: 'number' },
+                            { field: 'CustomerEmail', headerName: 'Customer Email', type: 'number' },
+                        ]}
+                        rows={[
+                            { id: 1, Brand: 'alllll', Priority: 'Jon', Agent: "al", Age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
+                        ]}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 50 },
+                            },
+                        }}
+                        pageSizeOptions={[50, 100]}
+                        checkboxSelection
+                    />
+                </Box> */}
+                < DataTable columns={columns} data={data} filterByStatus={""} formData={formData} filterByAge={""} filterByPriority={""} filterByBrand={""} />
             </Container>
         </>
     )

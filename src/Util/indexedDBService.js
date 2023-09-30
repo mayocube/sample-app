@@ -11,7 +11,7 @@ export async function initDB() {
         upgrade(db) {
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 const store = db.createObjectStore(STORE_NAME, { keyPath: 'taskSid' });
-                // store.createIndex('timestamp', 'timestamp');
+                store.createIndex('timestamp', 'timestamp');
             }
         },
     });

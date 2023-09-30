@@ -1,15 +1,8 @@
 import { Select, MenuItem, Grid, FormControl, Typography } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useState } from 'react';
-
-
-const CustomSelect = ({ name, selectedValue, setSelectedValue, items, title }) => {
+const CustomSelect = ({ name, onChange, value, items, title }) => {
     const [open, setOpen] = useState(false);
-
-    const handleChange = (event) => {
-        setSelectedValue({ ...selectedValue, [event.target.name]: event.target.value });
-    };
-
     const toggleSelect = () => {
         setOpen(open ? false : true);
     };
@@ -25,8 +18,8 @@ const CustomSelect = ({ name, selectedValue, setSelectedValue, items, title }) =
                     open={open}
                     onClose={toggleSelect}
                     onOpen={toggleSelect}
-                    value={selectedValue[name]}
-                    onChange={handleChange}
+                    value={value}
+                    onChange={(e) => { onChange(e) }}
                     className={"custom-select"}
                     IconComponent={() => <KeyboardArrowDownIcon onClick={toggleSelect} />}
                     sx={{
