@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Paper,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
     TableHead,
     TableRow,
     styled,
-    Checkbox, // Import Checkbox from MUI
+    Checkbox,
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -20,10 +14,6 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 const Root = styled('div')({
     padding: (theme) => theme.spacing(2),
-});
-
-const TableContainerStyled = styled(TableContainer)({
-    minHeight: 'auto',
 });
 
 const PaginationContainer = styled('div')({
@@ -40,7 +30,7 @@ const PaginationText = styled('span')({
 
 function DataTable({ title, columns, data = [], formData }) {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(100);
+    const [rowsPerPage, setRowsPerPage] = useState(20);
     const [selected, setSelected] = useState([]); // State to track selected items
 
     let [filteredData, setFilteredData] = useState(data);
@@ -49,7 +39,7 @@ function DataTable({ title, columns, data = [], formData }) {
         setPage(newPage);
         setSelected([]); // Reset selected items when changing page
     };
-
+    // eslint-disable-next-line
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
@@ -102,59 +92,49 @@ function DataTable({ title, columns, data = [], formData }) {
 
     return (
         <Root>
-            <TableContainerStyled component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Checkbox
-                                    checked={isAllSelected()}
-                                    onChange={handleHeaderCheckboxChange}
-                                />
+            <Table sx={{
+                borderCollapse: 'separate',
+                borderSpacing: '0 10px',
+                backgroundColor: '#FAFAFA',
+                border: '0px'
+            }}>
+                <TableHead sx={{ backgroundColor: "white" }}>
+                    <TableRow>
+                        <TableCell>
+                            <Checkbox
+                                checked={isAllSelected()}
+                                onChange={handleHeaderCheckboxChange}
+                            />
+                        </TableCell>
+                        {columns.map((column) => (
+                            <TableCell key={column.id}>
+                                {column.label}
                             </TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody >
+                    {filteredData.map((row) => (
+                        <TableRow sx={{ backgroundColor: "white" }} className='data-rows' key={row.id}>
+                            <TableCell >
+                                <Checkbox
+                                    checked={isItemSelected(row.id)}
+                                    onChange={(event) =>
+                                        handleCheckboxChange(event, row.id)
+                                    }
+                                />
+                            </TableCell >
                             {columns.map((column) => (
                                 <TableCell key={column.id}>
-                                    {column.label}
+                                    {row[column.accessor]}
+
                                 </TableCell>
                             ))}
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredData.map((row) => (
-                            <TableRow key={row.id}>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={isItemSelected(row.id)}
-                                        onChange={(event) =>
-                                            handleCheckboxChange(event, row.id)
-                                        }
-                                    />
-                                </TableCell>
-                                {columns.map((column) => (
-                                    <TableCell key={column.id}>
-                                        {row[column.accessor]}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainerStyled>
+                    ))}
+                </TableBody>
+            </Table>
             <PaginationContainer sx={{ marginTop: 2 }}>
-                <FormControl variant="outlined" size="small">
-                    <InputLabel>Show</InputLabel>
-                    <Select
-                        value={rowsPerPage}
-                        onChange={handleChangeRowsPerPage}
-                        label="Show"
-                    >
-                        {[100, 250, 500].map((pageSize) => (
-                            <MenuItem key={pageSize} value={pageSize}>
-                                {pageSize}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
                 <PaginationText>
                     Showing {page * rowsPerPage + 1} to{' '}
                     {Math.min((page + 1) * rowsPerPage, filteredData.length)} of{' '}
@@ -177,7 +157,7 @@ function DataTable({ title, columns, data = [], formData }) {
                     </IconButton>
                 </div>
             </PaginationContainer>
-        </Root>
+        </Root >
     );
 }
 

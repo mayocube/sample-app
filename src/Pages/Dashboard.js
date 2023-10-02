@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import NavBar from '../components/NavBar'
 import { Autocomplete, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
 import Header from '../components/Header'
@@ -10,90 +10,61 @@ import { getData, saveData } from '../Util/indexedDBService'
 import DataTable from '../components/DataTable'
 import { formReducer } from '../Util/RequestHandler'
 const Dashboard = () => {
+
     const [formData, setFormData] = useReducer(formReducer, {
         priority: "",
         brand: "",
         status: "",
         age: ""
     });
-    // eslint-disable-next-line
+
     const [data, setData] = useState([]);
-    const [agent, setAgent] = useState([])
+    const [agent, setAgent] = useState([]);
+
+    const pageSize = 20;
+
     const getAgents = async () => {
         const res = await getAllAgents()
         if (res) {
             setAgent(res?.data?.data)
         }
     }
-    const getnmTasksData = async () => {
-        // const pageSize = 20;
-        // let pageNo = 1;
-        // let pageToken = null;
-        // let allData = [];
-        const res = await getData()
 
-        // try {
-        //     while (pageNo < 10) {
-        //         let args = {}
-        //         if (pageNo > 1) {
-        //             args = { pageNo, pageSize, pageToken }
-        //         }
-        //         const data = await getmntasks(args);
-        //         console.log(data?.data);
-        //         args.pageToken = data?.data?.pageToken
-        //         console.log(data?.data?.data);
-        //         if (!data || data.length === 0) {
-        //             break;
-        //         }
-        //         allData = allData.concat({ ...[data, pageNo] });
-        //         setData(data?.data?.data)
-        //         saveData(data?.data?.data)
-        //         // console.log(all);
-        //         pageNo++;
-        //         if (data.length < pageSize) {
-        //             break;
-        //         }
-        //     }
-        // } catch (err) {
-        //     console.log("message" + err);
-        // }
-
-
-
-
-
-
-
-
-
-
-        if (res.length === 0) {
-            const restasks = await getmntasks();
-            if (restasks) {
-                setData(restasks?.data?.data)
-                saveData(restasks?.data?.data);
-                console.log("data from endPoint", restasks?.data?.data);
-            }
+    const getnmTasksData = async (prevData, pageNo, pageToken) => {
+        var args = {};
+        if (pageNo > 1) {
+            args = { pageNo, pageSize, pageToken }
         }
-        else {
-            setData(res)
-            console.log("data from db", res);
+
+        const res = await getmntasks(args);
+        if (res?.data?.pageToken != null) {
+            const newData = [...prevData, ...res?.data?.data];
+            setData(newData);
+            saveData(newData);
+            console.log(newData);
+            setTimeout(async () => {
+                await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
+            }, 200);
         }
     }
-    // eslint-disable-next-line
-    const handleRefresh = async () => {
-        const restasks = await getmntasks();
-        if (restasks) {
-            console.log(restasks.data.data);
-            setData(restasks?.data?.data)
-            saveData(restasks?.data?.data);
-        }
 
+    const handleRefresh = async () => {
+        getnmTasksData([], 1, null);
     };
+
     useEffect(() => {
-        getAgents()
-        getnmTasksData()
+        getAgents();
+        (async () => {
+            const res = await getData();
+            if (res.length === 0) {
+                await getnmTasksData([], 1, null)
+            } else {
+                console.log("dbData==>", res);
+                setData(res);
+            }
+        })()
     }, [])
+
     const columns = useMemo(
         () => [
             {
@@ -128,14 +99,12 @@ const Dashboard = () => {
         []
     );
 
-
-
     return (
         <>
             <NavBar navbarTitle={" NM Twilio Super Admin Dev "} />
             <Container maxWidth={"100%"}>
                 <Header headerTitle={"Customer Email Queue"} />
-                <Grid container spacing={2} paddingBottom={1} paddingTop={0}>
+                <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
                     <CustomInput title={'Customer email'} />
                     <CustomSelect title={"Brand"}
                         name='brand'
@@ -205,7 +174,7 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    < Actions actionTime={"last updated 6 minutes ago"} />
+                    <Actions onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
                 {/* <Box maxWidth={"100%"}>
                     <DataGrid

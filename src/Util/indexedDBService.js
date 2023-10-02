@@ -1,14 +1,11 @@
 import { openDB } from 'idb'
-const DB_NAME = 'myAppDB';
-const STORE_NAME = 'dataStore';
+const DB_NAME = 'NMTasks';
+const STORE_NAME = 'tasks';
 const dbVersion = 1;
-export const initIdb = async () => {
-
-}
-
 export async function initDB() {
     return openDB(DB_NAME, dbVersion, {
         upgrade(db) {
+            console.log(db);
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 const store = db.createObjectStore(STORE_NAME, { keyPath: 'taskSid' });
                 store.createIndex('timestamp', 'timestamp');
@@ -28,7 +25,6 @@ export async function saveData(data) {
     const db = await initDB();
     const tx = db.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
-
     data.forEach((item) => {
         store.put(item);
     });

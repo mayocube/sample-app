@@ -70,11 +70,9 @@ letter-spacing: -2 !important;
   gap: 4px !important;
 }
 .customSelectTitle, .customInputTitle{
-  min-width: 320px !important;
   min-height: 20px !important;
 }
 .custom-select, .custom-Input{
-  min-width: 252px !important;
   min-height: 36px !important;
   gap: 10px !important;
  padding: 8px, 12px, 8px, 12px !important;
@@ -99,3 +97,25 @@ color: #5C5C5C !important;
 .css-18lpkjc-MuiAutocomplete-root .MuiOutlinedInput-root{
   padding: 0px !important;
 } 
+.css-1vd2qld-MuiGrid-root>.MuiGrid-item {
+  padding: 0 24px !important;
+}
+.data-rows td{
+  border-top: 1px solid #EBEBEB;
+  border-bottom: 1px solid #EBEBEB
+;
+}
+
+.data-rows td:first-child{
+  border-radius: 10px 0px 0px 10px;
+  border-left: 1px solid #EBEBEB
+;
+  overflow: hidden;
+}
+
+.data-rows td:last-child{
+  overflow: hidden;
+  border-radius: 0px 10px 10px 0px;
+  border-right: 1px solid #EBEBEB
+;
+}

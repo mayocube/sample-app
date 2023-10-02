@@ -14,15 +14,8 @@ export const Get = async (path) => {
 
 }
 export const Post = async (path, data) => {
-    const { pageNo, pageSize, pageToken } = data
     try {
-        const response = await axios.post(`${url}${path}`, {
-            params: {
-                pageNo,
-                pageSize,
-                pageToken
-            }, headers: customHeaders
-        })
+        const response = await axios.post(`${url}${path}`, data, { headers: customHeaders })
         return response
 
     } catch (err) {
