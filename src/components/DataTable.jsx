@@ -105,8 +105,7 @@ function DataTable({ title, columns, data = [], formData }) {
                                 checked={isAllSelected()}
                                 onChange={handleHeaderCheckboxChange}
                             />
-                        </TableCell>
-                        {columns.map((column) => (
+                        </TableCell> {columns.map((column) => (
                             <TableCell key={column.id}>
                                 {column.label}
                             </TableCell>
@@ -114,8 +113,8 @@ function DataTable({ title, columns, data = [], formData }) {
                     </TableRow>
                 </TableHead>
                 <TableBody >
-                    {filteredData.map((row) => (
-                        <TableRow sx={{ backgroundColor: "white" }} className='data-rows' key={row.id}>
+                    {filteredData.map((row, idx) => (
+                        <TableRow key={`row_${idx}`} sx={{ backgroundColor: "white" }} className='data-rows'>
                             <TableCell >
                                 <Checkbox
                                     checked={isItemSelected(row.id)}
@@ -157,7 +156,7 @@ function DataTable({ title, columns, data = [], formData }) {
                     </IconButton>
                 </div>
             </PaginationContainer>
-        </Root >
+        </Root>
     );
 }
 

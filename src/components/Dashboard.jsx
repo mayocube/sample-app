@@ -1,16 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
-import NavBar from '../components/NavBar'
-import { Autocomplete, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
-import Header from '../components/Header'
-import CustomSelect from '../components/CustomSelect'
-import Actions from '../components/Actions'
-import { getAllAgents, getmntasks } from '../EndPoint/EndPoints'
-import CustomInput from '../components/CustomInput'
-import { getData, saveData } from '../Util/indexedDBService'
-import DataTable from '../components/DataTable'
-import { formReducer } from '../Util/RequestHandler'
-const Dashboard = () => {
+import React, { useEffect, useMemo, useReducer, useState } from 'react'
+import { Autocomplete, Box, Button, Container, Drawer, FormControl, Grid, TextField, Typography } from '@mui/material'
+import { formReducer } from '../utils/RequestHandler';
+import { getAllAgents, getmntasks } from '../apiService/endPoints';
+import { getData, saveData } from '../utils/indexedDBService';
+import NavBar from './NavBar';
+import Header from './Header';
+import CustomInput from './CustomInput';
+import CustomSelect from './CustomSelect';
+import Actions from './Actions';
+import DataTable from './DataTable';
+import DataaTable from './DataaTable';
+import SnackAlert from './SnackAlert';
+import SideBar from './SideBar';
 
+const Dashboard = () => {
+    const [open, setOpen] = useState(true)
     const [formData, setFormData] = useReducer(formReducer, {
         priority: "",
         brand: "",
@@ -65,35 +69,79 @@ const Dashboard = () => {
         })()
     }, [])
 
+    // const columns = useMemo(
+    //     () => [
+    //         {
+    //             label: "Brand",
+    //             accessor: "brand", // Update accessor key to "brand"
+    //         },
+    //         {
+    //             label: "Priority",
+    //             accessor: "priority", // Update accessor key to "priority"
+    //         },
+    //         {
+    //             label: "Agent",
+    //             accessor: "agent", // Update accessor key to "agent"
+    //         },
+    //         {
+    //             label: "Age",
+    //             accessor: "age", // Update accessor key to "age"
+    //         },
+    //         {
+    //             label: "Status",
+    //             accessor: "status", // Update accessor key to "status"
+    //         },
+    //         {
+    //             label: "Task Sid",
+    //             accessor: "taskSid", // Update accessor key to "taskSid"
+    //         },
+    //         {
+    //             label: "CustomerEmailId",
+    //             accessor: "customerEmailId", // Update accessor key to "customerEmailId"
+    //         },
+    //     ],
+    //     []
+    // );
     const columns = useMemo(
         () => [
             {
-                label: "Brand",
-                accessor: "brand", // Update accessor key to "brand"
+                header: "Select All",
+                accessorKey: "", // Update accessorKey key to "brand"
+                cell: () => (
+                    <label className="custom-toggle">
+                        <input className='checkBox' onChange={() => {
+                        }} checked={1} type="checkbox" />
+                        <span className="custom-toggle-slider  rounded-circle" />
+                    </label>
+                )
             },
             {
-                label: "Priority",
-                accessor: "priority", // Update accessor key to "priority"
+                header: "Brand",
+                accessorKey: "brand", // Update accessorKey key to "brand"
             },
             {
-                label: "Agent",
-                accessor: "agent", // Update accessor key to "agent"
+                header: "Priority",
+                accessorKey: "priority", // Update accessorKey key to "priority"
             },
             {
-                label: "Age",
-                accessor: "age", // Update accessor key to "age"
+                header: "Agent",
+                accessorKey: "agent", // Update accessorKey key to "agent"
             },
             {
-                label: "Status",
-                accessor: "status", // Update accessor key to "status"
+                header: "Age",
+                accessorKey: "age", // Update accessorKey key to "age"
             },
             {
-                label: "Task Sid",
-                accessor: "taskSid", // Update accessor key to "taskSid"
+                header: "Status",
+                accessorKey: "status", // Update accessorKey key to "status"
             },
             {
-                label: "CustomerEmailId",
-                accessor: "customerEmailId", // Update accessor key to "customerEmailId"
+                header: "Task Sid",
+                accessorKey: "taskSid", // Update accessorKey key to "taskSid"
+            },
+            {
+                header: "CustomerEmailId",
+                accessorKey: "customerEmailId", // Update accessorKey key to "customerEmailId"
             },
         ],
         []
@@ -102,7 +150,7 @@ const Dashboard = () => {
     return (
         <>
             <NavBar navbarTitle={" NM Twilio Super Admin Dev "} />
-            <Container maxWidth={"100%"}>
+            <Container maxWidth={"100%"} sx={{ position: "relative" }}>
                 <Header headerTitle={"Customer Email Queue"} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
                     <CustomInput title={'Customer email'} />
@@ -113,9 +161,9 @@ const Dashboard = () => {
                         id="brand"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Ten", value: 10 },
-                            { text: "Twenty", value: 20 },
-                            { text: "Thirty", value: 30 }
+                            { text: "Neiman Marcus", value: "Neiman Marcus" },
+                            { text: "Bergdorf Goodman", value: "Bergdorf Goodman" },
+                            { text: "Horchow", value: "Horchow" }
                         ]}
                     />
                     <CustomSelect title={"Priority"}
@@ -125,9 +173,9 @@ const Dashboard = () => {
                         id="priority"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Ten", value: 1 },
-                            { text: "Twenty", value: 10 },
-                            { text: "Thirty", value: 100 }
+                            { text: "0-40", value: "0-40" },
+                            { text: "41-100", value: "41-100" },
+                            { text: "101+", value: "101+" }
                         ]}
                     />
                     <Grid item xs={2} marginTop={0}>
@@ -156,9 +204,10 @@ const Dashboard = () => {
                         id="age"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Ten", value: 7825 },
-                            { text: "Twenty", value: 8122 },
-                            { text: "Thirty", value: 8131 }
+                            { text: "Less than one hours old", value: 3600000 },
+                            { text: "Between 24-48 hours old", value: 172800000 },
+                            { text: "Between 48-72 hours old", value: 259200000 },
+                            { text: "Greater than 72 hours old", value: 259200001 }
                         ]}
                     />
                     <CustomSelect title={"Status"}
@@ -168,38 +217,23 @@ const Dashboard = () => {
                         id="status"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Ten", value: 10 },
-                            { text: "Twenty", value: 20 },
-                            { text: "Thirty", value: 30 }
+                            { text: "Pending", value: "Pending" },
+                            { text: "Reserved", value: "Reserved" },
+                            { text: "Wrapping", value: "Wrapping" }
                         ]}
                     />
 
                     <Actions onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
-                {/* <Box maxWidth={"100%"}>
-                    <DataGrid
-                        columns={[
-                            { field: 'Brand', headerName: 'Brand' },
-                            { field: 'Priority', headerName: 'Priority' },
-                            { field: 'Agent', headerName: 'Agent', type: 'number' },
-                            { field: 'Age', headerName: 'Age', type: 'number' },
-                            { field: 'Status', headerName: 'Status', type: 'number' },
-                            { field: 'TaskSID', headerName: 'Task SID', type: 'number' },
-                            { field: 'CustomerEmail', headerName: 'Customer Email', type: 'number' },
-                        ]}
-                        rows={[
-                            { id: 1, Brand: 'alllll', Priority: 'Jon', Agent: "al", Age: 35, Status: 35, TaskSID: 35, CustomerEmail: 35 },
-                        ]}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 50 },
-                            },
-                        }}
-                        pageSizeOptions={[50, 100]}
-                        checkboxSelection
-                    />
-                </Box> */}
-                < DataTable columns={columns} data={data} filterByStatus={""} formData={formData} filterByAge={""} filterByPriority={""} filterByBrand={""} />
+                {/* <DataTable columns={columns} data={data} filterByStatus={""} formData={formData} filterByAge={""} filterByPriority={""} filterByBrand={""} /> */}
+
+                <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
+                    {/* <SnackAlert sx={{ position: "absolute" }} open={open} onClose={() => {
+                        setOpen(false)
+                    }} isSuccess={true} /> */}
+                    <SideBar />
+                </Box>
+                <DataaTable columns={columns} data={data} />
             </Container>
         </>
     )

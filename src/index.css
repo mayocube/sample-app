@@ -1,40 +1,57 @@
+/*
+ * Copyright (c) 2018-Present, Okta, Inc. and/or its affiliates. All rights reserved.
+ * The Okta software accompanied by this notice is provided pursuant to the Apache License, Version 2.0 (the "License.")
+ *
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 300;
+  font-weight: 300;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Light.woff") format('woff');
 }
+
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 400;
+  font-weight: 400;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Regular.woff") format('woff');
 }
+
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 500;
+  font-weight: 500;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Medium.woff") format('woff');
 }
+
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 600;
+  font-weight: 600;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Bold.woff") format('woff');
 }
+
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 700;
+  font-weight: 700;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Heavy.woff") format('woff');
 }
+
 @font-face {
   font-family: "Twilio-Sans-Mono";
-  font-weight : 800;
+  font-weight: 800;
   src: url("/public/assets/twilioSansFonts/TwilioSansMono-Extrabold.woff") format('woff');
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 
-  'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  padding: 0;
+  font-family: "Twilio-Sans-Mono", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -42,80 +59,156 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-.navBar{
-min-height: 46px !important;
+
+.navBar {
+  min-height: 46px !important;
 }
-.navTitle{
+
+.navTitle {
   font-size: 18px !important;
   line-height: 28px !important;
   font-weight: 400 !important;
 }
-.Headertitle{
-font-size: 20px !important;
-font-weight: 600 !important;
-line-height: 28px !important;
-letter-spacing: -2 !important;
+
+.Headertitle {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 28px !important;
+  letter-spacing: -2 !important;
 }
-.headerBtns{
+
+.headerBtns {
   gap: 20px !important;
 }
-.headerBtn{
+
+.headerBtn {
   min-width: 100px !important;
   min-height: 36px !important;
   border-radius: 24px !important;
   padding: 10px !important;
   gap: 10px !important;
 }
-.customSelects, .customInputs{
+
+.customSelects,
+.customInputs {
   gap: 4px !important;
 }
-.customSelectTitle, .customInputTitle{
+
+.customSelectTitle,
+.customInputTitle {
   min-height: 20px !important;
 }
-.custom-select, .custom-Input{
+
+.custom-select,
+.custom-Input {
   min-height: 36px !important;
   gap: 10px !important;
- padding: 8px, 12px, 8px, 12px !important;
+  padding: 8px, 12px, 8px, 12px !important;
 }
-.actionBtn{
+
+.actionBtn {
   font-weight: 400 !important;
   font-size: 14px !important;
   line-height: 21px !important;
   color: #606B85 !important;
 }
-.actionIcon{
+
+.actionIcon {
   width: 20px !important;
   height: 20px !important;
 }
-.css-1hucnu1-MuiFormLabel-root-MuiInputLabel-root{
-top:-10px !important;
-font-size: 14px !important;
-font-weight: 500;
-line-height: 20px !important;
-color: #5C5C5C !important;
+
+.css-1hucnu1-MuiFormLabel-root-MuiInputLabel-root {
+  top: -10px !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  line-height: 20px !important;
+  color: #5C5C5C !important;
 }
-.css-18lpkjc-MuiAutocomplete-root .MuiOutlinedInput-root{
+
+.css-18lpkjc-MuiAutocomplete-root .MuiOutlinedInput-root {
   padding: 0px !important;
-} 
+}
+
 .css-1vd2qld-MuiGrid-root>.MuiGrid-item {
   padding: 0 24px !important;
 }
-.data-rows td{
+
+.data-rows td {
   border-top: 1px solid #EBEBEB;
-  border-bottom: 1px solid #EBEBEB
-;
+  border-bottom: 1px solid #EBEBEB;
 }
 
-.data-rows td:first-child{
+.data-rows td:first-child {
   border-radius: 10px 0px 0px 10px;
-  border-left: 1px solid #EBEBEB
-;
+  border-left: 1px solid #EBEBEB;
   overflow: hidden;
 }
 
-.data-rows td:last-child{
+.data-rows td:last-child {
   overflow: hidden;
   border-radius: 0px 10px 10px 0px;
+  border-right: 1px solid #EBEBEB;
+}
+.tableRow{
+  background-color: white;
+  min-height: 74px !important;
+
+}
+.tableHead{
+  max-height: 100px !important;
+height: 74px !important;
+text-align: left;
+font-family: "Twilio-Sans-Mono" !important;
+border-top: 1px solid #EBEBEB;
+  border-bottom: 1px solid #EBEBEB;
+}
+.tableHead tr{
+  border-top: 1px solid #EBEBEB !important;
+  border-bottom: 1px solid #EBEBEB !important;
+}
+.tableHead th div{
+  color:black;
+font-weight:400;
+line-height: 21px;
+padding-left: 24px !important;
+}
+.tableRows{
+  height: 74px;
+  max-width: 100px;
+  padding: 0 24px !important;
+  gap:24px !important;
+  background-color: white ;
+}
+.tableRows td{
+  border-top: 1px solid #EBEBEB;
+  border-bottom: 1px solid #EBEBEB;
+  color:black;
+  font-weight:400;
+  line-height: 21px;
+  padding-left: 24px !important;
+}
+.tableRows td:first-child{
+  border-radius: 10px 0px 0px 10px;
+  border-left: 1px solid #EBEBEB;
+}
+.tableRows td:last-child{
+  border-radius: 0 10px 10px 0;
   border-right: 1px solid #EBEBEB
-;
+
+}
+.table{
+  font-family: "Twilio-Sans-Mono" !important;
+}
+.tbody{
+  text-align: left;
+  font-family: "Twilio-Sans-Mono" !important;
+}
+.flexCell{
+  display: flex;
+}
+.checkBox{
+  width: 16px !important;
+  height: 16px !important;
+
 }
