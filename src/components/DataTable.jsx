@@ -23,6 +23,7 @@ const DataTable = ({ data = [], columns }) => {
         }
 
     })
+    console.log(table.getHeaderGroups().map(ele => ele.headers[0].column.columnDef.header));
     return (
         <>
             <DebouncedInput
@@ -36,7 +37,7 @@ const DataTable = ({ data = [], columns }) => {
                 borderSpacing: '0 10px',
                 backgroundColor: '#FAFAFA',
                 border: '0px'
-            }} responsive>
+            }} >
                 <thead className='tableHead'>
 
                     {table?.getHeaderGroups().map(headerGroup => (

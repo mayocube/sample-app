@@ -210,5 +210,28 @@ padding-left: 24px !important;
 .checkBox{
   width: 16px !important;
   height: 16px !important;
-
+}
+.titleContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px !important;
+}
+.css-9rnw6j-MuiInputBase-root-MuiInput-root:before, .css-9rnw6j-MuiInputBase-root-MuiInput-root:after {
+  border-bottom: 0 !important;
+}
+.css-1x51dt5-MuiInputBase-input-MuiInput-input {
+  border-radius: 0.25rem !important;
+    border: 1px solid var(--colors-black-05, #D9D9D9) !important;
+    background: var(--colors-white, #FFF) !important;
+    padding: 0.5rem 0.75rem !important;
+}
+.css-1x51dt5-MuiInputBase-input-MuiInput-input::placeholder{
+  color: #171717 !important;
+}
+.css-1a6ulwi-MuiButtonBase-root-MuiListItemButton-root{
+  height: 58px !important;
+}
+.css-1ykdma4 {
+  margin-bottom: 16px !important;
 }

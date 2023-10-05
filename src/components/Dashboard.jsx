@@ -11,9 +11,15 @@ import Actions from './Actions';
 import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
-
 const Dashboard = () => {
+    const [openSideBar, setOpenSidebar] = React.useState(false);
+    const [sideBarTitle, setSideBarTitle] = useState("")
+    const [forAgent, setForAgent] = useState(false)
+    const [ForPriority, setForPriority] = useState(false)
     const [open, setOpen] = useState(true)
+    const handleClose = (fn) => {
+        console.log(fn);
+    }
     const [formData, setFormData] = useReducer(formReducer, {
         priority: "",
         brand: "",
@@ -62,7 +68,6 @@ const Dashboard = () => {
             if (res.length === 0) {
                 await getnmTasksData([], 1, null)
             } else {
-                console.log("dbData==>", res);
                 setData(res);
             }
         })()
@@ -152,6 +157,8 @@ const Dashboard = () => {
                                 options={agent}
                                 getOptionLabel={(option) => option.agentName}
                                 className={"custom-select"}
+                                autoComplete={true}
+
                                 sx={{
                                     height: 36, fontSize: 14, borderColor: "#EEEEEE", color: "#5c5c5c", ":hover": {
                                         borderColor: "#EEEEEE",
@@ -188,13 +195,13 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    <Actions onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
+                    <Actions setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} handleClose={handleClose} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
                     {/* <SnackAlert sx={{ position: "absolute" }} open={open} onClose={() => {
                         setOpen(false)
                     }} isSuccess={true} /> */}
-                    <SideBar />
+                    <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
                 </Box>
                 <DataTable columns={columns} data={data} />
             </Container>
