@@ -9,7 +9,6 @@ import CustomInput from './CustomInput';
 import CustomSelect from './CustomSelect';
 import Actions from './Actions';
 import DataTable from './DataTable';
-import DataaTable from './DataaTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
 
@@ -68,40 +67,6 @@ const Dashboard = () => {
             }
         })()
     }, [])
-
-    // const columns = useMemo(
-    //     () => [
-    //         {
-    //             label: "Brand",
-    //             accessor: "brand", // Update accessor key to "brand"
-    //         },
-    //         {
-    //             label: "Priority",
-    //             accessor: "priority", // Update accessor key to "priority"
-    //         },
-    //         {
-    //             label: "Agent",
-    //             accessor: "agent", // Update accessor key to "agent"
-    //         },
-    //         {
-    //             label: "Age",
-    //             accessor: "age", // Update accessor key to "age"
-    //         },
-    //         {
-    //             label: "Status",
-    //             accessor: "status", // Update accessor key to "status"
-    //         },
-    //         {
-    //             label: "Task Sid",
-    //             accessor: "taskSid", // Update accessor key to "taskSid"
-    //         },
-    //         {
-    //             label: "CustomerEmailId",
-    //             accessor: "customerEmailId", // Update accessor key to "customerEmailId"
-    //         },
-    //     ],
-    //     []
-    // );
     const columns = useMemo(
         () => [
             {
@@ -225,15 +190,13 @@ const Dashboard = () => {
 
                     <Actions onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
-                {/* <DataTable columns={columns} data={data} filterByStatus={""} formData={formData} filterByAge={""} filterByPriority={""} filterByBrand={""} /> */}
-
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
                     {/* <SnackAlert sx={{ position: "absolute" }} open={open} onClose={() => {
                         setOpen(false)
                     }} isSuccess={true} /> */}
                     <SideBar />
                 </Box>
-                <DataaTable columns={columns} data={data} />
+                <DataTable columns={columns} data={data} />
             </Container>
         </>
     )

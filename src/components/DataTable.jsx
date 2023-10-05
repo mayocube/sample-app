@@ -1,163 +1,125 @@
-import React, { useEffect, useState } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    styled,
-    Checkbox,
-} from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-
-const Root = styled('div')({
-    padding: (theme) => theme.spacing(2),
-});
-
-const PaginationContainer = styled('div')({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    fontSize: '14px',
-});
-
-const PaginationText = styled('span')({
-    marginLeft: (theme) => theme.spacing(2),
-    marginRight: (theme) => theme.spacing(2),
-});
-
-function DataTable({ title, columns, data = [], formData }) {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(20);
-    const [selected, setSelected] = useState([]); // State to track selected items
-
-    let [filteredData, setFilteredData] = useState(data);
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-        setSelected([]); // Reset selected items when changing page
-    };
-    // eslint-disable-next-line
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-        setSelected([]); // Reset selected items when changing rows per page
-    };
-
+import React, { useEffect, useState } from 'react'
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { Table } from '@mui/material'
+const DataTable = ({ data = [], columns }) => {
+    const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
+    const [globalFilter, setGlobalFilter] = React.useState('');
+    const [refresh, setRefresh] = useState(data)
     useEffect(() => {
-        const { priority, brand, status, age } = formData;
-        let filtered = data;
-        if (priority !== "") {
-            filtered = filtered.filter((item) => item.priority === priority);
-        }
-        if (brand !== "") {
-            filtered = filtered.filter((item) => item.brand === brand);
-        }
-        if (status !== "") {
-            filtered = filtered.filter((item) => item.status === status);
-        }
-        if (age !== "") {
-            filtered = filtered.filter((item) => item.age === age);
+        setRefresh(data)
+    }, [refresh])
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        state: {
+            sorting,
+            globalFilter
         }
 
-        setFilteredData(filtered);
-    }, [formData, data, filteredData]);
-
-    // Function to handle checkbox selection
-    const handleCheckboxChange = (event, itemId) => {
-        if (event.target.checked) {
-            setSelected([...selected, itemId]);
-        } else {
-            setSelected(selected.filter((id) => id !== itemId));
-        }
-    };
-
-    // Function to handle header checkbox selection (selects all items)
-    const handleHeaderCheckboxChange = (event) => {
-        if (event.target.checked) {
-            const allItemIds = filteredData.map((item) => item.id);
-            setSelected(allItemIds);
-        } else {
-            setSelected([]);
-        }
-    };
-
-    // Function to check if a specific item is selected
-    const isItemSelected = (itemId) => selected.indexOf(itemId) !== -1;
-
-    // Function to check if all items are selected
-    const isAllSelected = () => selected.length === filteredData.length;
-
+    })
     return (
-        <Root>
+        <>
+            <DebouncedInput
+                value={globalFilter ?? ''}
+                onChange={value => setGlobalFilter(String(value))}
+                className="p-2 font-lg shadow border border-block"
+                placeholder="Search all columns..."
+            />
             <Table sx={{
                 borderCollapse: 'separate',
                 borderSpacing: '0 10px',
                 backgroundColor: '#FAFAFA',
                 border: '0px'
-            }}>
-                <TableHead sx={{ backgroundColor: "white" }}>
-                    <TableRow>
-                        <TableCell>
-                            <Checkbox
-                                checked={isAllSelected()}
-                                onChange={handleHeaderCheckboxChange}
-                            />
-                        </TableCell> {columns.map((column) => (
-                            <TableCell key={column.id}>
-                                {column.label}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody >
-                    {filteredData.map((row, idx) => (
-                        <TableRow key={`row_${idx}`} sx={{ backgroundColor: "white" }} className='data-rows'>
-                            <TableCell >
-                                <Checkbox
-                                    checked={isItemSelected(row.id)}
-                                    onChange={(event) =>
-                                        handleCheckboxChange(event, row.id)
-                                    }
-                                />
-                            </TableCell >
-                            {columns.map((column) => (
-                                <TableCell key={column.id}>
-                                    {row[column.accessor]}
+            }} responsive>
+                <thead className='tableHead'>
 
-                                </TableCell>
+                    {table?.getHeaderGroups().map(headerGroup => (
+                        <tr key={`headerGroup_${headerGroup.id}`} className='tableRows'>
+                            {headerGroup.headers.map(header => (
+                                <th key={header.id} colSpan={header.colSpan}>
+                                    {header.isPlaceholder ? null : (
+
+                                        <div
+                                            {...{
+                                                className: header.column.getCanSort()
+                                                    ? 'cursor-pointer select-none'
+                                                    : '',
+                                                onClick: header.column.getToggleSortingHandler(),
+                                            }}
+                                        >
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                            {
+                                                header.column.getIsSorted() === 'asc' ?
+                                                    <span>▲</span>
+                                                    :
+                                                    header.column.getIsSorted() === 'desc' ?
+                                                        <span >▼</span>
+                                                        : header.column.getCanSort() ?
+                                                            <span></span> :
+                                                            null
+                                            }
+                                        </div>
+                                    )}
+
+                                </th>
                             ))}
-                        </TableRow>
+                        </tr>
                     ))}
-                </TableBody>
-            </Table>
-            <PaginationContainer sx={{ marginTop: 2 }}>
-                <PaginationText>
-                    Showing {page * rowsPerPage + 1} to{' '}
-                    {Math.min((page + 1) * rowsPerPage, filteredData.length)} of{' '}
-                    {filteredData.length} entries
-                </PaginationText>
-                <div>
-                    <IconButton
-                        onClick={() => handleChangePage(null, page - 1)}
-                        disabled={page === 0}
-                    >
-                        <KeyboardArrowLeftIcon />
-                    </IconButton>
-                    <IconButton
-                        onClick={() => handleChangePage(null, page + 1)}
-                        disabled={
-                            page >= Math.ceil(filteredData.length / rowsPerPage) - 1
-                        }
-                    >
-                        <KeyboardArrowRightIcon />
-                    </IconButton>
-                </div>
-            </PaginationContainer>
-        </Root>
-    );
+                </thead>
+                <tbody className='tbody'>
+                    {table.getRowModel().rows.map(row => (
+                        <tr key={row.id} className='tableRows'>
+                            {row.getVisibleCells().map(cell => {
+                                return (
+                                    <td className='align-middle py-2' key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </td>
+                                )
+                            })}
+                        </tr>
+                    ))}
+                </tbody>
+
+            </Table >
+        </>
+    )
 }
 
-export default DataTable;
+function DebouncedInput({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    ...props
+}) {
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    React.useEffect(() => {
+        const timeout = setTimeout(() => {
+            onChange(value)
+        }, debounce)
+
+        return () => clearTimeout(timeout)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value])
+
+    return (
+        <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+    )
+}
+export default DataTable

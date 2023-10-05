@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
-export default function SideBar({ onClose }) {
+export default function SideBar() {
     const [state, setState] = React.useState({
         right: false,
     });
@@ -31,11 +31,10 @@ export default function SideBar({ onClose }) {
             onClick={toggleDrawer(anchor, false)}
             onKeyDown={toggleDrawer(anchor, false)}
         >
-            <Box></Box>
             <List>
                 {['All mail', 'Trash', 'Spam'].map((text) => (
-                    <ListItem key={text} disablePadding sx={{ borderBottom: "1px solid black" }} >
-                        <ListItemButton>
+                    <ListItem key={text} disablePadding>
+                        <ListItemButton sx={{ borderBottom: "1px solid black" }}>
                             <ListItemIcon>
                                 <InboxIcon />
                             </ListItemIcon>
@@ -55,7 +54,7 @@ export default function SideBar({ onClose }) {
                     <Drawer
                         anchor={anchor}
                         open={state[anchor]}
-                        onClose={toggleDrawer(anchor, true)}
+                        onClose={toggleDrawer(anchor, false)}
                     >
                         {list(anchor)}
                     </Drawer>
