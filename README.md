@@ -15,6 +15,10 @@ Before running this sample, you will need the following:
 - An Okta Account, you can sign up for a developer account at https://developer.okta.com/signup/.
 - An Okta Application, configured for Single-Page App (SPA) mode. This is done from the Okta Developer Console, you can see the [OIDC SPA Setup Instructions][]. When following the wizard, use the default properties. They are are designed to work with our sample applications.
 
+ - Make sure you have Node Version 18 on you local
+ - Disconnect from VPN, if you get a certificate issue while installing dependencies
+
+
 ## Running This Example
 
 After cloning this repository or extracting the repository zip file, install the dependencies:
@@ -67,3 +71,7 @@ You can login with the same account that you created when signing up for your De
 [okta react library]: https://github.com/okta/okta-react
 [oidc spa setup instructions]: https://developer.okta.com/docs/guides/sign-into-spa/react/before-you-begin
 [okta sign in widget]: https://github.com/okta/okta-signin-widget
+
+
+## Common Errors
+ - If you get a esbuild error, while running `npm start`, perform a `npm rebuild` and then do `npm start`
