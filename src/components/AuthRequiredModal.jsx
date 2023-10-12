@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { Modal, Button } from 'semantic-ui-react';
+import { Modal, Button, Box } from '@mui/material';
 
 const AuthRequiredModal = ({ authRequiredModalOpen, setAuthRequiredModalOpen, triggerLogin }) => {
   const closeModal = () => {
@@ -26,25 +26,18 @@ const AuthRequiredModal = ({ authRequiredModalOpen, setAuthRequiredModalOpen, tr
   return (
     <Modal
       onClose={closeModal}
-      onActionClick={confirmModal}
       open={authRequiredModalOpen}
-      closeOnDocumentClick={false}
-      closeOnDimmerClick={false}
     >
-      <Modal.Header>Auth required</Modal.Header>
-      <Modal.Content>
-        <Modal.Description>
-          <p>Do you want to re-authenticate?</p>
-        </Modal.Description>
-      </Modal.Content>
-      <Modal.Actions>
+      <Box>
+        <h1>Auth required</h1>
+        <p>Do you want to re-authenticate?</p>
         <Button onClick={closeModal}>
           No
         </Button>
         <Button positive onClick={confirmModal}>
           Yes
         </Button>
-      </Modal.Actions>
+      </Box>
     </Modal>
   );
 };

@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { Modal } from 'semantic-ui-react';
+import { Box, Modal } from '@mui/material';
 import config from '../config';
 
 const CorsErrorModal = ({ corsErrorModalOpen, setCorsErrorModalOpen }) => {
@@ -33,9 +33,8 @@ const CorsErrorModal = ({ corsErrorModalOpen, setCorsErrorModalOpen }) => {
       open={corsErrorModalOpen}
       closeIcon
     >
-      <Modal.Header>Network Error</Modal.Header>
-      <Modal.Content>
-        <Modal.Description>
+      <Box>
+        <h1>Network Error</h1>
           <p>Seems like logout API call resulted with CORS error.</p>
           <p>
             You may need to add your origin
@@ -53,8 +52,7 @@ const CorsErrorModal = ({ corsErrorModalOpen, setCorsErrorModalOpen }) => {
             {' '}
             for more info.
           </p>
-        </Modal.Description>
-      </Modal.Content>
+      </Box>
     </Modal>
   );
 };

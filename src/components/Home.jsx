@@ -11,12 +11,11 @@
  */
 
 import React from 'react';
+import Dashboard from './Dashboard';
 
 const Home = () => {
   return (
-      <div>
-        Welcome to React App !!!!
-      </div>
+     <Dashboard />
   );
 };
 export default Home;

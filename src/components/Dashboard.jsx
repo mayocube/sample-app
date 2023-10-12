@@ -1,17 +1,29 @@
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { Autocomplete, Box, Button, Container, Drawer, FormControl, Grid, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
 import { formReducer } from '../utils/RequestHandler';
-import { getAllAgents, getmntasks } from '../apiService/endPoints';
 import { getData, saveData } from '../utils/indexedDBService';
-import NavBar from './NavBar';
+import TopBar from './TopBar';
 import Header from './Header';
 import CustomInput from './CustomInput';
 import CustomSelect from './CustomSelect';
 import Actions from './Actions';
+import { notify } from '../utils/toast';
+import { useOktaAuth } from '@okta/okta-react';
+import { getAllAgents, getmntasks } from '../apiService/EndPoints';
 import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
+
 const Dashboard = () => {
+    const { oktaAuth, authState } = useOktaAuth();
+    const triggerLogin = async () => {
+        await oktaAuth.signInWithRedirect();
+    };
+
+    if (authState && !authState.isPending && !authState.isAuthenticated) {
+        return <Button onClick={triggerLogin}>Login</Button>
+    }
+
     const [openSideBar, setOpenSidebar] = React.useState(false);
     const [sideBarTitle, setSideBarTitle] = useState("")
     const [forAgent, setForAgent] = useState(false)
@@ -33,10 +45,17 @@ const Dashboard = () => {
     const pageSize = 20;
 
     const getAgents = async () => {
-        const res = await getAllAgents()
-        if (res) {
-            setAgent(res?.data?.data)
+        try {
+            const res = await getAllAgents()
+            if (res) {
+                setAgent(res?.data?.data)
+                notify.success('Fetched Agents')
+            }
+
+        } catch (error) {
+            notify.error('Error while fetching agents')
         }
+
     }
 
     const getnmTasksData = async (prevData, pageNo, pageToken) => {
@@ -51,14 +70,30 @@ const Dashboard = () => {
             setData(newData);
             saveData(newData);
             console.log(newData);
-            setTimeout(async () => {
-                await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
-            }, 200);
+            // setTimeout(async () => {
+            //     await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
+            // }, 200);
+
+            //   To display promise toasts
+            return new Promise((resolve) => {
+                setTimeout(async () => {
+                    await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
+                    resolve();
+                }, 200);
+            });
         }
     }
 
     const handleRefresh = async () => {
         getnmTasksData([], 1, null);
+        notify.promise(
+            getnmTasksData([], 1, null),
+            {
+                loading: 'Fetching tasks...',
+                success: 'Tasks fetched successfully',
+                error: 'An error occurred while fetching tasks'
+            }
+        );
     };
 
     useEffect(() => {
@@ -67,6 +102,14 @@ const Dashboard = () => {
             const res = await getData();
             if (res.length === 0) {
                 await getnmTasksData([], 1, null)
+                notify.promise(
+                    getnmTasksData([], 1, null),
+                    {
+                        loading: 'Fetching tasks...',
+                        success: 'Tasks fetched successfully',
+                        error: 'An error occurred while fetching tasks'
+                    }
+                );
             } else {
                 setData(res);
             }
@@ -119,7 +162,7 @@ const Dashboard = () => {
 
     return (
         <>
-            <NavBar navbarTitle={" NM Twilio Super Admin Dev "} />
+            <TopBar navbarTitle={" NM Twilio Super Admin Dev "} />
             <Container maxWidth={"100%"} sx={{ position: "relative" }}>
                 <Header headerTitle={"Customer Email Queue"} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
@@ -156,6 +199,7 @@ const Dashboard = () => {
                                 id="combo-box-demo"
                                 options={agent}
                                 getOptionLabel={(option) => option.agentName}
+                                key={(option) => option.workerSid}
                                 className={"custom-select"}
                                 autoComplete={true}
 
