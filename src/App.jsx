@@ -11,31 +11,33 @@
  */
 
 import React from 'react';
-import { ThemeProvider } from '@mui/material';
+import { Route, useHistory, Switch } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security } from '@okta/okta-react';
+import { Security, SecureRoute, LoginCallback } from '@okta/okta-react';
 import config from './config';
-import './App.css';
-
-// import CorsErrorModal from './components/CorsErrorModal';
-// import AuthRequiredModal from './components/AuthRequiredModal';
+import Home from './components/Home';
 import theme from './utils/theme';
-import Dashboard from './components/Dashboard';
+
+import CorsErrorModal from './components/CorsErrorModal';
+import AuthRequiredModal from './components/AuthRequiredModal';
+import { ThemeProvider } from '@mui/material';
+import { ToastContainer } from 'react-toastify';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
 const App = () => {
+
   const [corsErrorModalOpen, setCorsErrorModalOpen] = React.useState(false);
   const [authRequiredModalOpen, setAuthRequiredModalOpen] = React.useState(false);
 
-  //const history = useLocation(); // example from react-router
+  const history = useHistory(); // example from react-router
 
   const triggerLogin = async () => {
     await oktaAuth.signInWithRedirect();
   };
 
   const restoreOriginalUri = async (_oktaAuth, originalUri) => {
-    location.replace(toRelativeUrl(originalUri || '/', window.location.origin));
+    history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
   };
 
   const customAuthHandler = async () => {
@@ -55,11 +57,15 @@ const App = () => {
       onAuthRequired={customAuthHandler}
       restoreOriginalUri={restoreOriginalUri}
     >
-      {/* <CorsErrorModal {...{ corsErrorModalOpen, setCorsErrorModalOpen }} />
-      <AuthRequiredModal {...{ authRequiredModalOpen, setAuthRequiredModalOpen, triggerLogin }} /> */}
-       <ThemeProvider theme={theme}>
-        <Dashboard />
-      </ThemeProvider >
+      <CorsErrorModal {...{ corsErrorModalOpen, setCorsErrorModalOpen }} />
+      <AuthRequiredModal {...{ authRequiredModalOpen, setAuthRequiredModalOpen, triggerLogin }} />
+      <ThemeProvider theme={theme}>
+        <ToastContainer position='top-center' />
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/login/callback"><Home loginCallback /></Route>
+        </Switch>
+      </ThemeProvider>
     </Security>
   );
 };

@@ -15,37 +15,37 @@
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 300;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Light.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Light.woff") format('woff');
 }
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 400;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Regular.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Regular.woff") format('woff');
 }
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 500;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Medium.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Medium.woff") format('woff');
 }
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 600;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Bold.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Bold.woff") format('woff');
 }
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 700;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Heavy.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Heavy.woff") format('woff');
 }
 
 @font-face {
   font-family: "Twilio-Sans-Mono";
   font-weight: 800;
-  src: url("/public/assets/twilioSansFonts/TwilioSansMono-Extrabold.woff") format('woff');
+  src: url("/assets/twilioSansFonts/TwilioSansMono-Extrabold.woff") format('woff');
 }
 
 body {
