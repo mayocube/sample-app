@@ -26,7 +26,6 @@ export const Post = async (path, data) => {
 
 
 export const formReducer = (state, event) => {
-    console.log(event);
     if (!event.target) {
         return {
             ...state,

@@ -113,7 +113,12 @@ const SideBar = ({
                             ))}
                         </List>}
                 </Box >
+                <Box sx={{ position: 'sticky', bottom: 0 }}>
+                    <Box sx={{ padding: "16px", backgroundColor: "white" }}>
 
+                        <Button sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">Assign</Button>
+                    </Box>
+                </Box>
             </Drawer >
         </div >
     );

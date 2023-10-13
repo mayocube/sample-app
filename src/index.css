@@ -10,6 +10,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @font-face {
@@ -46,6 +47,10 @@
   font-family: "Twilio-Sans-Mono";
   font-weight: 800;
   src: url("/assets/twilioSansFonts/TwilioSansMono-Extrabold.woff") format('woff');
+}
+
+:root {
+  --loginBtnColor: black;
 }
 
 body {
@@ -137,6 +142,7 @@ code {
 .data-rows td {
   border-top: 1px solid #EBEBEB;
   border-bottom: 1px solid #EBEBEB;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .data-rows td:first-child {
@@ -150,88 +156,277 @@ code {
   border-radius: 0px 10px 10px 0px;
   border-right: 1px solid #EBEBEB;
 }
-.tableRow{
+
+.tableRow {
   background-color: white;
   min-height: 74px !important;
 
 }
-.tableHead{
+
+.tableHead {
   max-height: 100px !important;
-height: 74px !important;
-text-align: left;
-font-family: "Twilio-Sans-Mono" !important;
-border-top: 1px solid #EBEBEB;
+  height: 74px !important;
+  text-align: left;
+  font-family: "calibri" !important;
+  border-top: 1px solid #EBEBEB;
   border-bottom: 1px solid #EBEBEB;
 }
-.tableHead tr{
+
+.tableHead tr {
   border-top: 1px solid #EBEBEB !important;
   border-bottom: 1px solid #EBEBEB !important;
 }
-.tableHead th div{
-  color:black;
-font-weight:400;
-line-height: 21px;
-padding-left: 24px !important;
-}
-.tableRows{
-  height: 74px;
-  max-width: 100px;
-  padding: 0 24px !important;
-  gap:24px !important;
-  background-color: white ;
-}
-.tableRows td{
-  border-top: 1px solid #EBEBEB;
-  border-bottom: 1px solid #EBEBEB;
-  color:black;
-  font-weight:400;
+
+.tableHead th div {
+  color: black;
+  font-weight: 400;
   line-height: 21px;
   padding-left: 24px !important;
 }
-.tableRows td:first-child{
+
+.tableRows {
+  height: 74px;
+  max-width: 100px;
+  padding: 0 24px !important;
+  gap: 24px !important;
+  background-color: white;
+}
+
+.tableRows td {
+  border-top: 1px solid #EBEBEB;
+  border-bottom: 1px solid #EBEBEB;
+  color: black;
+  font-weight: 400;
+  line-height: 21px;
+  padding-left: 24px !important;
+}
+
+.tableRows td:first-child {
   border-radius: 10px 0px 0px 10px;
   border-left: 1px solid #EBEBEB;
 }
-.tableRows td:last-child{
+
+.tableRows td:last-child {
   border-radius: 0 10px 10px 0;
   border-right: 1px solid #EBEBEB
+}
 
+.table {
+  font-family: "calibri" !important;
 }
-.table{
-  font-family: "Twilio-Sans-Mono" !important;
-}
-.tbody{
+
+.tbody {
   text-align: left;
-  font-family: "Twilio-Sans-Mono" !important;
+  font-family: "calibri" !important;
 }
-.flexCell{
+
+.flexCell {
   display: flex;
 }
-.checkBox{
+
+.checkBox {
   width: 16px !important;
   height: 16px !important;
 }
-.titleContainer{
+
+.titleContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 24px !important;
 }
-.css-9rnw6j-MuiInputBase-root-MuiInput-root:before, .css-9rnw6j-MuiInputBase-root-MuiInput-root:after {
-  border-bottom: 0 !important;
-}
+
 .css-1x51dt5-MuiInputBase-input-MuiInput-input {
   border-radius: 0.25rem !important;
-    border: 1px solid var(--colors-black-05, #D9D9D9) !important;
-    background: var(--colors-white, #FFF) !important;
-    padding: 0.5rem 0.75rem !important;
+  border: 1px solid var(--colors-black-05, #D9D9D9) !important;
+  background: var(--colors-white, #FFF) !important;
+  padding: 0.5rem 0.75rem !important;
 }
-.css-1x51dt5-MuiInputBase-input-MuiInput-input::placeholder{
+
+.css-1x51dt5-MuiInputBase-input-MuiInput-input::placeholder {
   color: #171717 !important;
 }
-.css-1a6ulwi-MuiButtonBase-root-MuiListItemButton-root{
+
+.css-1a6ulwi-MuiButtonBase-root-MuiListItemButton-root {
   height: 58px !important;
 }
+
 .css-1ykdma4 {
   margin-bottom: 16px !important;
+}
+
+
+.MuiInputBase-root.MuiOutlinedInput-root .MuiSvgIcon-root {
+  background: #EEEEEE;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.customSelects .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
+  right: 0px !important;
+
+}
+
+
+
+.button {
+  position: relative;
+  padding: 20px 30px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  background-color: var(--loginBtnColor);
+  transition: all 0.2s ease;
+}
+
+.button:active {
+  transform: scale(0.96);
+}
+
+.button:before,
+.button:after {
+  position: absolute;
+  content: "";
+  width: 150%;
+  left: 50%;
+  height: 100%;
+  transform: translateX(-50%);
+  z-index: -1000;
+  background-repeat: no-repeat;
+}
+
+.button:hover:before {
+  top: -70%;
+  background-image: radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, transparent 20%, var(--loginBtnColor) 20%, transparent 30%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, var(--loginBtnColor) 15%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%);
+  background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
+    10% 10%, 18% 18%;
+  background-position: 50% 120%;
+  animation: greentopBubbles 0.6s ease;
+}
+
+@keyframes greentopBubbles {
+  0% {
+    background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
+      40% 90%, 55% 90%, 70% 90%;
+  }
+
+  50% {
+    background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
+      50% 50%, 65% 20%, 90% 30%;
+  }
+
+  100% {
+    background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
+      50% 40%, 65% 10%, 90% 20%;
+    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  }
+}
+
+.button:hover::after {
+  bottom: -70%;
+  background-image: radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, var(--loginBtnColor) 15%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%),
+    radial-gradient(circle, var(--loginBtnColor) 20%, transparent 20%);
+  background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
+  background-position: 50% 0%;
+  animation: greenbottomBubbles 0.6s ease;
+}
+
+@keyframes greenbottomBubbles {
+  0% {
+    background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
+      70% -10%, 70% 0%;
+  }
+
+  50% {
+    background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
+      105% 0%;
+  }
+
+  100% {
+    background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
+      110% 10%;
+    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  }
+}
+
+
+
+.displayNone {
+  visibility: hidden;
+}
+
+.pagiantionBtb {
+  background-color: transparent;
+  border: 0;
+  color: black;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+.paginationDarkColor {
+  color: black;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 21px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+
+}
+
+.paginationGrayColor {
+  color: #5C5C5C;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+
+}
+
+.customCheckBox {
+  width: 16px;
+  height: 16px;
+}
+
+input[type=checkbox] {
+  accent-color: black;
+}
+
+#combo-box-demo::placeholder {
+  color: #171717 !important;
+  opacity: 1;
+}
+
+input#combo-box-demo {
+  padding-left: 15px;
+}
+
+.cursor-pointer.select-none {
+  display: flex;
+  align-items: center;
+}
+
+.fontBold {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.actionBtn.refresh {
+  color: #606B85 !important;
 }

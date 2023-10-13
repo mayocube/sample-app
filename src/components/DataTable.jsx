@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { Table } from '@mui/material'
-const DataTable = ({ data = [], columns }) => {
+import { Box, Button, Table } from '@mui/material'
+const DataTable = ({ data = [], columns, formData }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
-    const [globalFilter, setGlobalFilter] = React.useState('');
     const [refresh, setRefresh] = useState(data)
+
     useEffect(() => {
         setRefresh(data)
     }, [refresh])
@@ -16,22 +16,19 @@ const DataTable = ({ data = [], columns }) => {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
+        initialState: {
+            pagination: {
+                pageIndex: 0,
+                pageSize: 20
+            }
+        },
         state: {
-            sorting,
-            globalFilter
+            sorting
         }
-
     })
-    console.log(table.getHeaderGroups().map(ele => ele.headers[0].column.columnDef.header));
+
     return (
         <>
-            <DebouncedInput
-                value={globalFilter ?? ''}
-                onChange={value => setGlobalFilter(String(value))}
-                className="p-2 font-lg shadow border border-block"
-                placeholder="Search all columns..."
-            />
             <Table sx={{
                 borderCollapse: 'separate',
                 borderSpacing: '0 10px',
@@ -39,7 +36,6 @@ const DataTable = ({ data = [], columns }) => {
                 border: '0px'
             }} >
                 <thead className='tableHead'>
-
                     {table?.getHeaderGroups().map(headerGroup => (
                         <tr key={`headerGroup_${headerGroup.id}`} className='tableRows'>
                             {headerGroup.headers.map(header => (
@@ -49,7 +45,7 @@ const DataTable = ({ data = [], columns }) => {
                                         <div
                                             {...{
                                                 className: header.column.getCanSort()
-                                                    ? 'cursor-pointer select-none'
+                                                    ? 'cursor-pointer select-none fontBold'
                                                     : '',
                                                 onClick: header.column.getToggleSortingHandler(),
                                             }}
@@ -67,7 +63,10 @@ const DataTable = ({ data = [], columns }) => {
                                                         : header.column.getCanSort() ?
                                                             <span></span> :
                                                             null
-                                            }
+                                            } {header.column.getCanFilter() ? (
+                                                <Filter column={header?.column} value={formData} />
+                                            ) : null}
+
                                         </div>
                                     )}
 
@@ -76,12 +75,12 @@ const DataTable = ({ data = [], columns }) => {
                         </tr>
                     ))}
                 </thead>
-                <tbody className='tbody'>
+                <tbody className='tbody' style={{ fontFamily: "calibri" }}>
                     {table.getRowModel().rows.map(row => (
                         <tr key={row.id} className='tableRows'>
                             {row.getVisibleCells().map(cell => {
                                 return (
-                                    <td className='align-middle py-2' key={cell.id}>
+                                    <td className='align-middle py-2 ' key={cell.id}>
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext()
@@ -94,33 +93,54 @@ const DataTable = ({ data = [], columns }) => {
                 </tbody>
 
             </Table >
+            <Box sx={{ display: "flex", justifyContent: "end", margin: "20px 0" }}>
+                <div className={!table.getCanPreviousPage() && "disabled displayNone"}>
+                    <button
+                        onClick={e => { e.preventDefault(); table.previousPage(); }}
+                        tabIndex="-1"
+                        disabled={!table.getCanPreviousPage()}
+                        className='pagiantionBtb'
+                    >
+                        {/* <i className="fa fa-angle-left" />
+                                 */}
+                        <div>
+                            {'ᐸ PREVIOUS'}
+                        </div>
+                    </button>
+                </div>
+                <Box sx={{ minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center" }}><span className='ml-2'> <span className="paginationDarkColor">
+                    {(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1} - {(table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize > data.length ? data.length : (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize}</span> <span className="paginationGrayColor">of {data.length}</span> </span></Box>
+
+
+                <Box className={!table.getCanNextPage() && "disabled displayNone"}>
+                    <button
+                        onClick={e => { e.preventDefault(); table.nextPage(); }}
+                        tabIndex="-1"
+                        disabled={!table.getCanNextPage()}
+                        className='pagiantionBtb'
+                    >
+                        {'NEXT ᐳ'}
+                    </button>
+                </Box>
+            </Box >
         </>
     )
 }
 
-function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
-}) {
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        setValue(initialValue)
-    }, [initialValue])
-
-    React.useEffect(() => {
-        const timeout = setTimeout(() => {
-            onChange(value)
-        }, debounce)
-
-        return () => clearTimeout(timeout)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+const Filter = ({ column, value }) => {
+    useEffect(() => {
+        column.setFilterValue(value[column.id])
+        console.log(column);
     }, [value])
 
     return (
-        <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+        <input
+            type="text"
+            style={{ display: "none" }}
+            value={value[column.id]}
+            onChange={() => column.setFilterValue(value[column.id])}
+        />
     )
+
 }
 export default DataTable

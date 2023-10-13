@@ -7,12 +7,12 @@ import Header from './Header';
 import CustomInput from './CustomInput';
 import CustomSelect from './CustomSelect';
 import Actions from './Actions';
-import { notify } from '../utils/toast';
 import { useOktaAuth } from '@okta/okta-react';
 import { getAllAgents, getmntasks } from '../apiService/EndPoints';
 import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
+import { Pagination } from '@tanstack/react-table';
 
 const Dashboard = () => {
     const { oktaAuth, authState } = useOktaAuth();
@@ -20,28 +20,30 @@ const Dashboard = () => {
         await oktaAuth.signInWithRedirect();
     };
 
-    if (authState && !authState.isPending && !authState.isAuthenticated) {
-        return <Button onClick={triggerLogin}>Login</Button>
-    }
+    // if (authState && !authState.isPending && !authState.isAuthenticated) {
+    //     return (<>
+    //         <div style={{ height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    //             <button onClick={triggerLogin} className="button">Login to continue</button>
+    //         </div>
+    //     </>)
+    // }
 
     const [openSideBar, setOpenSidebar] = React.useState(false);
     const [sideBarTitle, setSideBarTitle] = useState("")
+    const [message, setMessage] = useState("")
     const [forAgent, setForAgent] = useState(false)
     const [ForPriority, setForPriority] = useState(false)
-    const [open, setOpen] = useState(true)
-    const handleClose = (fn) => {
-        console.log(fn);
-    }
+    const [open, setOpen] = useState(false)
+    const [autoCompleAgent, setAutoCompleAgent] = useState("")
     const [formData, setFormData] = useReducer(formReducer, {
         priority: "",
         brand: "",
         status: "",
-        age: ""
+        age: "",
+        agent: ""
     });
-
     const [data, setData] = useState([]);
     const [agent, setAgent] = useState([]);
-
     const pageSize = 20;
 
     const getAgents = async () => {
@@ -49,13 +51,11 @@ const Dashboard = () => {
             const res = await getAllAgents()
             if (res) {
                 setAgent(res?.data?.data)
-                notify.success('Fetched Agents')
             }
 
         } catch (error) {
-            notify.error('Error while fetching agents')
+            setMessage("Error: While fetching agents")
         }
-
     }
 
     const getnmTasksData = async (prevData, pageNo, pageToken) => {
@@ -63,103 +63,113 @@ const Dashboard = () => {
         if (pageNo > 1) {
             args = { pageNo, pageSize, pageToken }
         }
-
         const res = await getmntasks(args);
         if (res?.data?.pageToken != null) {
             const newData = [...prevData, ...res?.data?.data];
             setData(newData);
             saveData(newData);
-            console.log(newData);
-            // setTimeout(async () => {
-            //     await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
-            // }, 200);
-
-            //   To display promise toasts
-            return new Promise((resolve) => {
-                setTimeout(async () => {
-                    await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
-                    resolve();
-                }, 200);
-            });
+            setTimeout(async () => {
+                await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
+            }, 200);
         }
     }
 
     const handleRefresh = async () => {
-        getnmTasksData([], 1, null);
-        notify.promise(
-            getnmTasksData([], 1, null),
-            {
-                loading: 'Fetching tasks...',
-                success: 'Tasks fetched successfully',
-                error: 'An error occurred while fetching tasks'
-            }
-        );
+        await getnmTasksData([], 1, null);
     };
 
     useEffect(() => {
-        getAgents();
-        (async () => {
-            const res = await getData();
-            if (res.length === 0) {
-                await getnmTasksData([], 1, null)
-                notify.promise(
-                    getnmTasksData([], 1, null),
-                    {
-                        loading: 'Fetching tasks...',
-                        success: 'Tasks fetched successfully',
-                        error: 'An error occurred while fetching tasks'
-                    }
-                );
-            } else {
-                setData(res);
-            }
-        })()
-    }, [])
+        if (authState != null) {
+            getAgents();
+            (async () => {
+                const res = await getData();
+                if (res.length === 0) {
+                    await getnmTasksData([], 1, null);
+                } else {
+                    setData(res);
+                }
+            })()
+        }
+    }, [authState])
+
     const columns = useMemo(
         () => [
             {
-                header: "Select All",
-                accessorKey: "", // Update accessorKey key to "brand"
-                cell: () => (
-                    <label className="custom-toggle">
-                        <input className='checkBox' onChange={() => {
-                        }} checked={1} type="checkbox" />
-                        <span className="custom-toggle-slider  rounded-circle" />
-                    </label>
-                )
+                accessorKey: "ads",
+                header: ({ table }) => (
+                    <>
+                        <IndeterminateCheckbox
+                            {...{
+                                checked: table.getIsAllRowsSelected(),
+                                indeterminate: table.getIsSomeRowsSelected(),
+                                onChange: table.getToggleAllRowsSelectedHandler(),
+                            }}
+                        />
+                        <span style={{ marginLeft: "20px" }}> {table.getIsAllRowsSelected() ? " Deselect All" : " Select All"}</span>
+
+                    </>
+                ),
+                cell: ({ row, getValue }) => (
+                    <div
+                    >
+                        <>
+                            <IndeterminateCheckbox
+                                {...{
+                                    checked: row.getIsSelected(),
+                                    indeterminate: row.getIsSomeSelected(),
+                                    onChange: row.getToggleSelectedHandler(),
+                                }}
+                            />{' '}
+                            {row.getCanExpand()}
+                            {getValue()}
+                        </>
+                    </div>
+                ),
             },
+
             {
                 header: "Brand",
-                accessorKey: "brand", // Update accessorKey key to "brand"
+                accessorKey: "brand",
             },
             {
                 header: "Priority",
-                accessorKey: "priority", // Update accessorKey key to "priority"
+                accessorKey: "priority",
+                cell: (row) => (
+                    <div>{row?.row?.original?.priority <= 40 ? "0-40" : (row?.row?.original?.priority > 40 && row?.row?.original?.priority <= 100) ? "40-100" : (row?.row?.original?.priority > 100) ? "+101" : ""}</div>
+                ),
             },
             {
                 header: "Agent",
-                accessorKey: "agent", // Update accessorKey key to "agent"
+                accessorKey: "agent",
             },
             {
                 header: "Age",
-                accessorKey: "age", // Update accessorKey key to "age"
+                accessorKey: "age",
+                cell: (row) => (
+                    <div>{row?.row?.original?.age <= 3600 ? "Less than one hours old" : (row?.row?.original?.age > 3600 && row?.row?.original?.age <= 172800) ? "Between 24-48 hours old" : (row?.row?.original?.age > 172800 && row?.row?.original?.age <= 259200) ? "Between 48-72 hours old" : (row?.row?.original?.age > 259200) ? "Greater than 72 hours old" : ""}</div>
+                ),
             },
             {
                 header: "Status",
-                accessorKey: "status", // Update accessorKey key to "status"
+                accessorKey: "status",
             },
             {
                 header: "Task Sid",
-                accessorKey: "taskSid", // Update accessorKey key to "taskSid"
+                accessorKey: "taskSid",
+
             },
             {
                 header: "CustomerEmailId",
-                accessorKey: "customerEmailId", // Update accessorKey key to "customerEmailId"
+                accessorKey: "customerEmailId",
             },
         ],
         []
     );
-
+    useEffect(() => {
+        setFormData({
+            agent: autoCompleAgent
+        })
+    }, [autoCompleAgent])
     return (
         <>
             <TopBar navbarTitle={" NM Twilio Super Admin Dev "} />
@@ -196,20 +206,21 @@ const Dashboard = () => {
                             <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase" }}>Agent</Typography>
                             <Autocomplete
                                 disablePortal
+                                name="agent"
                                 id="combo-box-demo"
+                                onSelect={(e) => setAutoCompleAgent(e.target.value)}
                                 options={agent}
                                 getOptionLabel={(option) => option.agentName}
                                 key={(option) => option.workerSid}
                                 className={"custom-select"}
                                 autoComplete={true}
-
                                 sx={{
                                     height: 36, fontSize: 14, borderColor: "#EEEEEE", color: "#5c5c5c", ":hover": {
                                         borderColor: "#EEEEEE",
                                         color: "#333333",
                                     }
                                 }}
-                                renderInput={(params) => <TextField {...params} label="Select one" />}
+                                renderInput={(params) => <TextField {...params} placeholder="Select one" />}
                             />
                         </FormControl>
                     </Grid>
@@ -220,10 +231,10 @@ const Dashboard = () => {
                         id="age"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Less than one hours old", value: 3600000 },
-                            { text: "Between 24-48 hours old", value: 172800000 },
-                            { text: "Between 48-72 hours old", value: 259200000 },
-                            { text: "Greater than 72 hours old", value: 259200001 }
+                            { text: "Less than one hours old", value: "Less than one hours old" },
+                            { text: "Between 24-48 hours old", value: "Between 24-48 hours old" },
+                            { text: "Between 48-72 hours old", value: "Between 48-72 hours old" },
+                            { text: "Greater than 72 hours old", value: "Greater than 72 hours old" }
                         ]}
                     />
                     <CustomSelect title={"Status"}
@@ -239,18 +250,38 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    <Actions setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} handleClose={handleClose} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
+                    <Actions setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
+
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
-                    {/* <SnackAlert sx={{ position: "absolute" }} open={open} onClose={() => {
-                        setOpen(false)
-                    }} isSuccess={true} /> */}
-                    <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
+                    <SnackAlert message={message} />
                 </Box>
-                <DataTable columns={columns} data={data} />
+
+                <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
+                <DataTable columns={columns} data={data} formData={formData} />
             </Container>
+
         </>
     )
 }
+
+const IndeterminateCheckbox = ({ indeterminate, className = '', ...rest }) => {
+    const ref = React.useRef(null);
+
+    React.useEffect(() => {
+        if (typeof indeterminate === 'boolean') {
+            ref.current.indeterminate = !rest.checked && indeterminate;
+        }
+    }, [ref, indeterminate]);
+
+    return (
+        <input
+            type="checkbox"
+            ref={ref}
+            className={className + ' cursor-pointer customCheckBox'}
+            {...rest}
+        />
+    );
+};
 
 export default Dashboard

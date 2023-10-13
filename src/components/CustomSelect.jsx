@@ -12,7 +12,7 @@ const CustomSelect = ({ name, onChange, value, items, title }) => {
 
         <Grid item xs={2} marginTop={0}>
             <FormControl className='customSelects' sx={{ width: "100%" }}>
-                <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase" }}>{title ?? ""}</Typography>
+                <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "calibri" }}>{title ?? ""}</Typography>
                 <Select
                     name={name}
                     open={open}
@@ -21,19 +21,24 @@ const CustomSelect = ({ name, onChange, value, items, title }) => {
                     value={value}
                     onChange={(e) => { onChange(e) }}
                     className={"custom-select"}
-                    IconComponent={() => <KeyboardArrowDownIcon onClick={toggleSelect} />}
+
+                    IconComponent={() => <KeyboardArrowDownIcon onClick={toggleSelect}
+                    />}
+
                     sx={{
                         height: 36, fontSize: 14, borderColor: "#EEEEEE", color: "#5c5c5c", ":hover": {
                             borderColor: "#EEEEEE",
                             color: "#333333",
                         }
                     }}>
+
+
                     {
                         items.map((item, index) => <MenuItem key={index} value={item.value}>{item.text}</MenuItem>)
                     }
                 </Select>
             </FormControl>
-        </Grid>
+        </Grid >
     );
 };
 export default CustomSelect;
