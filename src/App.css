@@ -47,3 +47,11 @@ body {
   border: 1px solid #7BEAA5;
   color: #0B602D;
 }
+
+/* .MuiPaper-root .customAccordian {
+  box-shadow: none !important;
+} */
+/* .customAccordian .MuiAccordion-root {
+  background-color: red !important;
+  width: 100px !important;
+} */

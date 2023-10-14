@@ -12,7 +12,8 @@ import { getAllAgents, getmntasks } from '../apiService/EndPoints';
 import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
-import { Pagination } from '@tanstack/react-table';
+import CustomAccordian from './CustomAccordian';
+import { getAgeLimit, getPriority } from '../utils/globalFunctions';
 
 const Dashboard = () => {
     const { oktaAuth, authState } = useOktaAuth();
@@ -130,12 +131,15 @@ const Dashboard = () => {
             {
                 header: "Brand",
                 accessorKey: "brand",
+                cell: (row) => (
+                    <CustomAccordian detail={"Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt itaque tempora corrupti? Officiis, ipsa dolorem deleniti nam velit vero dignissimos."} title={row?.row?.original?.brand} />
+                ),
             },
             {
                 header: "Priority",
                 accessorKey: "priority",
                 cell: (row) => (
-                    <div>{row?.row?.original?.priority <= 40 ? "0-40" : (row?.row?.original?.priority > 40 && row?.row?.original?.priority <= 100) ? "40-100" : (row?.row?.original?.priority > 100) ? "+101" : ""}</div>
+                    <div>{getPriority(row?.row?.original?.priority)}</div>
                 ),
             },
             {
@@ -146,8 +150,8 @@ const Dashboard = () => {
                 header: "Age",
                 accessorKey: "age",
                 cell: (row) => (
-                    <div>{row?.row?.original?.age <= 3600 ? "Less than one hours old" : (row?.row?.original?.age > 3600 && row?.row?.original?.age <= 172800) ? "Between 24-48 hours old" : (row?.row?.original?.age > 172800 && row?.row?.original?.age <= 259200) ? "Between 48-72 hours old" : (row?.row?.original?.age > 259200) ? "Greater than 72 hours old" : ""}</div>
-                ),
+                    <div>{getAgeLimit(row?.row?.original?.age)}</div>
+                )
             },
             {
                 header: "Status",
@@ -165,6 +169,7 @@ const Dashboard = () => {
         ],
         []
     );
+
     useEffect(() => {
         setFormData({
             agent: autoCompleAgent
@@ -231,7 +236,7 @@ const Dashboard = () => {
                         id="age"
                         items={[
                             { text: "Select one", value: "" },
-                            { text: "Less than one hours old", value: "Less than one hours old" },
+                            { text: '7825', value: '7825' },
                             { text: "Between 24-48 hours old", value: "Between 24-48 hours old" },
                             { text: "Between 48-72 hours old", value: "Between 48-72 hours old" },
                             { text: "Greater than 72 hours old", value: "Greater than 72 hours old" }

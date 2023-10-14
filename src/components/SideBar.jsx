@@ -58,7 +58,7 @@ const SideBar = ({
                             setForAgent(false)
                         }} />} </span>
                     </Box>
-                    {forAgent && <><Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                    {forAgent && <><Box sx={{ width: "100%", display: "flex", justifyContent: "center" }} className="customInputMui">
                         <Input
                             placeholder='Search for an agent'
                             sx={{
@@ -69,7 +69,7 @@ const SideBar = ({
                             }}
                         />
                     </Box>
-                        <List>
+                        <List className='MuiCustomList'>
                             {filter.map((agent, index) => (
                                 <ListItem key={`${index}${agent}`} disablePadding>
                                     <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>

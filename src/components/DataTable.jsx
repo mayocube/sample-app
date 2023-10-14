@@ -4,6 +4,9 @@ import { Box, Button, Table } from '@mui/material'
 const DataTable = ({ data = [], columns, formData }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
     const [refresh, setRefresh] = useState(data)
+    // useEffect(() => {
+    //     console.log(formData);
+    // }, [formData])
 
     useEffect(() => {
         setRefresh(data)
@@ -26,7 +29,6 @@ const DataTable = ({ data = [], columns, formData }) => {
             sorting
         }
     })
-
     return (
         <>
             <Table sx={{
@@ -130,14 +132,13 @@ const DataTable = ({ data = [], columns, formData }) => {
 const Filter = ({ column, value }) => {
     useEffect(() => {
         column.setFilterValue(value[column.id])
-        console.log(column);
     }, [value])
-
+    console.log('column', column);
     return (
         <input
             type="text"
             style={{ display: "none" }}
-            value={value[column.id]}
+            value={column.getFilterValue()}
             onChange={() => column.setFilterValue(value[column.id])}
         />
     )

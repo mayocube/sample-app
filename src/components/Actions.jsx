@@ -11,17 +11,16 @@ const Actions = ({ setOpenSidebar = () => { }, setForPriority = () => { }, setSi
             <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1}>
                 <Button color='default' className='actionBtn' startIcon={<DeleteOutlinedIcon className='actionIcon' fontSize="large" />}>Delete</Button>
                 <Button color='default' className='actionBtn' onClick={() => {
-                    setOpenSidebar(true)
+                    setForAgent(false)
                     setForPriority(true)
                     setSideBarTitle("Select priority")
-
+                    setOpenSidebar(true)
                 }} startIcon={<NotificationsNoneIcon className='actionIcon' fontSize="large" />}>Set Priority</Button>
                 <Button color='default' className='actionBtn' onClick={() => {
-                    setOpenSidebar(true)
+                    setForPriority(false)
                     setForAgent(true)
                     setSideBarTitle("Select agent to assign email/s to")
-
-
+                    setOpenSidebar(true)
                 }} startIcon={<PersonOutlineIcon className='actionIcon' fontSize="large" />}>Assign</Button>
             </Box>
             <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={2}>
