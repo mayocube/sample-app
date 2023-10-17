@@ -14,6 +14,7 @@ import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
 import CustomAccordian from './CustomAccordian';
 import { getAgeLimit, getPriority } from '../utils/globalFunctions';
+import DeleteModal from './DeleteModal';
 
 const Dashboard = () => {
     const { oktaAuth, authState } = useOktaAuth();
@@ -36,6 +37,10 @@ const Dashboard = () => {
     const [ForPriority, setForPriority] = useState(false)
     const [open, setOpen] = useState(false)
     const [autoCompleAgent, setAutoCompleAgent] = useState("")
+    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+    const handleDeleteModalOpen = () => setOpenDeleteModal(true);
+    const handleDeleteModalClose = () => setOpenDeleteModal(false);
+    const [getClients, setGetClients] = useState([])
     const [formData, setFormData] = useReducer(formReducer, {
         priority: "",
         brand: "",
@@ -46,7 +51,16 @@ const Dashboard = () => {
     const [data, setData] = useState([]);
     const [agent, setAgent] = useState([]);
     const pageSize = 20;
-
+    const getDeletedArray = (arr) => {
+        setGetClients(arr())
+    }
+    const updateClients = () => {
+        setData(getClients)
+    }
+    const updatePriority = () => {
+        console.log("hasnian priority  update");
+        // getClients.map(x => x.priority = "hasnain")
+    }
     const getAgents = async () => {
         try {
             const res = await getAllAgents()
@@ -106,6 +120,8 @@ const Dashboard = () => {
                                 onChange: table.getToggleAllRowsSelectedHandler(),
                             }}
                         />
+                        {/* {console.log("all row selected", table.getIsAllRowsSelected())}
+                        {console.log("some row selected", table.getIsSomeRowsSelected())} */}
                         <span style={{ marginLeft: "20px" }}> {table.getIsAllRowsSelected() ? " Deselect All" : " Select All"}</span>
 
                     </>
@@ -122,6 +138,7 @@ const Dashboard = () => {
                                 }}
                             />{' '}
                             {row.getCanExpand()}
+                            {row.getIsSelected()}
                             {getValue()}
                         </>
                     </div>
@@ -255,15 +272,17 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    <Actions setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
+                    <Actions handleDeleteModalOpen={handleDeleteModalOpen} setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
                 </Grid>
 
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
                     <SnackAlert message={message} />
                 </Box>
-
+                <Box >
+                    <DeleteModal updateClients={updateClients} handleDeleteModalOpen={handleDeleteModalOpen} handleDeleteModalClose={handleDeleteModalClose} openDeleteModal={openDeleteModal} />
+                </Box>
                 <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
-                <DataTable columns={columns} data={data} formData={formData} />
+                <DataTable getDeletedArray={getDeletedArray} columns={columns} data={data} formData={formData} />
             </Container>
 
         </>

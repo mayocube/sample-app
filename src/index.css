@@ -59,6 +59,7 @@ body {
   font-family: "Twilio-Sans-Mono", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box !important;
 }
 
 code {
@@ -145,7 +146,7 @@ code {
 .data-rows td {
   border-top: 1px solid #EBEBEB;
   border-bottom: 1px solid #EBEBEB;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Inter' !important;
 }
 
 .data-rows td:first-child {
@@ -164,15 +165,14 @@ code {
   background-color: white;
   min-height: 74px !important;
   color: black !important;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif !important;
-
+  font-family: 'Inter' !important;
 }
 
 .tableHead {
   max-height: 100px !important;
   height: 74px !important;
   text-align: left;
-  font-family: "calibri" !important;
+  font-family: 'Inter' !important;
   border-top: 1px solid #EBEBEB;
   border-bottom: 1px solid #EBEBEB;
 }
@@ -217,12 +217,12 @@ code {
 }
 
 .table {
-  font-family: "calibri" !important;
+  font-family: 'Inter' !important;
 }
 
 .tbody {
   text-align: left;
-  font-family: "calibri" !important;
+  font-family: 'Inter' !important;
 }
 
 .flexCell {
@@ -394,7 +394,7 @@ code {
   color: black;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Inter' !important;
 
 }
 
@@ -403,7 +403,7 @@ code {
   font-size: 16px;
   font-weight: 700;
   line-height: 21px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Inter' !important;
 
 
 }
@@ -412,7 +412,7 @@ code {
   color: #5C5C5C;
   font-size: 16px;
   font-weight: 500;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Inter' !important;
 
 
 }
@@ -465,4 +465,12 @@ input#combo-box-demo {
   fill: #606B85;
   width: 24px !important;
   height: 24px !important;
+}
+
+.MuiBackdrop-root.MuiModal-backdrop {
+  background-color: rgba(253, 253, 253, .6) !important;
+}
+
+.deleteBtnContainer .MuiButtonBase-root.MuiButton-root.MuiButton-contained {
+  background-color: #D61F1F !important;
 }

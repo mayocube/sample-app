@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { Box, Button, Table } from '@mui/material'
-const DataTable = ({ data = [], columns, formData }) => {
+const DataTable = ({ data = [], columns, formData, getDeletedArray }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
     const [refresh, setRefresh] = useState(data)
-    // useEffect(() => {
-    //     console.log(formData);
-    // }, [formData])
-
+    const [DeleteClient, setDeleteClient] = useState([])
     useEffect(() => {
         setRefresh(data)
     }, [refresh])
@@ -29,6 +26,21 @@ const DataTable = ({ data = [], columns, formData }) => {
             sorting
         }
     })
+    useEffect(() => {
+        setDeleteClient(table?.getSelectedRowModel()?.rows.map(x => x.original))
+
+    }, [table?.getSelectedRowModel()])
+    useEffect(() => {
+        getDeletedArray(handleDelete)
+    }, [DeleteClient])
+    const handleDelete = () => {
+        const filteredArray = data.filter(item => {
+            return !DeleteClient.some(excludedItem => JSON.stringify(item) === JSON.stringify(excludedItem));
+        });
+        return filteredArray
+    }
+
+
     return (
         <>
             <Table sx={{
@@ -77,7 +89,7 @@ const DataTable = ({ data = [], columns, formData }) => {
                         </tr>
                     ))}
                 </thead>
-                <tbody className='tbody' style={{ fontFamily: "calibri" }}>
+                <tbody className='tbody' style={{ fontFamily: "Inter" }}>
                     {table.getRowModel().rows.map(row => (
                         <tr key={row.id} className='tableRows'>
                             {row.getVisibleCells().map(cell => {
@@ -103,8 +115,6 @@ const DataTable = ({ data = [], columns, formData }) => {
                         disabled={!table.getCanPreviousPage()}
                         className='pagiantionBtb'
                     >
-                        {/* <i className="fa fa-angle-left" />
-                                 */}
                         <div>
                             {'ᐸ PREVIOUS'}
                         </div>
@@ -133,7 +143,6 @@ const Filter = ({ column, value }) => {
     useEffect(() => {
         column.setFilterValue(value[column.id])
     }, [value])
-    console.log('column', column);
     return (
         <input
             type="text"

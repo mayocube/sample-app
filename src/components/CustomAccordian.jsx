@@ -11,15 +11,20 @@ import { Box, CircularProgress } from '@mui/material';
 
 const CustomAccordian = ({ title = "", detail = "" }) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    useEffect(() => {
+    const showLoader = () => {
         setTimeout(() => {
-            setIsLoaded(true)
-        }, 3000);
+            setIsLoaded(!isLoaded)
+        }, 1000);
+    }
+    useEffect(() => {
+        showLoader()
     }, [])
 
     return (
         <div className='customAccordian'>
-            <Accordion style={{ maxWidth: 250 }}>
+            <Accordion onClick={() => {
+                showLoader()
+            }} style={{ maxWidth: 250 }}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -28,14 +33,15 @@ const CustomAccordian = ({ title = "", detail = "" }) => {
                     <Typography>{title}</Typography>
                 </AccordionSummary>
                 {isLoaded ?
-                    <AccordionDetails>
+
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="dark" size={25} sx={{ width: "5px", height: "5px" }} />
+                    </Box>
+
+                    : <AccordionDetails>
                         <Typography>
                             {detail}
                         </Typography>
-                    </AccordionDetails>
-
-                    : <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress size={25} sx={{ width: "5px", height: "5px" }} />
-                    </Box>}
+                    </AccordionDetails>}
             </Accordion>
         </div>
 
