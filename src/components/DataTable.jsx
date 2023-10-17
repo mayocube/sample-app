@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { Box, Button, Table } from '@mui/material'
-const DataTable = ({ data = [], columns, formData, getDeletedArray }) => {
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, } from '@tanstack/react-table'
+import { Box, Button, CircularProgress, Table, Typography } from '@mui/material'
+const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = false, handleReset, rowId, brandDetails = [], getSelectedRows }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
     const [refresh, setRefresh] = useState(data)
     const [DeleteClient, setDeleteClient] = useState([])
     useEffect(() => {
         setRefresh(data)
     }, [refresh])
+
     const table = useReactTable({
         data,
         columns,
@@ -24,15 +25,24 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray }) => {
         },
         state: {
             sorting
-        }
+        },
+        filterFns: {
+            // myCustomFilter: (rows, id, filterValue) => {
+            //     console.log('rows', rows);
+            //     console.log('columnIds', id);
+            //     console.log('filterValue', filterValue);
+            //     return rows.getVisibleCells().filter(({ row }) => {
+            //         const priority = row.getValue(id);
+            //         console.log('priority', priority);
+            //         if (filterValue === "0-40" && priority <= 40) return true;
+            //         if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
+            //         if (filterValue === "+101" && priority > 100) return true;
+            //         return false;
+            //     });
+            // },
+        },
     })
-    useEffect(() => {
-        setDeleteClient(table?.getSelectedRowModel()?.rows.map(x => x.original))
 
-    }, [table?.getSelectedRowModel()])
-    useEffect(() => {
-        getDeletedArray(handleDelete)
-    }, [DeleteClient])
     const handleDelete = () => {
         const filteredArray = data.filter(item => {
             return !DeleteClient.some(excludedItem => JSON.stringify(item) === JSON.stringify(excludedItem));
@@ -40,6 +50,22 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray }) => {
         return filteredArray
     }
 
+    useEffect(() => {
+        getSelectedRows(table?.getSelectedRowModel()?.rows.map(x => x.original));
+        setDeleteClient(table?.getSelectedRowModel()?.rows.map(x => x.original));
+    }, [table?.getSelectedRowModel()])
+
+    useEffect(() => {
+        getDeletedArray(handleDelete)
+    }, [DeleteClient])
+
+
+    useEffect(() => {
+        if (resetData) {
+            table.reset();
+            handleReset();
+        }
+    }, [resetData])
 
     return (
         <>
@@ -91,20 +117,49 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray }) => {
                 </thead>
                 <tbody className='tbody' style={{ fontFamily: "Inter" }}>
                     {table.getRowModel().rows.map(row => (
-                        <tr key={row.id} className='tableRows'>
-                            {row.getVisibleCells().map(cell => {
-                                return (
-                                    <td className='align-middle py-2 ' key={cell.id}>
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </td>
+                        <>
+                            <tr key={row.id} className='tableRows'>
+                                {row.getVisibleCells().map(cell => (
+                                    <>
+                                        <td className='align-middle py-2 ' key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </td>
+
+                                    </>
                                 )
-                            })}
-                        </tr>
-                    ))}
-                </tbody>
+                                )}
+                            </tr>
+                            {(rowId && rowId === row.id) &&
+                                <tr className='tableRows accordion_row'>
+                                    {row.getVisibleCells().filter(cell => (rowId === cell.row.id && cell.column.columnDef.accessorKey === 'brand'))[0] ?
+                                        <>
+                                            <td></td>
+                                            <td colSpan={7}>
+                                                {brandDetails?.length > 0 ?
+                                                    brandDetails?.map(x => (
+                                                        <>
+                                                            <Typography className='accordion_body_main'>Email Address: {x?.customerEmailId} | Telephone: 212-293-1231</Typography>
+                                                            <div className='accordion_body_text' dangerouslySetInnerHTML={{ __html: x?.emailBody }}></div>
+                                                        </>
+                                                    ))
+                                                    :
+                                                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                        <CircularProgress color="dark" size={25} />
+                                                    </Box>
+                                                }
+                                            </td>
+                                        </>
+                                        : null
+                                    }
+                                </tr>
+                            }
+                        </>
+                    )
+                    )}
+                </tbody >
 
             </Table >
             <Box sx={{ display: "flex", justifyContent: "end", margin: "20px 0" }}>
@@ -143,13 +198,16 @@ const Filter = ({ column, value }) => {
     useEffect(() => {
         column.setFilterValue(value[column.id])
     }, [value])
+
     return (
-        <input
-            type="text"
-            style={{ display: "none" }}
-            value={column.getFilterValue()}
-            onChange={() => column.setFilterValue(value[column.id])}
-        />
+        <>
+            <input
+                type="text"
+                style={{ display: "none" }}
+                value={column.getFilterValue()}
+                onChange={() => column.setFilterValue(value[column.id])}
+            />
+        </>
     )
 
 }

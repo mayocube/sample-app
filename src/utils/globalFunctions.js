@@ -1,6 +1,6 @@
 export const getAgeLimit = (age) => {
     if (age <= 3600) {
-        return "Less than one hours old"
+        return "Less than one hour old"
     }
     if (age > 3600 && age <= 172800) {
         return "Between 24-48 hours old"

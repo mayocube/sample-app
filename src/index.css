@@ -190,9 +190,8 @@ code {
 }
 
 .tableRows {
-  height: 74px;
-  max-width: 100px;
-  padding: 0 24px !important;
+  /* height: 74px;
+  max-width: 100px; */
   gap: 24px !important;
   background-color: white;
 }
@@ -203,7 +202,7 @@ code {
   color: black;
   font-weight: 400;
   line-height: 21px;
-  padding-left: 24px !important;
+  padding: 24px !important;
 }
 
 .tableRows td:first-child {
@@ -449,22 +448,11 @@ input#combo-box-demo {
   color: #606B85 !important;
 }
 
-.customAccordian .MuiPaper-root {
-  box-shadow: none;
-}
-
-.customAccordian .MuiPaper-root .MuiAccordionSummary-root {
-  flex-direction: row-reverse;
-}
-
-.customAccordian .MuiPaper-root .MuiAccordionSummary-root .MuiAccordionSummary-content p {
-  margin-left: 20px;
-}
-
-.customAccordian .MuiPaper-root .MuiButtonBase-root .MuiAccordionSummary-expandIconWrapper svg {
-  fill: #606B85;
-  width: 24px !important;
-  height: 24px !important;
+.customAccordian {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
 }
 
 .MuiBackdrop-root.MuiModal-backdrop {
@@ -473,4 +461,22 @@ input#combo-box-demo {
 
 .deleteBtnContainer .MuiButtonBase-root.MuiButton-root.MuiButton-contained {
   background-color: #D61F1F !important;
+}
+
+.accordion_row>td {
+  padding: 24px !important;
+}
+
+.accordion_body_main {
+  color: #5C5C5C;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+}
+
+.accordion_body_text {
+  color: #5C5C5C;
+  margin-top: 16px !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
 }

@@ -8,13 +8,14 @@ import CustomInput from './CustomInput';
 import CustomSelect from './CustomSelect';
 import Actions from './Actions';
 import { useOktaAuth } from '@okta/okta-react';
-import { getAllAgents, getmntasks } from '../apiService/EndPoints';
+import { getAllAgents, getBrandDetails, getmntasks } from '../apiService/EndPoints';
 import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
 import CustomAccordian from './CustomAccordian';
 import { getAgeLimit, getPriority } from '../utils/globalFunctions';
 import DeleteModal from './DeleteModal';
+import moment from 'moment/moment';
 
 const Dashboard = () => {
     const { oktaAuth, authState } = useOktaAuth();
@@ -45,11 +46,16 @@ const Dashboard = () => {
         priority: "",
         brand: "",
         status: "",
-        age: "",
+        age: [],
         agent: ""
     });
+    const [resetData, setResetData] = useState(false)
     const [data, setData] = useState([]);
     const [agent, setAgent] = useState([]);
+    const [rowId, setRowId] = useState(null);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [brandDetails, setBrandDetails] = useState([]);
+
     const pageSize = 20;
     const getDeletedArray = (arr) => {
         setGetClients(arr())
@@ -57,9 +63,8 @@ const Dashboard = () => {
     const updateClients = () => {
         setData(getClients)
     }
-    const updatePriority = () => {
-        console.log("hasnian priority  update");
-        // getClients.map(x => x.priority = "hasnain")
+    const getSelectedRows = (selectedRows) => {
+        setSelectedRows(selectedRows);
     }
     const getAgents = async () => {
         try {
@@ -91,7 +96,17 @@ const Dashboard = () => {
 
     const handleRefresh = async () => {
         await getnmTasksData([], 1, null);
+        localStorage.setItem('lastUpdated', JSON.stringify(moment()))
     };
+
+    const getTaskDetails = async (taskSid) => {
+        const res = await getBrandDetails({ taskSid });
+        if (res?.data?.status === "success") {
+            setBrandDetails(res?.data?.data ?? []);
+        } else {
+            setBrandDetails([])
+        }
+    }
 
     useEffect(() => {
         if (authState != null) {
@@ -110,7 +125,7 @@ const Dashboard = () => {
     const columns = useMemo(
         () => [
             {
-                accessorKey: "ads",
+                accessorKey: "checkbox",
                 header: ({ table }) => (
                     <>
                         <IndeterminateCheckbox
@@ -126,35 +141,51 @@ const Dashboard = () => {
 
                     </>
                 ),
-                cell: ({ row, getValue }) => (
-                    <div
-                    >
-                        <>
-                            <IndeterminateCheckbox
-                                {...{
-                                    checked: row.getIsSelected(),
-                                    indeterminate: row.getIsSomeSelected(),
-                                    onChange: row.getToggleSelectedHandler(),
-                                }}
-                            />{' '}
-                            {row.getCanExpand()}
-                            {row.getIsSelected()}
-                            {getValue()}
-                        </>
-                    </div>
-                ),
+                cell: ({ row, getValue }) => {
+                    return (
+                        <div
+                        >
+                            {row.original.status === "Pending" &&
+                                <>
+                                    <IndeterminateCheckbox
+                                        {...{
+                                            checked: row.getIsSelected(),
+                                            indeterminate: row.getIsSomeSelected(),
+                                            onChange: row.getToggleSelectedHandler(),
+                                        }}
+                                    />{' '}
+                                    {row.getCanExpand()}
+                                    {row.getIsSelected()}
+                                    {getValue()}
+                                </>
+                            }
+                        </div>
+                    )
+                },
             },
 
             {
                 header: "Brand",
                 accessorKey: "brand",
                 cell: (row) => (
-                    <CustomAccordian detail={"Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt itaque tempora corrupti? Officiis, ipsa dolorem deleniti nam velit vero dignissimos."} title={row?.row?.original?.brand} />
-                ),
+                    <CustomAccordian onClick={(expanded) => { if (expanded) { getTaskDetails(row?.row?.original?.taskSid); setRowId(row?.row?.id) } else { setRowId(null) } }} title={row?.row?.original?.brand} />
+                )
             },
             {
                 header: "Priority",
                 accessorKey: "priority",
+                // filterFn: (rows, id, filterValue) => {
+                //     console.log('rows', rows.getVisibleCells());
+                //     return rows.getVisibleCells().filter(({ row }) => {
+                //         console.log('rows', row.getValue(id));
+                //         const priority = row.getValue(id);
+                //         if (filterValue === "0-40" && priority <= 40) return true;
+                //         if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
+                //         if (filterValue === "+101" && priority > 100) return true;
+                //         return false;
+                //     });
+                // },
+                // filterFn: 'myCustomFilter',
                 cell: (row) => (
                     <div>{getPriority(row?.row?.original?.priority)}</div>
                 ),
@@ -186,17 +217,71 @@ const Dashboard = () => {
         ],
         []
     );
+    const handleResetClick = () => {
+        setResetData(true);
+    }
+    // Define your custom filter method
+    const inNumberRange = (rows, id, filterValue) => {
+        return rows.filter((row) => {
+            const priority = row.values[id];
+            if (filterValue === "0-40" && priority <= 40) return true;
+            if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
+            if (filterValue === "+101" && priority > 100) return true;
+            return false;
+        });
+    };
+    const handleResetTable = () => {
+        const temp = [
+            {
+                target: {
+                    name: 'brand',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'age',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'agent',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'priority',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'status',
+                    value: ''
+                }
+            },
+        ];
+        temp.map(x => setFormData(x));
+        setResetData(false);
+    }
 
     useEffect(() => {
         setFormData({
             agent: autoCompleAgent
         })
     }, [autoCompleAgent])
+
+    useEffect(() => {
+        localStorage.setItem('lastUpdated', JSON.stringify(moment()))
+    }, [])
+
     return (
         <>
             <TopBar navbarTitle={" NM Twilio Super Admin Dev "} />
             <Container maxWidth={"100%"} sx={{ position: "relative" }}>
-                <Header headerTitle={"Customer Email Queue"} />
+                <Header headerTitle={"Customer Email Queue"} handleReset={handleResetClick} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
                     <CustomInput title={'Customer email'} />
                     <CustomSelect title={"Brand"}
@@ -220,7 +305,7 @@ const Dashboard = () => {
                             { text: "Select one", value: "" },
                             { text: "0-40", value: "0-40" },
                             { text: "41-100", value: "41-100" },
-                            { text: "101+", value: "101+" }
+                            { text: "+101", value: "+101" }
                         ]}
                     />
                     <Grid item xs={2} marginTop={0}>
@@ -249,11 +334,31 @@ const Dashboard = () => {
                     <CustomSelect title={"Age"}
                         name='age'
                         value={formData["age"]}
-                        onChange={setFormData}
+                        onChange={(e, prev) => {
+                            const value = prev.props.value;
+                            if (formData['age'].includes(value)) {
+                                setFormData({
+                                    ...formData,
+                                    target: {
+                                        name: 'age',
+                                        value: formData['age']?.filter(x => x !== value)
+                                    }
+                                })
+                            } else {
+                                setFormData({
+                                    ...formData,
+                                    target: {
+                                        name: 'age',
+                                        value: [value, ...formData['age']]
+                                    }
+                                })
+                            }
+                        }}
                         id="age"
+                        multiple={true}
+                        checkboxSelect={true}
                         items={[
-                            { text: "Select one", value: "" },
-                            { text: '7825', value: '7825' },
+                            { text: 'Less than one hour old', value: 'Less than one hour old' },
                             { text: "Between 24-48 hours old", value: "Between 24-48 hours old" },
                             { text: "Between 48-72 hours old", value: "Between 48-72 hours old" },
                             { text: "Greater than 72 hours old", value: "Greater than 72 hours old" }
@@ -272,17 +377,17 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    <Actions handleDeleteModalOpen={handleDeleteModalOpen} setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={"last updated 6 minutes ago"} />
+                    <Actions disabled={selectedRows?.length === 0} handleDeleteModalOpen={handleDeleteModalOpen} setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={moment(JSON.parse(localStorage.getItem('lastUpdated'))).fromNow()} />
                 </Grid>
 
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
                     <SnackAlert message={message} />
                 </Box>
-                <Box >
+                <Box>
                     <DeleteModal updateClients={updateClients} handleDeleteModalOpen={handleDeleteModalOpen} handleDeleteModalClose={handleDeleteModalClose} openDeleteModal={openDeleteModal} />
                 </Box>
                 <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
-                <DataTable getDeletedArray={getDeletedArray} columns={columns} data={data} formData={formData} />
+                <DataTable rowId={rowId} getSelectedRows={getSelectedRows} brandDetails={brandDetails} resetData={resetData} handleReset={handleResetTable} getDeletedArray={getDeletedArray} columns={columns} data={data} formData={formData} />
             </Container>
 
         </>
