@@ -16,6 +16,8 @@ import CustomAccordian from './CustomAccordian';
 import { getAgeLimit, getPriority } from '../utils/globalFunctions';
 import DeleteModal from './DeleteModal';
 import moment from 'moment/moment';
+import { createColumnHelper } from '@tanstack/react-table';
+import { KeyboardArrowDown } from '@mui/icons-material';
 
 const Dashboard = () => {
     const { oktaAuth, authState } = useOktaAuth();
@@ -32,22 +34,21 @@ const Dashboard = () => {
     // }
 
     const [openSideBar, setOpenSidebar] = React.useState(false);
-    const [sideBarTitle, setSideBarTitle] = useState("")
     const [message, setMessage] = useState("")
-    const [forAgent, setForAgent] = useState(false)
-    const [ForPriority, setForPriority] = useState(false)
-    const [open, setOpen] = useState(false)
-    const [autoCompleAgent, setAutoCompleAgent] = useState("")
+    const [columnToUpdate, setColumnToUpdate] = useState('')
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const handleDeleteModalOpen = () => setOpenDeleteModal(true);
     const handleDeleteModalClose = () => setOpenDeleteModal(false);
-    const [getClients, setGetClients] = useState([])
     const [formData, setFormData] = useReducer(formReducer, {
+        customerEmailId: '',
         priority: "",
         brand: "",
         status: "",
         age: [],
-        agent: ""
+        agent: {
+            agentName: '',
+            workerSid: ''
+        }
     });
     const [resetData, setResetData] = useState(false)
     const [data, setData] = useState([]);
@@ -55,13 +56,11 @@ const Dashboard = () => {
     const [rowId, setRowId] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const [brandDetails, setBrandDetails] = useState([]);
-
+    const columnHelper = createColumnHelper();
     const pageSize = 20;
-    const getDeletedArray = (arr) => {
-        setGetClients(arr())
-    }
-    const updateClients = () => {
-        setData(getClients)
+
+    const handleDelete = () => {
+        setData(data?.filter(x => !selectedRows.includes(x.taskSid)))
     }
     const getSelectedRows = (selectedRows) => {
         setSelectedRows(selectedRows);
@@ -86,8 +85,14 @@ const Dashboard = () => {
         const res = await getmntasks(args);
         if (res?.data?.pageToken != null) {
             const newData = [...prevData, ...res?.data?.data];
-            setData(newData);
+            const temp = newData.map((x, i) => {
+                x.priority = getPriority(x?.priority);
+                x.age = getAgeLimit(x.age);
+                return x;
+            })
+            setData(temp);
             saveData(newData);
+            localStorage.setItem('lastUpdated', JSON.stringify(moment()))
             setTimeout(async () => {
                 await getnmTasksData(newData, res?.data?.pageNo, res?.data?.pageToken);
             }, 200);
@@ -108,130 +113,18 @@ const Dashboard = () => {
         }
     }
 
-    useEffect(() => {
-        if (authState != null) {
-            getAgents();
-            (async () => {
-                const res = await getData();
-                if (res.length === 0) {
-                    await getnmTasksData([], 1, null);
-                } else {
-                    setData(res);
-                }
-            })()
-        }
-    }, [authState])
-
-    const columns = useMemo(
-        () => [
-            {
-                accessorKey: "checkbox",
-                header: ({ table }) => (
-                    <>
-                        <IndeterminateCheckbox
-                            {...{
-                                checked: table.getIsAllRowsSelected(),
-                                indeterminate: table.getIsSomeRowsSelected(),
-                                onChange: table.getToggleAllRowsSelectedHandler(),
-                            }}
-                        />
-                        {/* {console.log("all row selected", table.getIsAllRowsSelected())}
-                        {console.log("some row selected", table.getIsSomeRowsSelected())} */}
-                        <span style={{ marginLeft: "20px" }}> {table.getIsAllRowsSelected() ? " Deselect All" : " Select All"}</span>
-
-                    </>
-                ),
-                cell: ({ row, getValue }) => {
-                    return (
-                        <div
-                        >
-                            {row.original.status === "Pending" &&
-                                <>
-                                    <IndeterminateCheckbox
-                                        {...{
-                                            checked: row.getIsSelected(),
-                                            indeterminate: row.getIsSomeSelected(),
-                                            onChange: row.getToggleSelectedHandler(),
-                                        }}
-                                    />{' '}
-                                    {row.getCanExpand()}
-                                    {row.getIsSelected()}
-                                    {getValue()}
-                                </>
-                            }
-                        </div>
-                    )
-                },
-            },
-
-            {
-                header: "Brand",
-                accessorKey: "brand",
-                cell: (row) => (
-                    <CustomAccordian onClick={(expanded) => { if (expanded) { getTaskDetails(row?.row?.original?.taskSid); setRowId(row?.row?.id) } else { setRowId(null) } }} title={row?.row?.original?.brand} />
-                )
-            },
-            {
-                header: "Priority",
-                accessorKey: "priority",
-                // filterFn: (rows, id, filterValue) => {
-                //     console.log('rows', rows.getVisibleCells());
-                //     return rows.getVisibleCells().filter(({ row }) => {
-                //         console.log('rows', row.getValue(id));
-                //         const priority = row.getValue(id);
-                //         if (filterValue === "0-40" && priority <= 40) return true;
-                //         if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
-                //         if (filterValue === "+101" && priority > 100) return true;
-                //         return false;
-                //     });
-                // },
-                // filterFn: 'myCustomFilter',
-                cell: (row) => (
-                    <div>{getPriority(row?.row?.original?.priority)}</div>
-                ),
-            },
-            {
-                header: "Agent",
-                accessorKey: "agent",
-            },
-            {
-                header: "Age",
-                accessorKey: "age",
-                cell: (row) => (
-                    <div>{getAgeLimit(row?.row?.original?.age)}</div>
-                )
-            },
-            {
-                header: "Status",
-                accessorKey: "status",
-            },
-            {
-                header: "Task Sid",
-                accessorKey: "taskSid",
-
-            },
-            {
-                header: "CustomerEmailId",
-                accessorKey: "customerEmailId",
-            },
-        ],
-        []
-    );
     const handleResetClick = () => {
         setResetData(true);
     }
-    // Define your custom filter method
-    const inNumberRange = (rows, id, filterValue) => {
-        return rows.filter((row) => {
-            const priority = row.values[id];
-            if (filterValue === "0-40" && priority <= 40) return true;
-            if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
-            if (filterValue === "+101" && priority > 100) return true;
-            return false;
-        });
-    };
+
     const handleResetTable = () => {
         const temp = [
+            {
+                target: {
+                    name: 'customerEmailId',
+                    value: ''
+                }
+            },
             {
                 target: {
                     name: 'brand',
@@ -241,13 +134,16 @@ const Dashboard = () => {
             {
                 target: {
                     name: 'age',
-                    value: ''
+                    value: []
                 }
             },
             {
                 target: {
                     name: 'agent',
-                    value: ''
+                    value: {
+                        agentName: '',
+                        workerSid: ''
+                    }
                 }
             },
             {
@@ -267,15 +163,115 @@ const Dashboard = () => {
         setResetData(false);
     }
 
-    useEffect(() => {
-        setFormData({
-            agent: autoCompleAgent
-        })
-    }, [autoCompleAgent])
+    const handleAssign = (value) => {
+        let temp = JSON.parse(JSON.stringify(data));
+        if (columnToUpdate === 'priority') {
+            temp = temp?.filter(x => {
+                if (selectedRows.includes(x.taskSid)) {
+                    x.priority = value
+                }
+                return x;
+            })
+        }
+        if (columnToUpdate === 'agent') {
+            temp = temp?.filter(x => {
+                if (selectedRows.includes(x.taskSid)) {
+                    x.agent = value
+                }
+                return x;
+            })
+        }
+        setData(temp);
+    }
+
+    const columns = useMemo(
+        () => [
+            columnHelper.accessor("checkbox", {
+                header: ({ table }) => (
+                    <>
+                        <IndeterminateCheckbox
+                            {...{
+                                checked: table.getIsAllRowsSelected(),
+                                indeterminate: table.getIsSomeRowsSelected(),
+                                onChange: table.getToggleAllRowsSelectedHandler(),
+                            }}
+                        />
+                        <span style={{ marginLeft: "20px" }}> {table.getIsAllRowsSelected() ? " Deselect All" : " Select All"}</span>
+                    </>
+                ),
+                cell: ({ row, getValue }) => {
+                    return (
+                        <div>
+                            {row.original.status === "Pending" &&
+                                <>
+                                    <IndeterminateCheckbox
+                                        {...{
+                                            checked: row.getIsSelected(),
+                                            indeterminate: row.getIsSomeSelected(),
+                                            onChange: row.getToggleSelectedHandler(),
+                                        }}
+                                    />{' '}
+                                    {row.getCanExpand()}
+                                    {row.getIsSelected()}
+                                    {getValue()}
+                                </>
+                            }
+                        </div>
+                    )
+                },
+            }),
+            columnHelper.accessor("brand", {
+                header: () => "Brand",
+                cell: (row) => (
+                    <CustomAccordian onClick={(expanded) => { if (expanded) { getTaskDetails(row?.row?.original?.taskSid); setRowId(row?.row?.id) } else { setRowId(null) } }} title={row?.row?.original?.brand} />
+                )
+            }),
+            columnHelper.accessor("priority", {
+                header: () => "Priority",
+                cell: (row) => <div>{row?.row?.original?.priority}</div>,
+            }),
+            columnHelper.accessor("agent", {
+                header: () => "Agent",
+
+            }),
+            columnHelper.accessor("age", {
+                header: () => "Age",
+                filterFn: 'arrIncludesSome',
+                cell: (row) => <div>{row?.row?.original?.age}</div>
+            }),
+            columnHelper.accessor("status", {
+                header: () => "Status",
+            }),
+            columnHelper.accessor("taskSid", {
+                header: () => "Task Sid",
+            }),
+            columnHelper.accessor("customerEmailId", {
+                header: () => "CustomerEmailId",
+            }),
+        ],
+        []
+    );
 
     useEffect(() => {
-        localStorage.setItem('lastUpdated', JSON.stringify(moment()))
-    }, [])
+        if (authState != null) {
+            getAgents();
+            (async () => {
+                const res = await getData();
+                if (res.length === 0) {
+                    await getnmTasksData([], 1, null);
+                } else {
+                    setData(res);
+                    localStorage.setItem('lastUpdated', JSON.stringify(moment()))
+                }
+            })()
+        }
+    }, [authState])
+
+    useEffect(() => {
+        if (selectedRows.length === 0) {
+            setOpenSidebar(false);
+        }
+    }, [selectedRows])
 
     return (
         <>
@@ -283,8 +279,14 @@ const Dashboard = () => {
             <Container maxWidth={"100%"} sx={{ position: "relative" }}>
                 <Header headerTitle={"Customer Email Queue"} handleReset={handleResetClick} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
-                    <CustomInput title={'Customer email'} />
-                    <CustomSelect title={"Brand"}
+                    <CustomInput
+                        title={'Customer email'}
+                        name='customerEmailId'
+                        value={formData["customerEmailId"]}
+                        onChange={setFormData}
+                    />
+                    <CustomSelect
+                        title={"Brand"}
                         name='brand'
                         value={formData["brand"]}
                         onChange={setFormData}
@@ -296,7 +298,8 @@ const Dashboard = () => {
                             { text: "Horchow", value: "Horchow" }
                         ]}
                     />
-                    <CustomSelect title={"Priority"}
+                    <CustomSelect
+                        title={"Priority"}
                         name='priority'
                         value={formData["priority"]}
                         onChange={setFormData}
@@ -313,9 +316,18 @@ const Dashboard = () => {
                             <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase" }}>Agent</Typography>
                             <Autocomplete
                                 disablePortal
+                                value={formData['agent'] ?? ''}
                                 name="agent"
                                 id="combo-box-demo"
-                                onSelect={(e) => setAutoCompleAgent(e.target.value)}
+                                onChange={(e, value) => {
+                                    setFormData({
+                                        ...formData,
+                                        target: {
+                                            name: 'agent',
+                                            value: value ?? { agentName: '', workerSid: '' }
+                                        }
+                                    })
+                                }}
                                 options={agent}
                                 getOptionLabel={(option) => option.agentName}
                                 key={(option) => option.workerSid}
@@ -327,11 +339,13 @@ const Dashboard = () => {
                                         color: "#333333",
                                     }
                                 }}
+                                popupIcon={<KeyboardArrowDown />}
                                 renderInput={(params) => <TextField {...params} placeholder="Select one" />}
                             />
                         </FormControl>
                     </Grid>
-                    <CustomSelect title={"Age"}
+                    <CustomSelect
+                        title={"Age"}
                         name='age'
                         value={formData["age"]}
                         onChange={(e, prev) => {
@@ -364,7 +378,8 @@ const Dashboard = () => {
                             { text: "Greater than 72 hours old", value: "Greater than 72 hours old" }
                         ]}
                     />
-                    <CustomSelect title={"Status"}
+                    <CustomSelect
+                        title={"Status"}
                         name='status'
                         value={formData["status"]}
                         onChange={setFormData}
@@ -377,17 +392,42 @@ const Dashboard = () => {
                         ]}
                     />
 
-                    <Actions disabled={selectedRows?.length === 0} handleDeleteModalOpen={handleDeleteModalOpen} setForPriority={setForPriority} setSideBarTitle={setSideBarTitle} setForAgent={setForAgent} setOpenSidebar={setOpenSidebar} onRefresh={handleRefresh} actionTime={moment(JSON.parse(localStorage.getItem('lastUpdated'))).fromNow()} />
+                    <Actions
+                        disabled={selectedRows?.length === 0}
+                        handleDeleteModalOpen={handleDeleteModalOpen}
+                        setColumnToUpdate={(e) => { setColumnToUpdate(e); setOpenSidebar(true); }}
+                        onRefresh={handleRefresh}
+                    />
                 </Grid>
 
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
                     <SnackAlert message={message} />
                 </Box>
                 <Box>
-                    <DeleteModal updateClients={updateClients} handleDeleteModalOpen={handleDeleteModalOpen} handleDeleteModalClose={handleDeleteModalClose} openDeleteModal={openDeleteModal} />
+                    <DeleteModal
+                        deleteCount={selectedRows?.length ?? 0}
+                        handleDeleteModalClose={() => { handleDelete(); handleDeleteModalClose() }}
+                        openDeleteModal={openDeleteModal}
+                    />
                 </Box>
-                <SideBar ForPriority={ForPriority} sideBarTitle={sideBarTitle} setForAgent={setForAgent} forAgent={forAgent} openSideBar={openSideBar} setOpenSidebar={setOpenSidebar} title={"Select agent to assign email/s to"} options={agent} open={open} />
-                <DataTable rowId={rowId} getSelectedRows={getSelectedRows} brandDetails={brandDetails} resetData={resetData} handleReset={handleResetTable} getDeletedArray={getDeletedArray} columns={columns} data={data} formData={formData} />
+                <SideBar
+                    handleAssign={handleAssign}
+                    columnToUpdate={columnToUpdate}
+                    setColumnToUpdate={setColumnToUpdate}
+                    openSideBar={openSideBar}
+                    setOpenSidebar={setOpenSidebar}
+                    options={agent}
+                />
+                <DataTable
+                    rowId={rowId}
+                    getSelectedRows={getSelectedRows}
+                    brandDetails={brandDetails}
+                    resetData={resetData}
+                    handleReset={handleResetTable}
+                    columns={columns}
+                    data={data}
+                    formData={formData}
+                />
             </Container>
 
         </>

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, } from '@tanstack/react-table'
-import { Box, Button, CircularProgress, Table, Typography } from '@mui/material'
-const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = false, handleReset, rowId, brandDetails = [], getSelectedRows }) => {
+import { Box, CircularProgress, Table, Typography } from '@mui/material'
+import { ArrowDownward, ArrowUpward, KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+
+const DataTable = ({ data = [], columns, formData, resetData = false, handleReset, rowId, brandDetails = [], getSelectedRows }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
-    const [refresh, setRefresh] = useState(data)
-    const [DeleteClient, setDeleteClient] = useState([])
-    useEffect(() => {
-        setRefresh(data)
-    }, [refresh])
 
     const table = useReactTable({
         data,
@@ -26,39 +23,11 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
         state: {
             sorting
         },
-        filterFns: {
-            // myCustomFilter: (rows, id, filterValue) => {
-            //     console.log('rows', rows);
-            //     console.log('columnIds', id);
-            //     console.log('filterValue', filterValue);
-            //     return rows.getVisibleCells().filter(({ row }) => {
-            //         const priority = row.getValue(id);
-            //         console.log('priority', priority);
-            //         if (filterValue === "0-40" && priority <= 40) return true;
-            //         if (filterValue === "41-100" && priority > 40 && priority <= 100) return true;
-            //         if (filterValue === "+101" && priority > 100) return true;
-            //         return false;
-            //     });
-            // },
-        },
     })
 
-    const handleDelete = () => {
-        const filteredArray = data.filter(item => {
-            return !DeleteClient.some(excludedItem => JSON.stringify(item) === JSON.stringify(excludedItem));
-        });
-        return filteredArray
-    }
-
     useEffect(() => {
-        getSelectedRows(table?.getSelectedRowModel()?.rows.map(x => x.original));
-        setDeleteClient(table?.getSelectedRowModel()?.rows.map(x => x.original));
+        getSelectedRows(table?.getSelectedRowModel()?.rows.map(x => x.original).map(x => x.taskSid));
     }, [table?.getSelectedRowModel()])
-
-    useEffect(() => {
-        getDeletedArray(handleDelete)
-    }, [DeleteClient])
-
 
     useEffect(() => {
         if (resetData) {
@@ -66,6 +35,10 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
             handleReset();
         }
     }, [resetData])
+
+    useEffect(() => {
+        table?.resetRowSelection();
+    }, [data])
 
     return (
         <>
@@ -94,15 +67,15 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
                                                 header.column.columnDef.header,
                                                 header.getContext()
                                             )}
-                                            {
+                                            {header.column.columnDef.accessorKey !== 'checkbox' && (
                                                 header.column.getIsSorted() === 'asc' ?
-                                                    <span>▲</span>
+                                                    <ArrowUpward sx={{ ml: '16px', fontSize: '16px' }} />
                                                     :
                                                     header.column.getIsSorted() === 'desc' ?
-                                                        <span >▼</span>
-                                                        : header.column.getCanSort() ?
-                                                            <span></span> :
-                                                            null
+                                                        <ArrowDownward sx={{ ml: '16px', fontSize: '16px' }} />
+                                                        :
+                                                        null
+                                            )
                                             } {header.column.getCanFilter() ? (
                                                 <Filter column={header?.column} value={formData} />
                                             ) : null}
@@ -162,21 +135,19 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
                 </tbody >
 
             </Table >
-            <Box sx={{ display: "flex", justifyContent: "end", margin: "20px 0" }}>
+            <Box sx={{ display: "flex", justifyContent: "end", alignItems: 'center', margin: "20px 0" }}>
                 <div className={!table.getCanPreviousPage() && "disabled displayNone"}>
                     <button
                         onClick={e => { e.preventDefault(); table.previousPage(); }}
                         tabIndex="-1"
                         disabled={!table.getCanPreviousPage()}
-                        className='pagiantionBtb'
+                        className='paginationBtn'
                     >
-                        <div>
-                            {'ᐸ PREVIOUS'}
-                        </div>
+                        <KeyboardArrowLeft /> PREVIOUS
                     </button>
                 </div>
                 <Box sx={{ minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center" }}><span className='ml-2'> <span className="paginationDarkColor">
-                    {(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1} - {(table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize > data.length ? data.length : (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize}</span> <span className="paginationGrayColor">of {data.length}</span> </span></Box>
+                    {(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1}-{(table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize > data.length ? data.length : (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize}</span> <span className="paginationGrayColor">of {data.length}</span> </span></Box>
 
 
                 <Box className={!table.getCanNextPage() && "disabled displayNone"}>
@@ -184,9 +155,9 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
                         onClick={e => { e.preventDefault(); table.nextPage(); }}
                         tabIndex="-1"
                         disabled={!table.getCanNextPage()}
-                        className='pagiantionBtb'
+                        className='paginationBtn'
                     >
-                        {'NEXT ᐳ'}
+                        NEXT <KeyboardArrowRight />
                     </button>
                 </Box>
             </Box >
@@ -196,7 +167,11 @@ const DataTable = ({ data = [], columns, formData, getDeletedArray, resetData = 
 
 const Filter = ({ column, value }) => {
     useEffect(() => {
-        column.setFilterValue(value[column.id])
+        if (column.id === 'agent') {
+            column.setFilterValue(value[column.id]?.agentName)
+        } else {
+            column.setFilterValue(value[column.id]);
+        }
     }, [value])
 
     return (

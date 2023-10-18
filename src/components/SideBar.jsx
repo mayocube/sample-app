@@ -14,15 +14,11 @@ import { useEffect } from 'react';
 import Input from '@mui/material/Input';
 import { Radio } from '@mui/material';
 
-const SideBar = ({
-    sideBarTitle = "", options = [], openSideBar = false, forAgent = false, setForAgent = () => { }, ForPriority = false, setOpenSidebar = () => { } }) => {
-    const [filter, setFilter] = useState(options)
+const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setColumnToUpdate = () => { }, setOpenSidebar = () => { }, handleAssign }) => {
 
-    useEffect(() => {
-        setFilter(options)
-    }, [options]);
-
-    // const [openSideBar, setOpenSidebar] = React.useState(false);
+    const [filter, setFilter] = useState(options);
+    const [priority, setPriority] = useState('');
+    const [selectedAgent, setSelectedAgent] = useState('');
 
     const handleFilter = (term) => {
         setFilter(options.filter(ele => ele?.agentName?.toLowerCase().includes(term)))
@@ -34,6 +30,10 @@ const SideBar = ({
         }
         setOpenSidebar(!openSideBar);
     };
+
+    useEffect(() => {
+        setFilter(options)
+    }, [options]);
 
     return (
         <div>
@@ -53,61 +53,68 @@ const SideBar = ({
                             fontStyle: " normal",
                             fontWeight: " 400",
                             lineHeight: " 1.3125rem"
-                        }}>{sideBarTitle} </span><span>{<CloseIcon onClick={() => {
-                            setOpenSidebar(false)
-                            setForAgent(false)
-                        }} />} </span>
+                        }}>
+                            {columnToUpdate === 'priority' ? 'Select priority' : 'Select agent to assign email/s to'}
+                        </span>
+                        <span>
+                            <CloseIcon
+                                onClick={() => {
+                                    setOpenSidebar(false)
+                                    setColumnToUpdate('')
+                                }}
+                            />
+                        </span>
                     </Box>
-                    {forAgent && <><Box sx={{ width: "100%", display: "flex", justifyContent: "center" }} className="customInputMui">
-                        <Input
-                            placeholder='Search for an agent'
-                            sx={{
-                                height: "36px", minWidth: "414px", margin: "0 auto", gap: "10px", padding: "8px, 12px, 8px, 12px"
-                            }}
-                            onChange={(e) => {
-                                handleFilter(e?.target?.value?.toLowerCase())
-                            }}
-                        />
-                    </Box>
-                        <List className='MuiCustomList'>
-                            {filter.map((agent, index) => (
-                                <ListItem key={`${index}${agent}`} disablePadding>
-                                    <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>
-                                        <ListItemIcon>
-                                            <Radio
-                                                checked={''}
-                                                onChange={""}
-                                                value="a"
-                                                name="radio-buttons"
-                                                inputProps={{ 'aria-label': 'A' }}
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText sx={{
-                                            lineHeight: "21px", fontSize: "14px", fontWeight: "400", color: "#000000"
-                                        }} primary={agent?.agentName} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List></>}
-
-
-                    {ForPriority &&
+                    {columnToUpdate === 'agent' &&
+                        <>
+                            <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }} className="customInputMui">
+                                <Input
+                                    placeholder='Search for an agent'
+                                    sx={{
+                                        height: "36px", minWidth: "414px", margin: "0 auto", gap: "10px", padding: "8px, 12px, 8px, 12px"
+                                    }}
+                                    onChange={(e) => {
+                                        handleFilter(e?.target?.value?.toLowerCase())
+                                    }}
+                                />
+                            </Box>
+                            <List className='MuiCustomList'>
+                                {filter.map((agent, index) => (
+                                    <ListItem key={`${index}${agent}`} disablePadding>
+                                        <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>
+                                            <ListItemIcon>
+                                                <Radio
+                                                    checked={selectedAgent === agent?.agentName}
+                                                    onChange={() => setSelectedAgent(agent?.agentName)}
+                                                    name="radio-buttons"
+                                                    inputProps={{ 'aria-label': 'A' }}
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText sx={{
+                                                lineHeight: "21px", fontSize: "14px", fontWeight: "400", color: "#000000"
+                                            }} primary={agent?.agentName} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </>
+                    }
+                    {columnToUpdate === 'priority' &&
                         <List>
-                            {["0", "40", "100"].map((priority, index) => (
-                                <ListItem key={`${index}${priority}`} disablePadding>
+                            {["0-40", "41-100", "+101"].map((val, index) => (
+                                <ListItem key={`${index}${val}`} disablePadding>
                                     <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>
                                         <ListItemIcon>
                                             <Radio
-                                                checked={''}
-                                                onChange={""}
-                                                value="a"
+                                                checked={priority === val}
+                                                onChange={() => setPriority(val)}
                                                 name="radio-buttons"
                                                 inputProps={{ 'aria-label': 'A' }}
                                             />
                                         </ListItemIcon>
                                         <ListItemText sx={{
                                             lineHeight: "21px", fontSize: "14px", fontWeight: "400", color: "#000000"
-                                        }} primary={priority} />
+                                        }} primary={val} />
                                     </ListItemButton>
                                 </ListItem>
                             ))}
@@ -116,17 +123,11 @@ const SideBar = ({
                 <Box sx={{ position: 'sticky', bottom: 0 }}>
                     <Box sx={{ padding: "16px", backgroundColor: "white" }}>
 
-                        <Button onClick={() => {
-                            ForPriority
-                                ? (
-                                    console.log("object priority"),
-                                    console.log("object priority")
-                                )
-                                : (
-                                    console.log("object assgin"),
-                                    console.log("object assign")
-                                );
-                        }} sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">Assign</Button>
+                        <Button
+                            onClick={() => {
+                                handleAssign(columnToUpdate === 'priority' ? priority : selectedAgent);
+                            }}
+                            sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">Assign</Button>
                     </Box>
                 </Box>
             </Drawer >

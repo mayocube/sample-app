@@ -11,6 +11,7 @@ export const getAgeLimit = (age) => {
     if (age > 259200) {
         return "Greater than 72 hours old"
     }
+    return age;
 }
 
 export const getPriority = (priority) => {
@@ -18,9 +19,10 @@ export const getPriority = (priority) => {
         return "0-40"
     }
     if (priority > 40 && priority <= 100) {
-        return "40-100"
+        return "41-100"
     }
     if (priority > 100) {
         return "+101"
     }
+    return priority;
 }

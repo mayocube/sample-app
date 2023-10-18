@@ -221,7 +221,7 @@ code {
 
 .tbody {
   text-align: left;
-  font-family: 'Inter' !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
 .flexCell {
@@ -387,14 +387,15 @@ code {
   visibility: hidden;
 }
 
-.pagiantionBtb {
+.paginationBtn {
   background-color: transparent;
   border: 0;
   color: black;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   font-family: 'Inter' !important;
-
+  display: flex;
+  align-items: center;
 }
 
 .paginationDarkColor {
@@ -479,4 +480,9 @@ input#combo-box-demo {
   margin-top: 16px !important;
   font-size: 14px !important;
   line-height: 20px !important;
+}
+
+.custom-select .MuiAutocomplete-popupIndicatorOpen>svg {
+  margin-right: 0px !important;
+  margin-left: 10px !important;
 }
