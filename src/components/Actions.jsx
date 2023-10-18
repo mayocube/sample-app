@@ -17,7 +17,7 @@ const Actions = ({ handleDeleteModalOpen = () => { }, setColumnToUpdate = () => 
         updateLastUpdatedText();
         const intervalId = setInterval(updateLastUpdatedText, 30000);
         return () => clearInterval(intervalId);
-    }, []);
+    }, [JSON.parse(localStorage.getItem('lastUpdated'))]);
     return (
         <Grid item xs={12} lg={12} marginTop={1} display={"flex"} alignItems={"center"} justifyContent={"space-between"} paddingBottom={0} marginBottom={0} paddingLeft={0} paddingRight={0}>
             <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1}>
@@ -56,7 +56,7 @@ const Actions = ({ handleDeleteModalOpen = () => { }, setColumnToUpdate = () => 
                 </Button>
             </Box>
             <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={2}>
-                <Typography sx={{ fontFamily: "Inter", fontSize: "14px", color: "#394762", lineHeight: "21px", fontWeight: "400" }} variant="filterText" marginBottom={0} gutterBottom>{lastUpdatedText}</Typography>
+                <Typography sx={{ fontFamily: "Inter", fontSize: "14px", color: "#394762", lineHeight: "21px", fontWeight: "400" }} variant="filterText" marginBottom={0} gutterBottom>Last updated {lastUpdatedText}</Typography>
                 <Button
                     color='default'
                     sx={{ color: "#606B85" }}
