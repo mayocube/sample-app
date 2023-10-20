@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { Autocomplete, Box, Button, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Container, FormControl, Grid, TextField, Typography, createFilterOptions } from '@mui/material'
 import { formReducer } from '../utils/RequestHandler';
 import { getData, saveData } from '../utils/indexedDBService';
 import TopBar from './TopBar';
@@ -69,7 +69,13 @@ const Dashboard = () => {
         try {
             const res = await getAllAgents()
             if (res) {
-                setAgent(res?.data?.data)
+                let temp = [];
+                res?.data?.data?.filter(x => {
+                    if (!temp?.find(y => y.agentName === x.agentName)) {
+                        temp.push(x)
+                    }
+                })
+                setAgent(temp);
             }
 
         } catch (error) {
@@ -316,6 +322,7 @@ const Dashboard = () => {
                             <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase" }}>Agent</Typography>
                             <Autocomplete
                                 disablePortal
+                                freeSolo
                                 value={formData['agent'] ?? ''}
                                 name="agent"
                                 id="combo-box-demo"
@@ -328,11 +335,10 @@ const Dashboard = () => {
                                         }
                                     })
                                 }}
+                                // filterOptions={filterOptions}
                                 options={agent}
-                                getOptionLabel={(option) => option.agentName}
-                                key={(option) => option.workerSid}
                                 className={"custom-select"}
-                                autoComplete={true}
+                                getOptionLabel={(option) => option.agentName}
                                 sx={{
                                     height: 36, fontSize: 14, borderColor: "#EEEEEE", color: "#5c5c5c", ":hover": {
                                         borderColor: "#EEEEEE",
