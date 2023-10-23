@@ -1,3 +1,5 @@
+import moment from "moment"
+
 export const getAgeLimit = (age) => {
     if (age <= 3600) {
         return "Less than one hour old"
@@ -26,3 +28,38 @@ export const getPriority = (priority) => {
     }
     return priority;
 }
+
+export const filterAge = (row, columnId, value) => {
+    const hours = moment(row.getValue(columnId), 'hh:mm').hours();
+    if (value.length === 0) {
+        return true;
+    }
+    if (value.includes('Less than one hour old') && hours < 1) {
+        return true;
+    }
+    if (value.includes('Between 1-24 hours old') && hours >= 1 && hours <= 24) {
+        return true;
+    }
+    if (value.includes('Between 24-48 hours old') && hours > 24 && hours <= 48) {
+        return true;
+    }
+    if (value.includes('Between 48-72 hours old') && hours >= 48 && hours <= 72) {
+        return true;
+    }
+    if (value.includes('Greater than 72 hours old') && hours > 72) {
+        return true;
+    }
+    return false;
+};
+
+export const isWithinRange = (row, columnId, value) => {
+    const priority = row.getValue(columnId);
+    if (value === '0-40') {
+        return priority >= 0 && priority <= 40;
+    } else if (value === '41-100') {
+        return priority >= 41 && priority <= 100;
+    } else if (value === '+101') {
+        return priority > 100;
+    }
+    return true;
+};

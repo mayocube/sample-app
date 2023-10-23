@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, } from '@tanstack/react-table'
 import { Box, CircularProgress, Table, Typography } from '@mui/material'
 import { ArrowDownward, ArrowUpward, KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import { filterAge, isWithinRange } from '../utils/globalFunctions';
 
 const DataTable = ({ data = [], columns, formData, resetData = false, handleReset, rowId, brandDetails = [], getSelectedRows }) => {
     const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
@@ -23,10 +24,15 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
         state: {
             sorting
         },
+        filterFns: {
+            'isWithinRange': isWithinRange,
+            'filterAge': filterAge
+        }
     })
 
+
     useEffect(() => {
-        getSelectedRows(table?.getSelectedRowModel()?.rows.map(x => x.original).map(x => x.taskSid));
+        getSelectedRows(table?.getSelectedRowModel()?.rows.map(x => x.original));
     }, [table?.getSelectedRowModel()])
 
     useEffect(() => {

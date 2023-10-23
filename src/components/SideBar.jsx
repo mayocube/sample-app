@@ -101,20 +101,20 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
                     }
                     {columnToUpdate === 'priority' &&
                         <List>
-                            {["0-40", "41-100", "+101"].map((val, index) => (
+                            {new Array(201).fill(null).map((val, index) => (
                                 <ListItem key={`${index}${val}`} disablePadding>
                                     <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>
                                         <ListItemIcon>
                                             <Radio
-                                                checked={priority === val}
-                                                onChange={() => setPriority(val)}
+                                                checked={priority === index}
+                                                onChange={() => setPriority(index)}
                                                 name="radio-buttons"
                                                 inputProps={{ 'aria-label': 'A' }}
                                             />
                                         </ListItemIcon>
                                         <ListItemText sx={{
                                             lineHeight: "21px", fontSize: "14px", fontWeight: "400", color: "#000000"
-                                        }} primary={val} />
+                                        }} primary={index} />
                                     </ListItemButton>
                                 </ListItem>
                             ))}

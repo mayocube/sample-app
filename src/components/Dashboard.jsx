@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useState } from 'react'
-import { Autocomplete, Box, Button, Container, FormControl, Grid, TextField, Typography, createFilterOptions } from '@mui/material'
+import { Autocomplete, Box, Container, FormControl, Grid, TextField, Typography } from '@mui/material'
 import { formReducer } from '../utils/RequestHandler';
-import { getData, saveData } from '../utils/indexedDBService';
+import { deleteData, getData, saveData, updateData } from '../utils/indexedDBService';
 import TopBar from './TopBar';
 import Header from './Header';
 import CustomInput from './CustomInput';
@@ -13,7 +13,6 @@ import DataTable from './DataTable';
 import SnackAlert from './SnackAlert';
 import SideBar from './SideBar';
 import CustomAccordian from './CustomAccordian';
-import { getAgeLimit, getPriority } from '../utils/globalFunctions';
 import DeleteModal from './DeleteModal';
 import moment from 'moment/moment';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -55,16 +54,20 @@ const Dashboard = () => {
     const [agent, setAgent] = useState([]);
     const [rowId, setRowId] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRowIds, setSelectedRowIds] = useState([]);
     const [brandDetails, setBrandDetails] = useState([]);
     const columnHelper = createColumnHelper();
     const pageSize = 20;
 
     const handleDelete = () => {
-        setData(data?.filter(x => !selectedRows.includes(x.taskSid)))
+        deleteData(selectedRowIds);
+        setData(data?.filter(x => !selectedRowIds.includes(x.taskSid)))
     }
     const getSelectedRows = (selectedRows) => {
         setSelectedRows(selectedRows);
+        setSelectedRowIds(selectedRows.map(x => x.taskSid));
     }
+
     const getAgents = async () => {
         try {
             const res = await getAllAgents()
@@ -90,13 +93,14 @@ const Dashboard = () => {
         }
         const res = await getmntasks(args);
         if (res?.data?.pageToken != null) {
-            const newData = [...prevData, ...res?.data?.data];
-            const temp = newData.map((x, i) => {
-                x.priority = getPriority(x?.priority);
-                x.age = getAgeLimit(x.age);
+            const temp = res?.data?.data.map((x, i) => {
+                if (x.age) {
+                    x.age = moment(x.age).format("hh:mm");
+                }
                 return x;
             })
-            setData(temp);
+            const newData = [...prevData, ...temp];
+            setData(newData);
             saveData(newData);
             localStorage.setItem('lastUpdated', JSON.stringify(moment()))
             setTimeout(async () => {
@@ -171,9 +175,16 @@ const Dashboard = () => {
 
     const handleAssign = (value) => {
         let temp = JSON.parse(JSON.stringify(data));
+        let selected = JSON.parse(JSON.stringify(selectedRows));
         if (columnToUpdate === 'priority') {
             temp = temp?.filter(x => {
-                if (selectedRows.includes(x.taskSid)) {
+                if (selectedRowIds.includes(x.taskSid)) {
+                    x.priority = value
+                }
+                return x;
+            });
+            selected = selected?.filter(x => {
+                if (selectedRowIds.includes(x.taskSid)) {
                     x.priority = value
                 }
                 return x;
@@ -181,12 +192,19 @@ const Dashboard = () => {
         }
         if (columnToUpdate === 'agent') {
             temp = temp?.filter(x => {
-                if (selectedRows.includes(x.taskSid)) {
+                if (selectedRowIds.includes(x.taskSid)) {
+                    x.agent = value
+                }
+                return x;
+            })
+            selected = selected?.filter(x => {
+                if (selectedRowIds.includes(x.taskSid)) {
                     x.agent = value
                 }
                 return x;
             })
         }
+        updateData(selected);
         setData(temp);
     }
 
@@ -234,6 +252,7 @@ const Dashboard = () => {
             }),
             columnHelper.accessor("priority", {
                 header: () => "Priority",
+                filterFn: 'isWithinRange',
                 cell: (row) => <div>{row?.row?.original?.priority}</div>,
             }),
             columnHelper.accessor("agent", {
@@ -242,7 +261,7 @@ const Dashboard = () => {
             }),
             columnHelper.accessor("age", {
                 header: () => "Age",
-                filterFn: 'arrIncludesSome',
+                filterFn: 'filterAge',
                 cell: (row) => <div>{row?.row?.original?.age}</div>
             }),
             columnHelper.accessor("status", {
@@ -335,7 +354,6 @@ const Dashboard = () => {
                                         }
                                     })
                                 }}
-                                // filterOptions={filterOptions}
                                 options={agent}
                                 className={"custom-select"}
                                 getOptionLabel={(option) => option.agentName}
@@ -379,6 +397,7 @@ const Dashboard = () => {
                         checkboxSelect={true}
                         items={[
                             { text: 'Less than one hour old', value: 'Less than one hour old' },
+                            { text: 'Between 1-24 hours old', value: 'Between 1-24 hours old' },
                             { text: "Between 24-48 hours old", value: "Between 24-48 hours old" },
                             { text: "Between 48-72 hours old", value: "Between 48-72 hours old" },
                             { text: "Greater than 72 hours old", value: "Greater than 72 hours old" }

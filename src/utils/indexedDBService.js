@@ -30,3 +30,19 @@ export async function saveData(data) {
 
     await tx.done;
 }
+
+export async function updateData(data) {
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    data.map((obj) => store.put(obj));
+    await tx.done;
+}
+
+export async function deleteData(data) {
+    const db = await initDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    data.map((key) => store.delete(key));
+    await tx.done;
+}
