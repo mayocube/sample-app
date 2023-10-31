@@ -32,8 +32,11 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
     };
 
     useEffect(() => {
-        setFilter(options)
-    }, [options]);
+        if (openSideBar) {
+            setFilter(options);
+        }
+        setSelectedAgent('');
+    }, [options, openSideBar]);
 
     return (
         <div>

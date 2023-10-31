@@ -456,6 +456,7 @@ input#combo-box-demo {
   cursor: pointer;
 }
 
+.MuiDrawer-modal,
 .MuiBackdrop-root.MuiModal-backdrop {
   background-color: rgba(253, 253, 253, .6) !important;
 }

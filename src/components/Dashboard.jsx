@@ -426,7 +426,7 @@ const Dashboard = () => {
                 </Grid>
 
                 <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
-                    <SnackAlert message={message} />
+                    <SnackAlert message={message} setMessage={setMessage} />
                 </Box>
                 <Box>
                     <DeleteModal

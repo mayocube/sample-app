@@ -2,7 +2,7 @@ import { Alert, } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import SuccessLogo from './../../src/assets/success.svg'
 import ErrorLogo from './../../src/assets/error.svg'
-const SnackAlert = ({ message = "" }) => {
+const SnackAlert = ({ message = "", setMessage }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
@@ -12,9 +12,11 @@ const SnackAlert = ({ message = "" }) => {
             setIsSuccess(!message.includes("Error"))
             setTimeout(() => {
                 setIsOpen(false);
+                setMessage('');
             }, 3000)
         } else {
             setIsOpen(false);
+            setMessage('');
         }
     }, [message])
 
