@@ -274,7 +274,6 @@ code {
   margin-bottom: 16px !important;
 }
 
-
 .MuiInputBase-root.MuiOutlinedInput-root .MuiSvgIcon-root {
   background: #EEEEEE;
   border-radius: 5px;
@@ -283,7 +282,6 @@ code {
 
 .customSelects .MuiOutlinedInput-root .MuiAutocomplete-endAdornment {
   right: 0px !important;
-
 }
 
 .button {
@@ -381,8 +379,6 @@ code {
   }
 }
 
-
-
 .displayNone {
   visibility: hidden;
 }
@@ -404,8 +400,6 @@ code {
   font-weight: 700;
   line-height: 21px;
   font-family: 'Inter' !important;
-
-
 }
 
 .paginationGrayColor {
@@ -413,8 +407,6 @@ code {
   font-size: 16px;
   font-weight: 500;
   font-family: 'Inter' !important;
-
-
 }
 
 .customCheckBox {

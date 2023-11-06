@@ -13,7 +13,7 @@
 import React from 'react';
 import { Route, useHistory, Switch } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security, SecureRoute, LoginCallback } from '@okta/okta-react';
+import { Security, LoginCallback } from '@okta/okta-react';
 import config from './config';
 import Home from './components/Home';
 import theme from './utils/theme';
@@ -21,7 +21,6 @@ import theme from './utils/theme';
 import CorsErrorModal from './components/CorsErrorModal';
 import AuthRequiredModal from './components/AuthRequiredModal';
 import { ThemeProvider } from '@mui/material';
-import { ToastContainer } from 'react-toastify';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -60,7 +59,6 @@ const App = () => {
       <CorsErrorModal {...{ corsErrorModalOpen, setCorsErrorModalOpen }} />
       <AuthRequiredModal {...{ authRequiredModalOpen, setAuthRequiredModalOpen, triggerLogin }} />
       <ThemeProvider theme={theme}>
-        <ToastContainer position='top-center' />
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/login/callback"><Home loginCallback /></Route>
