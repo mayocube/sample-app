@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Input from '@mui/material/Input';
 import { Radio } from '@mui/material';
+import CustomInput from './CustomInput';
 
 const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setColumnToUpdate = () => { }, setOpenSidebar = () => { }, handlePriorityAndAssignment }) => {
 
@@ -102,34 +103,26 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
             </>
           }
           {columnToUpdate === 'priority' &&
-            <List>
-              {new Array(201).fill(null).map((val, index) => (
-                <ListItem key={`${index}${val}`} disablePadding>
-                  <ListItemButton sx={{ borderTop: "1px solid #D9D9D9", padding: "16px, 16px, 8px, 16px" }}>
-                    <ListItemIcon>
-                      <Radio
-                        checked={priority === index}
-                        onChange={() => setPriority(index)}
-                        name="radio-buttons"
-                        inputProps={{ 'aria-label': 'A' }}
-                      />
-                    </ListItemIcon>
-                    <ListItemText sx={{
-                      lineHeight: "21px", fontSize: "14px", fontWeight: "400", color: "#000000"
-                    }} primary={index} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>}
+            <Box sx={{ px: "16px" }}>
+              <CustomInput
+                title={''}
+                type='number'
+                value={priority}
+                onChange={(e) => { if (e.target.value >= 0 && e.target.value <= 200) { setPriority(e.target.value) } }}
+              />
+            </Box>
+          }
         </Box>
         <Box sx={{ position: 'sticky', bottom: 0 }}>
           <Box sx={{ padding: "16px", backgroundColor: "white" }}>
-
             <Button
+              disabled={!columnToUpdate}
               onClick={() => {
+                setColumnToUpdate('');
                 handlePriorityAndAssignment(columnToUpdate === 'priority' ? priority : selectedAgent);
               }}
-              sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">Assign</Button>
+
+              sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">{columnToUpdate === 'priority' ? 'Set Priority' : 'Assign'}</Button>
           </Box>
         </Box>
       </Drawer>

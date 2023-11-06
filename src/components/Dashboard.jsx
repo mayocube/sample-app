@@ -87,6 +87,7 @@ const Dashboard = () => {
     const deletedTaskSids = await deleteTasks(selectedRowIds);
     deleteData(deletedTaskSids);
     setData(data?.filter(x => !selectedRowIds.includes(x.taskSid)))
+    handleDeleteModalClose();
   }
   const getSelectedRows = (selectedRows) => {
     setSelectedRows(selectedRows);
@@ -331,7 +332,7 @@ const Dashboard = () => {
       columnHelper.accessor("brand", {
         header: () => "Brand",
         cell: (row) => (
-          <CustomAccordian onClick={(expanded) => { if (expanded) { getEmailDetailsData(row?.row?.original?.channelSid); setRowId(row?.row?.id) } else { setRowId(null) } }} title={row?.row?.original?.brand} />
+          <CustomAccordian onClick={(expanded) => { if (expanded) { getEmailDetailsData(row?.row?.original?.channelSid); setRowId(row?.row?.id) } else { setRowId(null); setEmailDetails(null) } }} title={row?.row?.original?.brand} />
         )
       }),
       columnHelper.accessor("priority", {
@@ -521,7 +522,7 @@ const Dashboard = () => {
         <Box>
           <DeleteModal
             deleteCount={selectedRows?.length ?? 0}
-            handleDeleteModalOk={() => { handleDelete(); handleDeleteModalClose() }}
+            handleDeleteModalOk={() => { handleDelete(); }}
             handleDeleteModalClose={() => { handleDeleteModalClose() }}
             openDeleteModal={openDeleteModal}
           />

@@ -59,33 +59,46 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
               {headerGroup.headers.map(header => (
                 <th key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder ? null : (
-
-                    <div
-                      {...{
-                        className: header.column.getCanSort()
-                          ? 'cursor-pointer select-none fontBold'
-                          : '',
-                        onClick: header.column.getToggleSortingHandler(),
-                      }}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {header.column.columnDef.accessorKey !== 'checkbox' && (
-                        header.column.getIsSorted() === 'asc' ?
-                          <ArrowUpward sx={{ ml: '16px', fontSize: '16px' }} />
-                          :
-                          header.column.getIsSorted() === 'desc' ?
-                            <ArrowDownward sx={{ ml: '16px', fontSize: '16px' }} />
+                    <>
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? 'cursor-pointer select-none'
+                            : '',
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.columnDef.accessorKey !== 'checkbox' && (
+                          header.column.getIsSorted() === 'asc' ?
+                            <ArrowUpward sx={{ ml: '16px', fontSize: '16px' }} />
                             :
-                            null
-                      )
-                      } {header.column.getCanFilter() ? (
-                        <Filter column={header?.column} value={formData} />
-                      ) : null}
+                            header.column.getIsSorted() === 'desc' ?
+                              <ArrowDownward sx={{ ml: '16px', fontSize: '16px' }} />
+                              :
+                              null
+                        )
+                        } {header.column.getCanFilter() ? (
+                          <Filter column={header?.column} value={formData} />
+                        ) : null}
 
-                    </div>
+                      </div>
+                      {header.column.columnDef.accessorKey === 'age' &&
+                        <Typography
+                          sx={{
+                            display: 'block',
+                            fontSize: 12,
+                            pl: '24px'
+                          }}
+                          component={'span'}
+                        >
+                          H:M
+                        </Typography>
+                      }
+                    </>
                   )}
 
                 </th>
