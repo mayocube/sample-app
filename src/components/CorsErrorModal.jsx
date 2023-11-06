@@ -35,23 +35,23 @@ const CorsErrorModal = ({ corsErrorModalOpen, setCorsErrorModalOpen }) => {
     >
       <Box>
         <h1>Network Error</h1>
-          <p>Seems like logout API call resulted with CORS error.</p>
-          <p>
-            You may need to add your origin
-            {' '}
-            {window.location.origin}
-            {' '}
-            to list of trusted origins in your
-            {' '}
-            <a href={corsAdminUrl} target="_blank" rel="noreferrer">Okta Administrator Dashboard</a>
-          </p>
-          <p>
-            Read
-            {' '}
-            <a href={guideUrl} target="_blank" rel="noreferrer">this guide</a>
-            {' '}
-            for more info.
-          </p>
+        <p>Seems like logout API call resulted with CORS error.</p>
+        <p>
+          You may need to add your origin
+          {' '}
+          {window.location.origin}
+          {' '}
+          to list of trusted origins in your
+          {' '}
+          <a href={corsAdminUrl} target="_blank" rel="noreferrer">Okta Administrator Dashboard</a>
+        </p>
+        <p>
+          Read
+          {' '}
+          <a href={guideUrl} target="_blank" rel="noreferrer">this guide</a>
+          {' '}
+          for more info.
+        </p>
       </Box>
     </Modal>
   );
