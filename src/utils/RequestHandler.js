@@ -26,14 +26,14 @@ export const Post = async (path, data) => {
 
 
 export const formReducer = (state, event) => {
-    if (!event.target) {
-        return {
-            ...state,
-            ...event
-        }
-    }
+  if (!event.target) {
     return {
-        ...state,
-        [event.target?.name]: event.target?.value
+      ...state,
+      ...event
     }
+  }
+  return {
+    ...state,
+    [event.target?.name]: event.target?.value
+  }
 }
