@@ -11,10 +11,19 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Input from '@mui/material/Input';
-import { Radio } from '@mui/material';
+import { CircularProgress, Radio } from '@mui/material';
 import CustomInput from './CustomInput';
 
-const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setColumnToUpdate = () => { }, setOpenSidebar = () => { }, handlePriorityAndAssignment }) => {
+const SideBar = ({
+  options = [],
+  openSideBar = false,
+  columnToUpdate = '',
+  sideBarLoading = false,
+  setColumnToUpdate = () => { },
+  setOpenSidebar = () => { },
+  setSideBarLoading = () => { },
+  handlePriorityAndAssignment = () => { }
+}) => {
 
   const [filter, setFilter] = useState(options);
   const [priority, setPriority] = useState('');
@@ -35,6 +44,7 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
     if (openSideBar) {
       setFilter(options);
     }
+    setPriority('');
     setSelectedAgent('');
   }, [options, openSideBar]);
 
@@ -57,7 +67,7 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
               fontWeight: " 400",
               lineHeight: " 1.3125rem"
             }}>
-              {columnToUpdate === 'priority' ? 'Select priority' : 'Select agent to assign email/s to'}
+              {columnToUpdate === 'priority' ? 'Set priority' : 'Select agent to assign email/s to'}
             </span>
             <span>
               <CloseIcon
@@ -108,7 +118,7 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
                 title={''}
                 type='number'
                 value={priority}
-                onChange={(e) => { if (e.target.value >= 0 && e.target.value <= 200) { setPriority(e.target.value) } }}
+                onChange={(e) => { if (e.target.value >= 0) { setPriority(e.target.value) } }}
               />
             </Box>
           }
@@ -116,13 +126,21 @@ const SideBar = ({ options = [], openSideBar = false, columnToUpdate = '', setCo
         <Box sx={{ position: 'sticky', bottom: 0 }}>
           <Box sx={{ padding: "16px", backgroundColor: "white" }}>
             <Button
-              disabled={!columnToUpdate}
+              disabled={sideBarLoading || (columnToUpdate === 'priority' && priority === "")}
               onClick={() => {
-                setColumnToUpdate('');
+                setSideBarLoading(true);
                 handlePriorityAndAssignment(columnToUpdate === 'priority' ? priority : selectedAgent);
               }}
-
-              sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained">{columnToUpdate === 'priority' ? 'Set Priority' : 'Assign'}</Button>
+              sx={{ width: "100%", backgroundColor: "#0263E0", height: "40px", padding: "8px 12px", gap: "4px" }} variant="contained"
+            >
+              {sideBarLoading ?
+                <CircularProgress />
+                :
+                <>
+                  {columnToUpdate === 'priority' ? 'Set Priority' : 'Assign'}
+                </>
+              }
+            </Button>
           </Box>
         </Box>
       </Drawer>

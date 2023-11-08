@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Grid, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CachedIcon from '@mui/icons-material/Cached';
@@ -6,7 +6,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import moment from 'moment';
 
-const Actions = ({ handleDeleteModalOpen = () => { }, setColumnToUpdate = () => { }, onRefresh = () => { }, disabled = false }) => {
+const Actions = ({ handleDeleteModalOpen = () => { }, setColumnToUpdate = () => { }, onRefresh = () => { }, disabled = false, gridLoading = false }) => {
   const [lastUpdatedText, setLastUpdatedText] = useState(moment(JSON.parse(localStorage.getItem('lastUpdated'))).fromNow());
 
   const updateLastUpdatedText = () => {
@@ -61,10 +61,11 @@ const Actions = ({ handleDeleteModalOpen = () => { }, setColumnToUpdate = () => 
           color='default'
           sx={{ color: "#606B85" }}
           className='actionBtn refresh'
-          startIcon={<CachedIcon className='actionIcon' fontSize="large" />}
+          startIcon={gridLoading ? null : <CachedIcon className='actionIcon' fontSize="large" />}
           onClick={onRefresh}
+          disabled={gridLoading}
         >
-          Refresh
+          {gridLoading ? <CircularProgress size={20} /> : "Refresh"}
         </Button>
       </Box>
     </Grid>

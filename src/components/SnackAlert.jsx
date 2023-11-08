@@ -18,7 +18,7 @@ const SnackAlert = ({ message = "", setMessage }) => {
         setTimeout(() => {
           setIsOpen(false);
           setMessage('');
-        }, 3000);
+        }, 10000);
       }
     } else {
       setIsOpen(false);

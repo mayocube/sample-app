@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Typography } from '@mui/material'
 import React from 'react'
 import Modal from "@mui/material/Modal"
 const style = {
@@ -12,7 +12,7 @@ const style = {
   padding: "38px 60px",
   borderRadius: "10px"
 };
-const DeleteModal = ({ openDeleteModal, handleDeleteModalClose, handleDeleteModalOk, deleteCount = 0 }) => {
+const DeleteModal = ({ openDeleteModal, deleteLoading = false, handleDeleteModalClose, handleDeleteModalOk, deleteCount = 0 }) => {
   return (
     <div>
       <Modal
@@ -29,8 +29,16 @@ const DeleteModal = ({ openDeleteModal, handleDeleteModalClose, handleDeleteModa
             marginTop: "80px", display: "flex", justifyContent: "center"
           }}>
 
-            <Button onClick={handleDeleteModalClose} sx={{ width: "100px", height: "45px" }} color="dark" variant="outlined">Cancel</Button>
-            <Button onClick={handleDeleteModalOk} sx={{ marginLeft: "40px", width: "100px", height: "45px", backgroundColor: "#D61F1F" }} variant="contained">Delete</Button>
+            <Button disabled={deleteLoading} onClick={handleDeleteModalClose} sx={{ width: "100px", height: "45px" }} color="dark" variant="outlined">Cancel</Button>
+            <Button disabled={deleteLoading} onClick={handleDeleteModalOk} sx={{ marginLeft: "40px", width: "100px", height: "45px", backgroundColor: "#D61F1F" }} variant="contained">
+              {
+                deleteLoading ?
+                  <CircularProgress />
+                  :
+                  "Delete"
+              }
+
+            </Button>
           </Box>
         </Box>
       </Modal>

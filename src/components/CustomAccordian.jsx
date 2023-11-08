@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Box } from '@mui/material';
 import { KeyboardArrowUp } from '@mui/icons-material';
 
-const CustomAccordian = ({ title = "", detail = "", onClick }) => {
+const CustomAccordian = ({ title = "", onClick = () => {} }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (

@@ -90,7 +90,7 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
                         <Typography
                           sx={{
                             display: 'block',
-                            fontSize: 12,
+                            fontSize: 14,
                             pl: '24px'
                           }}
                           component={'span'}

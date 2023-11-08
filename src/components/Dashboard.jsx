@@ -42,12 +42,18 @@ const Dashboard = () => {
     </>)
   }
 
-  const [openSideBar, setOpenSidebar] = React.useState(false);
+  const [openSideBar, setOpenSidebar] = useState(false);
+  const [gridLoading, setGridLoading] = useState(false);
+  const [sideBarLoading, setSideBarLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [message, setMessage] = useState("")
   const [columnToUpdate, setColumnToUpdate] = useState('')
-  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const handleDeleteModalOpen = () => setOpenDeleteModal(true);
-  const handleDeleteModalClose = () => setOpenDeleteModal(false);
+  const handleDeleteModalClose = () => {
+    setOpenDeleteModal(false);
+    setDeleteLoading(false);
+  };
   const [formData, setFormData] = useReducer(formReducer, {
     customerEmail: '',
     priority: "",
@@ -84,6 +90,7 @@ const Dashboard = () => {
   };
 
   const handleDelete = async () => {
+    setDeleteLoading(true);
     const deletedTaskSids = await deleteTasks(selectedRowIds);
     deleteData(deletedTaskSids);
     setData(data?.filter(x => !selectedRowIds.includes(x.taskSid)))
@@ -113,6 +120,7 @@ const Dashboard = () => {
   }
 
   const getEmailTasksData = async (prevData, Page, PageToken) => {
+    setGridLoading(true);
     var args = {};
     if (Page >= 1) {
       args = { Page, PageToken }
@@ -133,11 +141,14 @@ const Dashboard = () => {
         setTimeout(async () => {
           await getEmailTasksData(newData, parseInt(res?.Page), res?.PageToken);
         }, 200);
+      } else {
+        setGridLoading(false);
       }
     } else {
       setData([]);
       clearData();
       setMessage(res?.message);
+      setGridLoading(false);
     }
   }
 
@@ -277,6 +288,7 @@ const Dashboard = () => {
       }
     }
     setData(temp);
+    setSideBarLoading(false);
   }
 
   const environmentName = (origin) => {
@@ -332,7 +344,19 @@ const Dashboard = () => {
       columnHelper.accessor("brand", {
         header: () => "Brand",
         cell: (row) => (
-          <CustomAccordian onClick={(expanded) => { if (expanded) { getEmailDetailsData(row?.row?.original?.channelSid); setRowId(row?.row?.id) } else { setRowId(null); setEmailDetails(null) } }} title={row?.row?.original?.brand} />
+          <CustomAccordian 
+            rowId={row?.row?.id}
+            onClick={(expanded) => { 
+              setEmailDetails(null); 
+              if (expanded) { 
+                getEmailDetailsData(row?.row?.original?.channelSid); 
+                setRowId(row?.row?.id) 
+              } else { 
+                setRowId(null); 
+              } 
+            }} 
+            title={row?.row?.original?.brand} 
+          />
         )
       }),
       columnHelper.accessor("priority", {
@@ -368,7 +392,7 @@ const Dashboard = () => {
         await getAgentsData(); //get agent data first
         const res = await getData();
         if (res.length === 0) {
-          await getEmailTasksData([], 1, null);
+          await getEmailTasksData([], 0, null);
         } else {
           setData(res);
           localStorage.setItem('lastUpdated', JSON.stringify(moment()))
@@ -510,6 +534,7 @@ const Dashboard = () => {
 
           <Actions
             disabled={selectedRows?.length === 0}
+            gridLoading={gridLoading}
             handleDeleteModalOpen={handleDeleteModalOpen}
             setColumnToUpdate={(e) => { setColumnToUpdate(e); setOpenSidebar(true); }}
             onRefresh={handleRefresh}
@@ -525,6 +550,7 @@ const Dashboard = () => {
             handleDeleteModalOk={() => { handleDelete(); }}
             handleDeleteModalClose={() => { handleDeleteModalClose() }}
             openDeleteModal={openDeleteModal}
+            deleteLoading={deleteLoading}
           />
         </Box>
         <SideBar
@@ -533,8 +559,11 @@ const Dashboard = () => {
           setColumnToUpdate={setColumnToUpdate}
           openSideBar={openSideBar}
           setOpenSidebar={setOpenSidebar}
+          sideBarLoading={sideBarLoading}
+          setSideBarLoading={setSideBarLoading}
           options={agent}
         />
+        
         <DataTable
           rowId={rowId}
           getSelectedRows={getSelectedRows}
