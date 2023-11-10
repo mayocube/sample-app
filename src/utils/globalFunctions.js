@@ -1,7 +1,8 @@
-import moment from "moment"
-
 export const filterAge = (row, columnId, value) => {
-  const hours = moment(row.getValue(columnId), 'hh:mm').hours();
+  const [strHours, strMinutes] = row.getValue(columnId).split(':');
+  const totalMinutes = parseInt(strHours) * 60 + parseInt(strMinutes);
+  const hours = Math.floor(totalMinutes / 60);
+
   if (value.length === 0) {
     return true;
   }
