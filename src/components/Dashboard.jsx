@@ -129,7 +129,8 @@ const Dashboard = () => {
     if (res?.data) {
       const temp = res?.data.map((x, i) => {
         if (x.age) {
-          x.age = moment(x.age).format("hh:mm");
+          const duration = moment.duration(x.age, 'seconds');
+          x.age = Math.floor(duration.asHours()).toString().padStart(2, '0') + ':' + duration.minutes().toString().padStart(2, '0');
         }
         return x;
       })
@@ -293,13 +294,13 @@ const Dashboard = () => {
 
   const environmentName = (origin) => {
     if (origin.includes('localhost')) {
-      return 'Local';
+      return '{Local}';
     } else if (origin.includes('ccc-admin-dev')) {
-      return 'Dev';
+      return '{Dev}';
     } else if (origin.includes('ccc-admin-qa')) {
-      return 'QA';
+      return '{QA}';
     } else if (origin.includes('ccc-admin-preprod')) {
-      return 'Pre-PROD';
+      return '{Pre-Prod}';
     } else {
       return '';
     }
@@ -345,7 +346,6 @@ const Dashboard = () => {
         header: () => "Brand",
         cell: (row) => (
           <CustomAccordian 
-            rowId={row?.row?.id}
             onClick={(expanded) => { 
               setEmailDetails(null); 
               if (expanded) { 
@@ -412,7 +412,7 @@ const Dashboard = () => {
       <TopBar navbarTitle={
         <>
           NM Twilio Super Admin
-          <span style={{ color: 'yellow' }}>{` {${environmentName(window.location.origin)}}`}</span>
+          <span style={{ color: 'yellow' }}>{` ${environmentName(window.location.origin)}`}</span>
         </>
       } />
 
