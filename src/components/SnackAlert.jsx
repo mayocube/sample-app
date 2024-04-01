@@ -6,21 +6,25 @@ import ErrorLogo from './../../src/assets/error.svg'
 const SnackAlert = ({ message = "", setMessage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  let timeout = null;
 
   useEffect(() => {
     if (message !== "") {
       setIsOpen(true);
       const hasError = message.includes("Error");
       setIsSuccess(!hasError);
-  
+      
       // Only auto-close for success messages
       if (!hasError) {
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           setIsOpen(false);
           setMessage('');
         }, 10000);
       }
     } else {
+      if(timeout != null){
+        clearTimeout(timeout);
+      }
       setIsOpen(false);
       setMessage('');
     }
@@ -29,7 +33,7 @@ const SnackAlert = ({ message = "", setMessage }) => {
   return (
     isOpen &&
     <Alert
-      onClose={() => setIsOpen(false)}
+      onClose={() => { setMessage(''); }}
       icon={<img src={isSuccess ? SuccessLogo : ErrorLogo} />}
       variant="filled"
       sx={{

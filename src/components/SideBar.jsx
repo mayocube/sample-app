@@ -126,7 +126,7 @@ const SideBar = ({
         <Box sx={{ position: 'sticky', bottom: 0 }}>
           <Box sx={{ padding: "16px", backgroundColor: "white" }}>
             <Button
-              disabled={sideBarLoading || (columnToUpdate === 'priority' && priority === "")}
+              disabled={sideBarLoading || (columnToUpdate === 'priority' && priority === "") || (columnToUpdate === 'agent' && selectedAgent === '')}
               onClick={() => {
                 setSideBarLoading(true);
                 handlePriorityAndAssignment(columnToUpdate === 'priority' ? priority : selectedAgent);

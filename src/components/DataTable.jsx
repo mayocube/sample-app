@@ -107,6 +107,11 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
           ))}
         </thead>
         <tbody className='tbody' style={{ fontFamily: "Inter" }}>
+          {
+            table.getFilteredRowModel().rows.length === 0 && (
+              <td colSpan={20} style={{ textAlign: "center", color: "#bd1721" }}>No tasks found. Try resetting filters.</td>
+            )
+          }
           {table.getRowModel().rows.map(row => (
             <>
               <tr key={row.id} className='tableRows'>
@@ -156,31 +161,39 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
           )}
         </tbody>
       </Table>
-      <Box sx={{ display: "flex", justifyContent: "end", alignItems: 'center', margin: "20px 0" }}>
-        <div className={!table.getCanPreviousPage() && "disabled displayNone"}>
-          <button
-            onClick={e => { e.preventDefault(); table.previousPage(); }}
-            tabIndex="-1"
-            disabled={!table.getCanPreviousPage()}
-            className='paginationBtn'
-          >
-            <KeyboardArrowLeft /> PREVIOUS
-          </button>
-        </div>
-        <Box sx={{ minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center" }}><span className='ml-2'> <span className="paginationDarkColor">
-          {(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1}-{(table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize > data.length ? data.length : (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize}</span> <span className="paginationGrayColor">of {data.length}</span> </span></Box>
+      {table.getFilteredRowModel().rows.length !== 0 &&
+        <Box sx={{ display: "flex", justifyContent: "end", alignItems: 'center', margin: "20px 0" }}>
+          <div className={!table.getCanPreviousPage() && "disabled displayNone"}>
+            <button
+              onClick={e => { e.preventDefault(); table.previousPage(); }}
+              tabIndex="-1"
+              disabled={!table.getCanPreviousPage()}
+              className='paginationBtn'
+            >
+              <KeyboardArrowLeft /> PREVIOUS
+            </button>
+          </div>
+          <Box sx={{ minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span className='ml-2'>
+              <span className="paginationDarkColor">
+                {(table.getState().pagination.pageIndex * table.getState().pagination.pageSize) + 1}-{(table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize > table.getFilteredRowModel().rows.length ? table.getFilteredRowModel().rows.length : (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize}
+              </span>
+              <span className="paginationGrayColor"> of {table.getFilteredRowModel().rows.length}</span>
+            </span>
+          </Box>
 
-        <Box className={!table.getCanNextPage() && "disabled displayNone"}>
-          <button
-            onClick={e => { e.preventDefault(); table.nextPage(); }}
-            tabIndex="-1"
-            disabled={!table.getCanNextPage()}
-            className='paginationBtn'
-          >
-            NEXT <KeyboardArrowRight />
-          </button>
-        </Box>
-      </Box >
+          <Box className={!table.getCanNextPage() && "disabled displayNone"}>
+            <button
+              onClick={e => { e.preventDefault(); table.nextPage(); }}
+              tabIndex="-1"
+              disabled={!table.getCanNextPage()}
+              className='paginationBtn'
+            >
+              NEXT <KeyboardArrowRight />
+            </button>
+          </Box>
+        </Box >
+      }
     </>
   )
 }

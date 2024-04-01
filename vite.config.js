@@ -52,22 +52,22 @@ export default defineConfig(({ command }) => {
         punycode: 'rollup-plugin-node-polyfills/polyfills/punycode',
         url: 'rollup-plugin-node-polyfills/polyfills/url',
         string_decoder:
-          'rollup-plugin-node-polyfills/polyfills/string-decoder',
+            'rollup-plugin-node-polyfills/polyfills/string-decoder',
         http: 'rollup-plugin-node-polyfills/polyfills/http',
         https: 'rollup-plugin-node-polyfills/polyfills/http',
         os: 'rollup-plugin-node-polyfills/polyfills/os',
         assert: 'rollup-plugin-node-polyfills/polyfills/assert',
         constants: 'rollup-plugin-node-polyfills/polyfills/constants',
         _stream_duplex:
-          'rollup-plugin-node-polyfills/polyfills/readable-stream/duplex',
+            'rollup-plugin-node-polyfills/polyfills/readable-stream/duplex',
         _stream_passthrough:
-          'rollup-plugin-node-polyfills/polyfills/readable-stream/passthrough',
+            'rollup-plugin-node-polyfills/polyfills/readable-stream/passthrough',
         _stream_readable:
-          'rollup-plugin-node-polyfills/polyfills/readable-stream/readable',
+            'rollup-plugin-node-polyfills/polyfills/readable-stream/readable',
         _stream_writable:
-          'rollup-plugin-node-polyfills/polyfills/readable-stream/writable',
+            'rollup-plugin-node-polyfills/polyfills/readable-stream/writable',
         _stream_transform:
-          'rollup-plugin-node-polyfills/polyfills/readable-stream/transform',
+            'rollup-plugin-node-polyfills/polyfills/readable-stream/transform',
         timers: 'rollup-plugin-node-polyfills/polyfills/timers',
         console: 'rollup-plugin-node-polyfills/polyfills/console',
         vm: 'rollup-plugin-node-polyfills/polyfills/vm',
@@ -113,7 +113,7 @@ export default defineConfig(({ command }) => {
       rollupOptions: {
         // always throw with build warnings
         onwarn(warning, warn) {
-          warn('\nBuild warning happened, customize "onwarn" callback in vite.config.js to handle this error.');
+          //warn('\nBuild warning happened, customize "onwarn" callback in vite.config.js to handle this error.');
           //throw new Error(warning);
         },
         plugins: [

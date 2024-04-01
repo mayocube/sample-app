@@ -92,7 +92,9 @@ const Dashboard = () => {
   const handleDelete = async () => {
     setDeleteLoading(true);
     const deletedTaskSids = await deleteTasks(selectedRowIds);
-    deleteData(deletedTaskSids);
+    if (deletedTaskSids) {
+      deleteData(deletedTaskSids);
+    }
     setData(data?.filter(x => !selectedRowIds.includes(x.taskSid)))
     handleDeleteModalClose();
   }
@@ -236,19 +238,21 @@ const Dashboard = () => {
     try {
       const res = await assignEmailTaskToAgent(tasks);
       if (!res.isAllTasksAssigned) {
-        setMessage(`Error: Could not agent to ${res.tasksNotAssignedCount} emails`);
+        setMessage(`Error: Failed to assign ${res.tasksNotAssignedCount} emails to agent`);
+        return { success: false, message: res.message };
       }
       setMessage(res.message);
-      return res.assignedTasks;
+      return { success: true, data: res.assignedTasks };
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
-      return false;
+      setMessage(`Error: ${error.response?.data || error.message}`);
+      return { success: false, message: error.response?.data || error.message };
     }
   };
 
   const handlePriorityAndAssignment = async (value) => {
     let temp = JSON.parse(JSON.stringify(data));
     let selected = JSON.parse(JSON.stringify(selectedRows));
+    let error = 0;
     if (columnToUpdate === 'priority') {
       temp = temp?.filter(x => {
         if (selectedRowIds.includes(x.taskSid)) {
@@ -263,7 +267,11 @@ const Dashboard = () => {
         return x;
       })
       const assignedTaskPriorityResult = await assignTaskPriority(selected);
-      updateData(assignedTaskPriorityResult);
+      if (assignedTaskPriorityResult) {
+        updateData(assignedTaskPriorityResult);
+      } else {
+        error++;
+      }
     }
     if (columnToUpdate === 'agent') {
       const agentDetail = agent.find(item => item.fullName === value);
@@ -285,10 +293,20 @@ const Dashboard = () => {
           agentSid: agentDetail.workerSid
         }));
         const assignedAgentsResult = await assignAgent(selected);
-        updateData(assignedAgentsResult);
+        if (assignedAgentsResult.success) {
+          updateData(assignedAgentsResult.data);
+        }
+        else {
+          error++;
+          console.error("Error in assigning agents:", assignedAgentsResult.message);
+        }
       }
     }
-    setData(temp);
+    if(error === 0) {
+      setData(temp);
+    } else {
+      setOpenSidebar(false);
+    }
     setSideBarLoading(false);
   }
 
@@ -389,7 +407,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (authState != null || process.env.NODE_ENV === "development") {
       (async () => {
-        await getAgentsData(); //get agent data first
         const res = await getData();
         if (res.length === 0) {
           await getEmailTasksData([], 0, null);
@@ -397,6 +414,7 @@ const Dashboard = () => {
           setData(res);
           localStorage.setItem('lastUpdated', JSON.stringify(moment()))
         }
+        await getAgentsData(); //get agent data first
       })()
     }
   }, [authState])
