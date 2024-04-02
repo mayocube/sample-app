@@ -16,6 +16,9 @@ export const Get = async (path) => {
 export const Post = async (path, data) => {
     try {
         const response = await axios.post(`${url}${path}`, data, { headers: customHeaders })
+        if(process.env.NODE_ENV === "development"){
+          return response?.data ?? response;
+        }
         return response
 
     } catch (err) {

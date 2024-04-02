@@ -22,9 +22,9 @@ import { useHistory } from 'react-router-dom';
 const Dashboard = () => {
   const { oktaAuth, authState } = useOktaAuth();
   const location = useHistory()
-  const triggerLogin = async () => {
+  const triggerLogin = async (route) => {
     if (process.env.NODE_ENV === "development") {
-      location.replace("/login/callback?code=sYmm2mzsJBrJ7LSxkwvlsL3V2UJlwaUf5l5Le9dNSXg&state=pnRCq7Dlw6HerG7EvgvW62VQqS4PWistWLncaqsgX4RFV0Z74GTi6wrDE1En4gU6");
+      location.replace(`/login/${route}?code=sYmm2mzsJBrJ7LSxkwvlsL3V2UJlwaUf5l5Le9dNSXg&state=pnRCq7Dlw6HerG7EvgvW62VQqS4PWistWLncaqsgX4RFV0Z74GTi6wrDE1En4gU6`);
       window.location.reload();
     } else {
       await oktaAuth.signInWithRedirect();
@@ -37,8 +37,8 @@ const Dashboard = () => {
   if (authState && !authState.isPending && !authState.isAuthenticated) {
     return (
       <div style={{ height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
-        <button onClick={triggerLogin} className="button">Launch Dashboard</button>
-        <button onClick={triggerLogin} className="button">Launch HOOPs</button>
+        <button onClick={() => triggerLogin('callback')} className="button">Launch Dashboard</button>
+        <button onClick={() => triggerLogin('callback2')} className="button">Launch HOOPs</button>
       </div>
     );
   }

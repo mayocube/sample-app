@@ -21,6 +21,7 @@ import theme from './utils/theme';
 import CorsErrorModal from './components/CorsErrorModal';
 import AuthRequiredModal from './components/AuthRequiredModal';
 import { ThemeProvider } from '@mui/material';
+import HOOPs from './components/HOOPs';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -62,6 +63,7 @@ const App = () => {
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/login/callback"><Home loginCallback /></Route>
+          <Route path="/login/callback2"><HOOPs /></Route>
         </Switch>
       </ThemeProvider>
     </Security>

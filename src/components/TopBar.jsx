@@ -4,15 +4,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import DraftsIcon from '@mui/icons-material/Drafts';
+import { useHistory } from 'react-router-dom';
 
 const MenuSider = ({ openSideBar, setOpenSidebar }) => {
-
+  const location = useHistory();
   const toggleDrawer = () => () => {
     setOpenSidebar(!openSideBar);
   };
 
   const handleListItemClick = (event, route) => {
-
+    location.replace(`/login/${route}?code=sYmm2mzsJBrJ7LSxkwvlsL3V2UJlwaUf5l5Le9dNSXg&state=pnRCq7Dlw6HerG7EvgvW62VQqS4PWistWLncaqsgX4RFV0Z74GTi6wrDE1En4gU6`);
   }
 
   return (
@@ -37,13 +38,13 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
       <Box sx={{ position: 'sticky', bottom: 0 }}>
         <Box sx={{ backgroundColor: "white" }}>
           <List component="nav" aria-label="main mailbox folders">
-            <ListItemButton onClick={(event) => handleListItemClick(event, 'Email')} >
+            <ListItemButton onClick={(event) => handleListItemClick(event, 'callback')} >
                 <ListItemIcon>
                   <DraftsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Email Dashboard" />
               </ListItemButton>
-            <ListItemButton onClick={(event) => handleListItemClick(event, 'HOOPs')} >
+            <ListItemButton onClick={(event) => handleListItemClick(event, 'callback2')} >
               <ListItemIcon>
                 <WatchLaterIcon />
               </ListItemIcon>

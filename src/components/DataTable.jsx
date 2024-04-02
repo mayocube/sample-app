@@ -4,7 +4,7 @@ import { Box, CircularProgress, Table, Typography } from '@mui/material'
 import { ArrowDownward, ArrowUpward, KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { filterAge, isWithinRange } from '../utils/globalFunctions';
 
-const DataTable = ({ data = [], columns, formData, resetData = false, handleReset, rowId, emailDetails = null, getSelectedRows }) => {
+const DataTable = ({ data = [], columns, formData, resetData = false, handleReset, rowId, emailDetails = null, getSelectedRows = () => {} }) => {
   const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
 
   const table = useReactTable({
