@@ -35,11 +35,12 @@ const Dashboard = () => {
   };
 
   if (authState && !authState.isPending && !authState.isAuthenticated) {
-    return (<>
-      <div style={{ height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    return (
+      <div style={{ height: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
         <button onClick={triggerLogin} className="button">Launch Dashboard</button>
+        <button onClick={triggerLogin} className="button">Launch HOOPs</button>
       </div>
-    </>)
+    );
   }
 
   const [openSideBar, setOpenSidebar] = useState(false);
