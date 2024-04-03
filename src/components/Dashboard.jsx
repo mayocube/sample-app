@@ -303,7 +303,7 @@ const Dashboard = () => {
         }
       }
     }
-    if(error === 0) {
+    if (error === 0) {
       setData(temp);
     } else {
       setOpenSidebar(false);
@@ -364,17 +364,17 @@ const Dashboard = () => {
       columnHelper.accessor("brand", {
         header: () => "Brand",
         cell: (row) => (
-          <CustomAccordian 
-            onClick={(expanded) => { 
-              setEmailDetails(null); 
-              if (expanded) { 
-                getEmailDetailsData(row?.row?.original?.channelSid); 
-                setRowId(row?.row?.id) 
-              } else { 
-                setRowId(null); 
-              } 
-            }} 
-            title={row?.row?.original?.brand} 
+          <CustomAccordian
+            onClick={(expanded) => {
+              setEmailDetails(null);
+              if (expanded) {
+                getEmailDetailsData(row?.row?.original?.channelSid);
+                setRowId(row?.row?.id)
+              } else {
+                setRowId(null);
+              }
+            }}
+            title={row?.row?.original?.brand}
           />
         )
       }),
@@ -565,7 +565,7 @@ const Dashboard = () => {
         </Box>
         <Box>
           <DeleteModal
-            deleteCount={selectedRows?.length ?? 0}
+            text={`Are you sure you want to delete ${selectedRows?.length} email${selectedRows?.length > 1 ? 's' : ''}?`}
             handleDeleteModalOk={() => { handleDelete(); }}
             handleDeleteModalClose={() => { handleDeleteModalClose() }}
             openDeleteModal={openDeleteModal}
@@ -582,7 +582,7 @@ const Dashboard = () => {
           setSideBarLoading={setSideBarLoading}
           options={agent}
         />
-        
+
         <DataTable
           rowId={rowId}
           getSelectedRows={getSelectedRows}

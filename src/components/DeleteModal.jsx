@@ -12,7 +12,7 @@ const style = {
   padding: "38px 60px",
   borderRadius: "10px"
 };
-const DeleteModal = ({ openDeleteModal, deleteLoading = false, handleDeleteModalClose, handleDeleteModalOk, deleteCount = 0 }) => {
+const DeleteModal = ({ openDeleteModal, deleteLoading = false, handleDeleteModalClose, handleDeleteModalOk, text = '' }) => {
   return (
     <div>
       <Modal
@@ -23,7 +23,7 @@ const DeleteModal = ({ openDeleteModal, deleteLoading = false, handleDeleteModal
       >
         <Box sx={style}>
           <Typography sx={{ fontFamily: "Inter", fontSize: "18px", lineHeight: "21px", textAlign: "center", fontWeight: "700", color: "#0F1621" }} id="modal-modal-title" variant="h6" component="h2">
-            {`Are you sure you want to delete ${deleteCount} email${deleteCount > 1 ? 's' : ''}?`}
+            {text}
           </Typography>
           <Box className="deleteBtnContainer" sx={{
             marginTop: "80px", display: "flex", justifyContent: "center"

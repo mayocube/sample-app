@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { AppBar, Container, IconButton, Toolbar, Typography, Drawer, Box, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import { useHistory } from 'react-router-dom';
@@ -23,27 +22,15 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
       open={openSideBar}
       onClose={toggleDrawer()}
     >
-      <Box
-        sx={{ width: "300px" }}
-        role="presentation"
-      >
-        <Box className="titleContainer">
-          <span> Menu </span>
-          <span>
-            <CloseIcon onClick={() => { setOpenSidebar(false) }} />
-          </span>
-        </Box>
-
-      </Box>
-      <Box sx={{ position: 'sticky', bottom: 0 }}>
+      <Box sx={{ position: 'sticky', bottom: 0, width: "300px" }}>
         <Box sx={{ backgroundColor: "white" }}>
           <List component="nav" aria-label="main mailbox folders">
             <ListItemButton onClick={(event) => handleListItemClick(event, 'callback')} >
-                <ListItemIcon>
-                  <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Email Dashboard" />
-              </ListItemButton>
+              <ListItemIcon>
+                <DraftsIcon />
+              </ListItemIcon>
+              <ListItemText primary="Email Dashboard" />
+            </ListItemButton>
             <ListItemButton onClick={(event) => handleListItemClick(event, 'callback2')} >
               <ListItemIcon>
                 <WatchLaterIcon />

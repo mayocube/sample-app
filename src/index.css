@@ -117,6 +117,7 @@ code {
   font-size: 14px !important;
   line-height: 21px !important;
   color: #606B85 !important;
+  text-transform: capitalize !important;
 }
 
 .actionIcon {
@@ -449,9 +450,18 @@ input#combo-box-demo {
   cursor: pointer;
 }
 
-.MuiDrawer-modal,
+/* .MuiDrawer-modal,
 .MuiBackdrop-root.MuiModal-backdrop {
   background-color: rgba(253, 253, 253, .6) !important;
+} */
+
+.MuiDrawer-modal,
+.MuiDrawer-modal .MuiDrawer-paper {
+  top: 46px !important;
+}
+
+.MuiDrawer-modal .MuiListItemButton-root {
+  padding-left: 20px;
 }
 
 .deleteBtnContainer .MuiButtonBase-root.MuiButton-root.MuiButton-contained {
