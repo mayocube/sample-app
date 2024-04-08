@@ -1,16 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Button, Container, Grid } from '@mui/material'
-import TopBar from './TopBar';
-import Header from './Header';
+import TopBar from '../components/TopBar';
+import Header from '../components/Header';
 import { getHoops } from '../apiService/EndPoints';
-import DataTable from './DataTable';
+import DataTable from '../components/DataTable';
 import { createColumnHelper } from '@tanstack/react-table';
-import CustomInput from './CustomInput';
+import CustomInput from '../components/CustomInput';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
-import DeleteModal from './DeleteModal';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import DeleteModal from '../components/DeleteModal';
+import { useHistory } from 'react-router-dom';
 
 const HOOPs = () => {
+
+  const history = useHistory();
 
   const [name, setName] = useState('');
   const [resetData, setResetData] = useState(false);
@@ -91,13 +95,13 @@ const HOOPs = () => {
       }),
       columnHelper.accessor("action", {
         header: () => "",
-        cell: () => {
+        cell: ({ row }) => {
           return (
             <>
               <Button
                 className='actionBtn'
-                onClick={() => { }}
-                startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
+                onClick={() => history.push(`/hoops/add-update`, { id: row.original.id })}
+                startIcon={<EditNoteIcon className='actionIcon' fontSize="large" />}
               >
                 Edit
               </Button>
@@ -170,7 +174,7 @@ const HOOPs = () => {
           </Button>
           <Button
             className='actionBtn'
-            onClick={() => { }}
+            onClick={() => history.push(`/hoops/add-update`)}
             startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
           >
             Add

@@ -15,13 +15,14 @@ import { Route, useHistory, Switch } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Security, LoginCallback } from '@okta/okta-react';
 import config from './config';
-import Home from './components/Home';
+import Home from './Pages/Home';
 import theme from './utils/theme';
 
 import CorsErrorModal from './components/CorsErrorModal';
 import AuthRequiredModal from './components/AuthRequiredModal';
 import { ThemeProvider } from '@mui/material';
-import HOOPs from './components/HOOPs';
+import HOOPs from './Pages/HOOPs';
+import HoopsEdit from './Pages/HoopsEdit';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="/" exact component={Home} />
           <Route path="/login/callback"><Home loginCallback /></Route>
           <Route path="/login/callback2"><HOOPs /></Route>
+          <Route path="/hoops/add-update"><HoopsEdit /></Route>
         </Switch>
       </ThemeProvider>
     </Security>

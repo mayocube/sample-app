@@ -10,7 +10,7 @@ const CustomSelect = ({ name, onChange, value = '', items, title, multiple = fal
   return (
     <Grid item xs={2} marginTop={0}>
       <FormControl className='customSelects' sx={{ width: "100%" }}>
-        <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""}</Typography>
+        {title && <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""}</Typography>}
         <Select
           multiple={multiple}
           displayEmpty

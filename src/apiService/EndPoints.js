@@ -9,3 +9,5 @@ export const getEmailDetails = (data) => Post('get-email-message', data);
 export const getEmailTasks = (data) => Post('get-email-tasks', data);
 export const assignEmailTaskToAgent = (data) => Post('emailDetail', data);
 export const getHoops = (data) => Post('hoops', data);
+export const createUpdateHoops = (data) => Post('hoops/save', data);
+export const getHoopsById = (id) => Post(`hoops/${id}`);
