@@ -66,8 +66,10 @@ const HoopsEdit = () => {
                 temp.id = id;
             }
             const res = await createUpdateHoops(temp);
-            console.log('first', res)
-            setLoading(false);
+            if (res?.status === 'success') {
+                setMessage(res?.message ?? `HOOP ${id ? 'updated' : 'created'} successfully.`);
+                setLoading(false);
+            }
         } catch (e) {
             setMessage(`Error occured please try again!`);
             setLoading(false);
@@ -81,12 +83,13 @@ const HoopsEdit = () => {
                 try {
                     const res = await getHoopsById(id);
                     console.log('first', res)
-                    if (res?.id) {
+                    if (res?.status === 'success') {
+                        let data = res?.data[0];
                         setFormData({
-                            name: res?.name,
-                            description: res?.description,
-                            timezone: res?.timezone,
-                            schedule: res?.schedule
+                            name: data?.name,
+                            description: data?.description,
+                            timezone: data?.timezone,
+                            schedule: data?.schedule
                         })
                     }
 

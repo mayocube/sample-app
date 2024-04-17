@@ -1,4 +1,4 @@
-import { Get, Post } from '../utils/RequestHandler';
+import { Delete, Post } from '../utils/RequestHandler';
 
 export const getmntasks = (data) => Post('nmtasks', data);
 export const getBrandDetails = (data) => Post('emailDetail', data);
@@ -11,3 +11,4 @@ export const assignEmailTaskToAgent = (data) => Post('emailDetail', data);
 export const getHoops = (data) => Post('hoops', data);
 export const createUpdateHoops = (data) => Post('hoops/save', data);
 export const getHoopsById = (id) => Post(`hoops/${id}`);
+export const deleteHoop = (id) => Delete(`hoops/${id}`);

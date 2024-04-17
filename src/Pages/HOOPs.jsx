@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Button, Container, Grid } from '@mui/material'
 import TopBar from '../components/TopBar';
 import Header from '../components/Header';
-import { getHoops } from '../apiService/EndPoints';
+import { deleteHoop, getHoops } from '../apiService/EndPoints';
 import DataTable from '../components/DataTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import CustomInput from '../components/CustomInput';
@@ -38,7 +38,7 @@ const HOOPs = () => {
   }
 
   const getSelectedRows = (selectedRows) => {
-    setSelectedRowIds(selectedRows.map(x => x.taskSid));
+    setSelectedRowIds(selectedRows.map(x => x.id));
   }
 
   const handleResetClick = () => {
@@ -116,10 +116,9 @@ const HOOPs = () => {
   const [data, setData] = useState([]);
   const getHoopsData = async () => {
     try {
-      //let token = authState.accessToken;
       const res = await getHoops()
-      if (res) {
-        setData(res);
+      if (res?.status === 'success') {
+        setData(res?.data ?? []);
       }
     } catch (error) {
       setMessage("Error: While fetching hoops")
@@ -127,14 +126,18 @@ const HOOPs = () => {
   }
 
   const handleDelete = async () => {
-    setDeleteLoading(true);
-    // const deletedTaskSids = await deleteOperation(selectedRowIds);
-    // if (deletedTaskSids) {
-    //   deleteData(deletedTaskSids);
-    // }
-    setData(data?.filter(x => !selectedRowIds.includes(x.id)))
-    setDeleteLoading(false);
-    setShowModal(false);
+    try {
+      setDeleteLoading(true);
+      const res = await deleteHoop(selectedRowIds);
+      if (res?.status === 'success') {
+        getHoopsData();
+        setDeleteLoading(false);
+        setShowModal(false);
+      }
+    } catch (error) {
+        setDeleteLoading(false);
+        setMessage("Error: An error has occured please try again!");
+    }
   }
 
   useEffect(() => {

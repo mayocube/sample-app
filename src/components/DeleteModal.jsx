@@ -33,7 +33,7 @@ const DeleteModal = ({ openDeleteModal, deleteLoading = false, handleDeleteModal
             <Button disabled={deleteLoading} onClick={handleDeleteModalOk} sx={{ marginLeft: "40px", width: "100px", height: "45px", backgroundColor: "#D61F1F" }} variant="contained">
               {
                 deleteLoading ?
-                  <CircularProgress />
+                  <CircularProgress sx={{ width: 25, height: 25, color: 'white' }} />
                   :
                   "Delete"
               }

@@ -27,6 +27,19 @@ export const Post = async (path, data) => {
 
 }
 
+export const Delete = async (path) => {
+  try {
+      const response = await axios.delete(`${url}${path}`)
+      if(process.env.NODE_ENV === "development"){
+        return response?.data ?? response;
+      }
+      return response
+
+  } catch (err) {
+      throw new Error(err.message);
+  }
+
+}
 
 export const formReducer = (state, event) => {
   if (!event.target) {
