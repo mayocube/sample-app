@@ -20,7 +20,7 @@ const HOOPs = () => {
   const [resetData, setResetData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
-  const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [selectedRowId, setSelectedRowId] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const environmentName = (origin) => {
@@ -37,10 +37,6 @@ const HOOPs = () => {
     }
   }
 
-  const getSelectedRows = (selectedRows) => {
-    setSelectedRowIds(selectedRows.map(x => x.id));
-  }
-
   const handleResetClick = () => {
     setResetData(true);
   }
@@ -54,36 +50,6 @@ const HOOPs = () => {
   const columnHelper = createColumnHelper();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("checkbox", {
-        header: ({ table }) => (
-          <>
-            <IndeterminateCheckbox
-              {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
-              }}
-            />
-            <span style={{ marginLeft: "20px" }}> {table.getIsAllRowsSelected() ? " Deselect All" : " Select All"}</span>
-          </>
-        ),
-        cell: ({ row, getValue }) => {
-          return (
-            <>
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />{' '}
-              {row.getCanExpand()}
-              {row.getIsSelected()}
-              {getValue()}
-            </>
-          )
-        },
-      }),
       columnHelper.accessor("name", {
         header: () => "Name",
       }),
@@ -97,7 +63,13 @@ const HOOPs = () => {
         header: () => "",
         cell: ({ row }) => {
           return (
-            <>
+            <Box
+              sx={{
+                gap: '10px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <Button
                 className='actionBtn'
                 onClick={() => history.push(`/hoops/add-update`, { id: row.original.id })}
@@ -105,7 +77,14 @@ const HOOPs = () => {
               >
                 Edit
               </Button>
-            </>
+              <Button
+                className='actionBtn'
+                onClick={() => { setSelectedRowId(row.original.id); setShowModal(true) }}
+                startIcon={<DeleteOutlinedIcon className='actionIcon' fontSize="large" />}
+              >
+                Delete
+              </Button>
+            </Box>
           )
         },
       }),
@@ -128,15 +107,15 @@ const HOOPs = () => {
   const handleDelete = async () => {
     try {
       setDeleteLoading(true);
-      const res = await deleteHoop(selectedRowIds);
+      const res = await deleteHoop(selectedRowId);
       if (res?.status === 'success') {
         getHoopsData();
         setDeleteLoading(false);
         setShowModal(false);
       }
     } catch (error) {
-        setDeleteLoading(false);
-        setMessage("Error: An error has occured please try again!");
+      setDeleteLoading(false);
+      setMessage("Error: An error has occured please try again!");
     }
   }
 
@@ -168,14 +147,6 @@ const HOOPs = () => {
         </Grid>
         <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
           <Button
-            disabled={selectedRowIds?.length === 0}
-            className='actionBtn'
-            onClick={() => setShowModal(true)}
-            startIcon={<DeleteOutlinedIcon className='actionIcon' fontSize="large" />}
-          >
-            Delete
-          </Button>
-          <Button
             className='actionBtn'
             onClick={() => history.push(`/hoops/add-update`)}
             startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
@@ -189,11 +160,10 @@ const HOOPs = () => {
           handleReset={handleReset}
           data={data}
           formData={{ name, description }}
-          getSelectedRows={getSelectedRows}
         />
       </Container>
       <DeleteModal
-        text={`Are you sure you want to delete ${selectedRowIds?.length} hoops?`}
+        text={`Are you sure you want to delete this hoop?`}
         handleDeleteModalOk={handleDelete}
         handleDeleteModalClose={() => setShowModal(false)}
         openDeleteModal={showModal}
@@ -201,25 +171,6 @@ const HOOPs = () => {
       />
     </>
   )
-}
-
-const IndeterminateCheckbox = ({ indeterminate, className = '', ...rest }) => {
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate]);
-
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={className + ' cursor-pointer customCheckBox'}
-      {...rest}
-    />
-  );
 };
 
 export default HOOPs

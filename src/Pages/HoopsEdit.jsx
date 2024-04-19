@@ -64,11 +64,14 @@ const HoopsEdit = () => {
             }
             if (id) {
                 temp.id = id;
+            } else {
+                temp.id = Math.random() * 9999;
             }
             const res = await createUpdateHoops(temp);
             if (res?.status === 'success') {
                 setMessage(res?.message ?? `HOOP ${id ? 'updated' : 'created'} successfully.`);
                 setLoading(false);
+                history.goBack();
             }
         } catch (e) {
             setMessage(`Error occured please try again!`);
@@ -143,6 +146,9 @@ const HoopsEdit = () => {
                         name='timezone'
                         value={formData["timezone"]}
                         onChange={setFormData}
+                        MenuStyle={{
+                            maxHeight: '400px !important'
+                        }}
                         items={
                             timezones?.map((tz) => ({
                                 value: tz,
