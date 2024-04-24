@@ -5,14 +5,13 @@ import CustomInput from '../components/CustomInput'
 import CustomSelect from '../components/CustomSelect'
 import { formReducer } from '../utils/RequestHandler'
 import CustomTimePicker from '../components/CustomTimePicker'
-import moment from 'moment-timezone';
 import { useHistory } from 'react-router-dom'
 import SnackAlert from '../components/SnackAlert'
 import { createUpdateHoops, getHoopsById } from '../apiService/EndPoints'
+import { timezones } from '../utils'
 
 const HoopsEdit = () => {
     const history = useHistory();
-    const timezones = moment.tz.names();
     const id = history.location.state?.id;
 
     const [message, setMessage] = useState('');
@@ -71,7 +70,9 @@ const HoopsEdit = () => {
             if (res?.status === 'success') {
                 setMessage(res?.message ?? `HOOP ${id ? 'updated' : 'created'} successfully.`);
                 setLoading(false);
-                history.goBack();
+                setTimeout(() => {
+                    history.goBack();
+                }, 1500);
             }
         } catch (e) {
             setMessage(`Error occured please try again!`);
@@ -236,9 +237,7 @@ const HoopsEdit = () => {
                     </Box>
                 </Box>
             </div>
-            <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
-                <SnackAlert message={message} setMessage={setMessage} />
-            </Box>
+            <SnackAlert message={message} setMessage={setMessage} />
         </>
     )
 }

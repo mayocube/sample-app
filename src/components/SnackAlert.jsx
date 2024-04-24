@@ -1,4 +1,5 @@
-import { Alert, } from '@mui/material'
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import React, { useEffect, useState } from 'react'
 import SuccessLogo from './../../src/assets/success.svg'
 import ErrorLogo from './../../src/assets/error.svg'
@@ -13,7 +14,7 @@ const SnackAlert = ({ message = "", setMessage }) => {
       setIsOpen(true);
       const hasError = message.includes("Error");
       setIsSuccess(!hasError);
-      
+
       // Only auto-close for success messages
       if (!hasError) {
         timeout = setTimeout(() => {
@@ -22,7 +23,7 @@ const SnackAlert = ({ message = "", setMessage }) => {
         }, 10000);
       }
     } else {
-      if(timeout != null){
+      if (timeout != null) {
         clearTimeout(timeout);
       }
       setIsOpen(false);
@@ -32,24 +33,26 @@ const SnackAlert = ({ message = "", setMessage }) => {
 
   return (
     isOpen &&
-    <Alert
-      onClose={() => { setMessage(''); }}
-      icon={<img src={isSuccess ? SuccessLogo : ErrorLogo} />}
-      variant="filled"
-      sx={{
-        backgroundColor: "#EDFDF3 ", display: 'flex',
-        padding: '1.25rem',
-        alignItems: 'flex-start',
-        flex: '1 0 0',
-        maxWidth: "fit-content",
-        margin: "0 auto",
-        color: isSuccess ? "#0B602D" : "#C72323",
-        border: isSuccess ? "solid 1px #7BEAA5" : "solid 1px #F58A8A",
-        boxShadow: "0px 16px 24px 4px rgba(18, 28, 45, 0.20)",
-      }}
-    >
-      {message ?? ""}
-    </Alert>
+    <Box sx={{ position: "absolute", top: "20px", width: "100%" }}>
+      <Alert
+        onClose={() => { setMessage(''); }}
+        icon={<img src={isSuccess ? SuccessLogo : ErrorLogo} />}
+        variant="filled"
+        sx={{
+          backgroundColor: "#EDFDF3 ", display: 'flex',
+          padding: '1.25rem',
+          alignItems: 'flex-start',
+          flex: '1 0 0',
+          maxWidth: "fit-content",
+          margin: "0 auto",
+          color: isSuccess ? "#0B602D" : "#C72323",
+          border: isSuccess ? "solid 1px #7BEAA5" : "solid 1px #F58A8A",
+          boxShadow: "0px 16px 24px 4px rgba(18, 28, 45, 0.20)",
+        }}
+      >
+        {message ?? ""}
+      </Alert>
+    </Box>
   )
 }
 export default SnackAlert

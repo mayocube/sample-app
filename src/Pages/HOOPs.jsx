@@ -11,12 +11,15 @@ import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteModal from '../components/DeleteModal';
 import { useHistory } from 'react-router-dom';
+import SnackAlert from '../components/SnackAlert';
 
 const HOOPs = () => {
 
   const history = useHistory();
 
   const [name, setName] = useState('');
+  const [data, setData] = useState([]);
+  const [message, setMessage] = useState('');
   const [resetData, setResetData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
@@ -92,7 +95,6 @@ const HOOPs = () => {
     []
   );
 
-  const [data, setData] = useState([]);
   const getHoopsData = async () => {
     try {
       const res = await getHoops()
@@ -112,6 +114,7 @@ const HOOPs = () => {
         getHoopsData();
         setDeleteLoading(false);
         setShowModal(false);
+        setMessage(res?.message);
       }
     } catch (error) {
       setDeleteLoading(false);
@@ -169,6 +172,7 @@ const HOOPs = () => {
         openDeleteModal={showModal}
         deleteLoading={deleteLoading}
       />
+      <SnackAlert message={message} setMessage={setMessage} />
     </>
   )
 };
