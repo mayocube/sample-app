@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Box, Button, Container, Grid } from '@mui/material'
+import { Box, Button, CircularProgress, Container, Grid, Typography } from '@mui/material'
 import TopBar from '../components/TopBar';
 import Header from '../components/Header';
 import { deleteHoop, getHoops } from '../apiService/EndPoints';
@@ -12,19 +12,37 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteModal from '../components/DeleteModal';
 import { useHistory } from 'react-router-dom';
 import SnackAlert from '../components/SnackAlert';
+import CachedIcon from '@mui/icons-material/Cached';
+import moment from 'moment';
 
-const HOOPs = () => {
+const Hoops = () => {
 
   const history = useHistory();
+  const [fetchTime, setFetchTime] = useState(null);
+  const [lastUpdatedText, setLastUpdatedText] = useState(moment().fromNow());
 
   const [name, setName] = useState('');
   const [data, setData] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [resetData, setResetData] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
   const [selectedRowId, setSelectedRowId] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const onRefresh = () => { 
+     getHoopsData();
+}
+  const updateLastUpdatedText = () => {
+    setLastUpdatedText(moment(fetchTime).fromNow());
+};
+
+useEffect(() => {
+    updateLastUpdatedText();
+    const intervalId = setInterval(updateLastUpdatedText, 30000);
+    return () => clearInterval(intervalId);
+}, [fetchTime]);
 
   const environmentName = (origin) => {
     if (origin.includes('localhost')) {
@@ -62,6 +80,9 @@ const HOOPs = () => {
       columnHelper.accessor("timezone", {
         header: () => "Timezone",
       }),
+      columnHelper.accessor("closedHOOPFileName", {
+        header: () => "Closed Hoop File Name",
+      }),
       columnHelper.accessor("action", {
         header: () => "",
         cell: ({ row }) => {
@@ -75,14 +96,14 @@ const HOOPs = () => {
             >
               <Button
                 className='actionBtn'
-                onClick={() => history.push(`/hoops/add-update`, { id: row.original.id })}
+                onClick={() => history.push(`/hoop/${row.original.name}`, { name: row.original.name } )}
                 startIcon={<EditNoteIcon className='actionIcon' fontSize="large" />}
               >
                 Edit
               </Button>
               <Button
                 className='actionBtn'
-                onClick={() => { setSelectedRowId(row.original.id); setShowModal(true) }}
+                onClick={() => { setSelectedRowId(row.original.name); setShowModal(true) }}
                 startIcon={<DeleteOutlinedIcon className='actionIcon' fontSize="large" />}
               >
                 Delete
@@ -96,12 +117,19 @@ const HOOPs = () => {
   );
 
   const getHoopsData = async () => {
+    const date = new Date();
+
     try {
+      setDataLoading(true);
       const res = await getHoops()
-      if (res?.status === 'success') {
+      if (res?.status === 'Success') {
         setData(res?.data ?? []);
+      
       }
+      setFetchTime(date)
+      setDataLoading(false);
     } catch (error) {
+      setDataLoading(false);
       setMessage("Error: While fetching hoops")
     }
   }
@@ -110,7 +138,7 @@ const HOOPs = () => {
     try {
       setDeleteLoading(true);
       const res = await deleteHoop(selectedRowId);
-      if (res?.status === 'success') {
+      if (res?.status === 'Success') {
         getHoopsData();
         setDeleteLoading(false);
         setShowModal(false);
@@ -148,20 +176,36 @@ const HOOPs = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </Grid>
+        <Grid item xs={12} lg={12} marginTop={1} display={"flex"} alignItems={"center"} justifyContent={"space-between"} paddingBottom={0} marginBottom={0} paddingLeft={0} paddingRight={0}>
         <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
           <Button
             className='actionBtn'
-            onClick={() => history.push(`/hoops/add-update`)}
+            onClick={() => history.push(`/hoop`)}
             startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
           >
             Add
           </Button>
         </Box>
+        <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={2}>
+                        <Typography sx={{ fontFamily: "Inter", fontSize: "14px", color: "#394762", lineHeight: "21px", fontWeight: "400" }} variant="filterText" marginBottom={0} gutterBottom>Last updated {lastUpdatedText}</Typography>
+                        <Button
+                            color='default'
+                            sx={{ color: "#606B85" }}
+                            className='actionBtn refresh'
+                            startIcon={dataLoading ? null : <CachedIcon className='actionIcon' fontSize="large" />}
+                            onClick={onRefresh}
+                            disabled={dataLoading}
+                        >
+                            {dataLoading ? <CircularProgress size={20} /> : "Refresh"}
+                        </Button>
+                    </Box>
+                    </Grid>
         <DataTable
           columns={columns}
           resetData={resetData}
           handleReset={handleReset}
           data={data}
+          isLoading={dataLoading}
           formData={{ name, description }}
         />
       </Container>
@@ -177,4 +221,4 @@ const HOOPs = () => {
   )
 };
 
-export default HOOPs
+export default Hoops

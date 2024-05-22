@@ -4,7 +4,7 @@ import { Box, CircularProgress, Table, Typography } from '@mui/material'
 import { ArrowDownward, ArrowUpward, KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { filterAge, isWithinRange } from '../utils/globalFunctions';
 
-const DataTable = ({ data = [], columns, formData, resetData = false, handleReset, rowId, emailDetails = null, getSelectedRows = () => {} }) => {
+const DataTable = ({ data = [], columns, formData, isLoading = false, resetData = false, handleReset, rowId, emailDetails = null, getSelectedRows = () => {} }) => {
   const [sorting, setSorting] = useState([{ id: columns[0]?.accessorKey, desc: false }]);
 
   const table = useReactTable({
@@ -18,7 +18,7 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 20
+        pageSize: 5
       }
     },
     state: {
@@ -108,8 +108,13 @@ const DataTable = ({ data = [], columns, formData, resetData = false, handleRese
         </thead>
         <tbody className='tbody' style={{ fontFamily: "Inter" }}>
           {
-            table.getFilteredRowModel().rows.length === 0 && (
-              <td colSpan={20} style={{ textAlign: "center", color: "#bd1721" }}>No tasks found. Try resetting filters.</td>
+            !isLoading && table.getFilteredRowModel().rows.length === 0 && (
+              <tr><td colSpan={20} style={{ textAlign: "center", color: "#bd1721" }}>No records found. Try resetting filters.</td></tr>
+            )
+          }
+          {
+            isLoading && (
+              <tr><td colSpan={20} style={{ textAlign: "center" }}><CircularProgress /></td></tr>
             )
           }
           {table.getRowModel().rows.map(row => (

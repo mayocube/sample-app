@@ -12,7 +12,7 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
   };
 
   const handleListItemClick = (event, route) => {
-    location.replace(`/login/${route}?code=sYmm2mzsJBrJ7LSxkwvlsL3V2UJlwaUf5l5Le9dNSXg&state=pnRCq7Dlw6HerG7EvgvW62VQqS4PWistWLncaqsgX4RFV0Z74GTi6wrDE1En4gU6`);
+    location.push('/' + route);
   }
 
   return (
@@ -25,17 +25,23 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
       <Box sx={{ position: 'sticky', bottom: 0, width: "300px" }}>
         <Box sx={{ backgroundColor: "white" }}>
           <List component="nav" aria-label="main mailbox folders">
-            <ListItemButton onClick={(event) => handleListItemClick(event, 'callback')} >
+            <ListItemButton onClick={(event) => handleListItemClick(event, 'dashboard')} >
               <ListItemIcon>
                 <DraftsIcon />
               </ListItemIcon>
               <ListItemText primary="Email Dashboard" />
             </ListItemButton>
-            <ListItemButton onClick={(event) => handleListItemClick(event, 'callback2')} >
+            <ListItemButton onClick={(event) => handleListItemClick(event, 'hoops')} >
               <ListItemIcon>
                 <WatchLaterIcon />
               </ListItemIcon>
-              <ListItemText primary="HOOPs" />
+              <ListItemText primary="Hoops" />
+            </ListItemButton>
+            <ListItemButton onClick={(event) => handleListItemClick(event, 'dispositions')} >
+              <ListItemIcon>
+                <WatchLaterIcon />
+              </ListItemIcon>
+              <ListItemText primary="Disposition" />
             </ListItemButton>
           </List>
         </Box>

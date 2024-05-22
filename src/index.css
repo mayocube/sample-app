@@ -111,7 +111,7 @@ code {
 
 .custom-select,
 .custom-Input {
-  min-height: 36px !important;
+  min-height: 34px !important;
   gap: 10px !important;
   padding: 8px, 12px, 8px, 12px !important;
 }
@@ -598,4 +598,14 @@ input#combo-box-demo {
   border-color: rgb(235, 235, 235) !important;
 }
 
-/* HoopsEdit */
+/* DispositionEdit */
+.dispositions_edit {
+  min-height: 100vh;
+  background: rgba(237, 237, 237, 0.4);
+  padding-bottom: 100px;
+}
+
+.dispositions_edit .heading {
+  font-size: 20px !important;
+  margin: 25px 0 !important;
+}

@@ -13,16 +13,19 @@
 import React from 'react';
 import { Route, useHistory, Switch } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security, LoginCallback } from '@okta/okta-react';
+import { Security } from '@okta/okta-react';
 import config from './config';
-import Home from './Pages/Home';
 import theme from './utils/theme';
 
 import CorsErrorModal from './components/CorsErrorModal';
 import AuthRequiredModal from './components/AuthRequiredModal';
 import { ThemeProvider } from '@mui/material';
-import HOOPs from './Pages/HOOPs';
+import Profile from './components/Profile';
+import Dashboard from './Pages/Dashboard';
+import Hoops from './Pages/HOOPs';
 import HoopsEdit from './Pages/HoopsEdit';
+import Dispositions from './Pages/Dispositions';
+import DispositionEdit from './Pages/DispositionEdit';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -62,10 +65,16 @@ const App = () => {
       <AuthRequiredModal {...{ authRequiredModalOpen, setAuthRequiredModalOpen, triggerLogin }} />
       <ThemeProvider theme={theme}>
         <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/login/callback"><Home loginCallback /></Route>
-          <Route path="/login/callback2"><HOOPs /></Route>
-          <Route path="/hoops/add-update"><HoopsEdit /></Route>
+          <Route path="/" exact component={Dashboard} />
+          <Route path="/login/callback"><Dashboard loginCallback /></Route>
+          <Route path="/profile" component={Profile} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/hoops"><Hoops /></Route>
+          <Route path="/hoop"><HoopsEdit /></Route>
+          <Route path="/hoop/:id" component={HoopsEdit} />
+          <Route path="/dispositions"><Dispositions /></Route>
+          <Route path="/disposition"><DispositionEdit /></Route>
+          <Route path="/disposition/:id" component={DispositionEdit} />
         </Switch>
       </ThemeProvider>
     </Security>

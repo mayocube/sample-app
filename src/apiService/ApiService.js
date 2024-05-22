@@ -122,7 +122,7 @@ export default class ApiService {
       let storage = localStorage.getItem("okta-token-storage");
       let token=(storage)?JSON.parse(storage)?.accessToken?.accessToken:null;
     
-      console.log("post access token=", token);
+      // console.log("post access token=", token);
       const axiosConfig = {
           headers: {
             accept: 'application/json',

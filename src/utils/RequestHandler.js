@@ -24,6 +24,19 @@ export const Post = async (path, data) => {
     } catch (err) {
         throw new Error(err.message);
     }
+}
+
+export const Put = async (path, data) => {
+    try {
+        const response = await axios.put(`${url}${path}`, data, { headers: customHeaders })
+        if(process.env.NODE_ENV === "development"){
+          return response?.data ?? response;
+        }
+        return response
+
+    } catch (err) {
+        throw new Error(err.message);
+    }
 
 }
 
