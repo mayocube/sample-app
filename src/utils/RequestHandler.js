@@ -63,6 +63,6 @@ export const formReducer = (state, event) => {
   }
   return {
     ...state,
-    [event.target?.name]: event.target?.value
+    [event.target?.name]:  (event.target.type === "radio" || event.target.type === "checkbox") ? (event.target?.value === "" ? '' : event.target?.value == "true") : event.target?.value
   }
 }

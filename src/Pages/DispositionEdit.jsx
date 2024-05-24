@@ -4,16 +4,28 @@ import { Box, Button, CircularProgress, FormControl, Grid, Typography } from '@m
 import CustomInput from '../components/CustomInput'
 import CustomSelect from '../components/CustomSelect'
 import { formReducer } from '../utils/RequestHandler'
-import CustomTimePicker from '../components/CustomTimePicker'
 import { useHistory } from 'react-router-dom'
 import SnackAlert from '../components/SnackAlert'
 import { createUpdateDisposition, getDispositionById } from '../apiService/EndPoints';
-import { timezones } from '../utils'
 import RadioButtonsGroup from '../components/RadioButton'
 import CreatableSelect from 'react-select/creatable';
+
 const DispositionEdit = () => {
   const history = useHistory();
   const dispostionId = history.location.state?.name;
+
+  const prepareDropdownData = (key) => {
+    const ls = localStorage.getItem(key);
+    if (ls !== null && ls !== undefined && ls !== '') {
+      return JSON.parse(ls);
+    }
+    return [{ text: "Select one", value: "" }];
+  }
+
+  const categories = prepareDropdownData('dis_cats');
+  const subCategories = prepareDropdownData('dis_sub_cats');
+  const groups = prepareDropdownData('dis_groups');
+
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {
@@ -24,7 +36,6 @@ const DispositionEdit = () => {
     groupName: "",
     sendSurvey: "",
   });
-  console.log(formData['category'])
 
   const handleAddUpdate = async () => {
     if (!formData.category) {
@@ -121,26 +132,43 @@ const DispositionEdit = () => {
             </Box>
           </Box>
           <Grid container spacing={2} paddingBottom={1} paddingTop={0}>
-            <Grid item xs={6} marginTop={0} >
-              <FormControl className='customSelects' sx={{ width: "100%" }} >
-                <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
-                <CreatableSelect
-                  className={"createable custom-select"}
+
+            {
+              dispostionId ?
+                <Grid item xs={6} marginTop={0} >
+                  <FormControl className='customSelects' sx={{ width: "100%" }} >
+                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                    <CreatableSelect
+                      className={"createable custom-select"}
+                      name={'category'}
+                      width={2}
+                      id="category"
+                      placeholder=""
+                      onChange={(e) => setFormData({ target: { name: 'category', value: e } })}
+                      value={formData["category"]}
+                      isClearable
+                      options={[
+                        { label: "Select one", value: "" },
+                        { label: "Neiman Marcus", value: "Neiman Marcus" },
+                        { label: "Bergdorf Goodman", value: "Bergdorf Goodman" },
+                        { label: "Horchow", value: "Horchow" }
+                      ]}
+                    //options={categories}
+                    />
+                  </FormControl>
+                </Grid>
+                :
+                <CustomInput
+                  title={'Category'}
                   name={'category'}
-                  width={2}
-                  id="category"              
-                  placeholder=""
-                  onChange={(e) => setFormData({target: {name: 'category', value: e}})}
+                  width={6}
                   value={formData["category"]}
-                  isClearable
-                  options={[
-                    { label: "Select one", value: "" },
-                    { label: "Neiman Marcus", value: "Neiman Marcus" },
-                    { label: "Bergdorf Goodman", value: "Bergdorf Goodman" },
-                    { label: "Horchow", value: "Horchow" }
-                  ]} />
-              </FormControl>
-            </Grid>
+                  id="category"
+                  onChange={setFormData}
+                  required={true}
+                />
+            }
+
             <CustomInput
               title={'Group Name'}
               name={'groupName'}
@@ -183,7 +211,11 @@ const DispositionEdit = () => {
               id="sendSurvey"
               value={formData["sendSurvey"]}
               onChange={setFormData}
-            ></RadioButtonsGroup>
+              options={[
+                { label: "True", value: true },
+                { label: "False", value: false },
+              ]}
+            />
           </Grid>
         </Box>
       </div>

@@ -27,10 +27,10 @@ const Dispositions = () => {
 
     const [formData, setFormData] = useReducer(formReducer, {
         category: "",
-        subCategoryDescription: "",
         subCategory: "",
-        sendSurvey: "",
+        descriptions: "",
         groupName: "",
+        sendSurvey: "",
     });
 
     const updateLastUpdatedText = () => {
@@ -51,6 +51,10 @@ const Dispositions = () => {
     const [selectedRowId, setSelectedRowId] = useState([]);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
+    const [categories, setCategories] = useState([{ text: "Select one", value: "" }]);
+    const [subCategories, setSubCategories] = useState([{ text: "Select one", value: "" }]);
+    const [groups, setGroups] = useState([{ text: "Select one", value: "" }]);
+
     const environmentName = (origin) => {
         if (origin.includes('localhost')) {
             return '{Local}';
@@ -69,10 +73,41 @@ const Dispositions = () => {
         setResetData(true);
     }
 
-    const handleReset = () => {
-        setName('');
-        setDescription('');
-        setResetData(false)
+    const handleResetTable = () => {
+        const temp = [
+            {
+                target: {
+                    name: 'category',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'subCategory',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'descriptions',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'groupName',
+                    value: ''
+                }
+            },
+            {
+                target: {
+                    name: 'sendSurvey',
+                    value: ''
+                }
+            }
+        ];
+        temp.map(x => setFormData(x));
+        setResetData(false);
     }
 
     const columnHelper = createColumnHelper();
@@ -84,7 +119,7 @@ const Dispositions = () => {
             columnHelper.accessor("subCategory", {
                 header: () => "Sub Category",
             }),
-            columnHelper.accessor("subCategoryDescription", {
+            columnHelper.accessor("descriptions", {
                 header: () => "Sub Category Description",
             }),
             columnHelper.accessor("groupName", {
@@ -136,7 +171,19 @@ const Dispositions = () => {
             const res = await getDisposition()
             if (res?.status === 'Success') {
                 setData(res?.data ?? []);
-                setFetchTime(date)
+
+                const cats = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.category, value: item.category })))]];
+                const subCats = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.subCategory, value: item.subCategory })))]];
+                const gNames = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.groupName, value: item.groupName })))]];
+                
+                localStorage.setItem('dis_cats', JSON.stringify(cats));
+                localStorage.setItem('dis_sub_cats', JSON.stringify(subCats));
+                localStorage.setItem('dis_groups', JSON.stringify(gNames));
+
+                setCategories(cats);
+                setSubCategories(subCats);
+                setGroups(gNames);
+                setFetchTime(date);
             }
             setDataLoading(false);
         } catch (error) {
@@ -145,7 +192,7 @@ const Dispositions = () => {
         }
     }
 
-    const onRefresh = () => { 
+    const onRefresh = () => {
         getDispositionData();
     }
 
@@ -175,55 +222,54 @@ const Dispositions = () => {
             <Container maxWidth={"100%"} sx={{ position: "relative" }}>
                 <Header headerTitle={"Disposition"} handleReset={handleResetClick} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
-                    
+
                     <CustomSelect
                         title={'Category'}
                         name='category'
                         value={formData["category"]}
                         onChange={setFormData}
                         id="category"
-                        items={[
-                            { text: "Select one", value: "" },
-                            { text: "Neiman Marcus", value: "Neiman Marcus" },
-                            { text: "Bergdorf Goodman", value: "Bergdorf Goodman" },
-                            { text: "Horchow", value: "Horchow" }
-                        ]}
-                      
+                        items={categories}
                     />
-               
-                    <CustomInput
+
+                    <CustomSelect
                         title={"Sub Category"}
                         name='subCategory'
                         id="subCategory"
                         value={formData["subCategory"]}
                         onChange={setFormData}
+                        items={subCategories}
                     />
+
                     <CustomInput
-                        title={"Sub Category Description"}
-                        name='subCategoryDescription'
-                        value={formData["subCategoryDescription"]}
+                        title={"Description"}
+                        name='descriptions'
+                        value={formData["descriptions"]}
                         onChange={setFormData}
-                        id="subCategoryDescription"
+                        id="descriptions"
                     />
+
                     <CustomSelect
                         title={"Group Name"}
                         name='groupName'
                         value={formData["groupName"]}
                         onChange={setFormData}
                         id="groupName"
-                        items={[
-                            { text: "Select one", value: "" },
-                            { text: "Neiman Marcus", value: "Neiman Marcus" },
-                            { text: "Bergdorf Goodman", value: "Bergdorf Goodman" },
-                            { text: "Horchow", value: "Horchow" }
-                        ]}
+                        items={groups}
                     />
 
                     <RadioButtonsGroup
                         title={"Send Survey"}
                         name='sendSurvey'
+                        id="sendSurvey"
+                        value={formData["sendSurvey"]}
                         onChange={setFormData}
-                    ></RadioButtonsGroup>
+                        options={[
+                            {label: "All", value: ''},
+                            {label: "True", value: true},
+                            {label: "False", value: false},
+                        ]}
+                    />
                 </Grid>
                 <Grid item xs={12} lg={12} marginTop={1} display={"flex"} alignItems={"center"} justifyContent={"space-between"} paddingBottom={0} marginBottom={0} paddingLeft={0} paddingRight={0}>
                     <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
@@ -252,7 +298,7 @@ const Dispositions = () => {
                 <DataTable
                     columns={columns}
                     resetData={resetData}
-                    handleReset={handleReset}
+                    handleReset={handleResetTable}
                     data={data}
                     isLoading={dataLoading}
                     formData={formData}
