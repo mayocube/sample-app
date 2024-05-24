@@ -13,7 +13,7 @@
 import React from 'react';
 import { Route, useHistory, Switch } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security } from '@okta/okta-react';
+import { LoginCallback, Security } from '@okta/okta-react';
 import config from './config';
 import theme from './utils/theme';
 
@@ -66,7 +66,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Switch>
           <Route path="/" exact component={Dashboard} />
-          <Route path="/login/callback"><Dashboard loginCallback /></Route>
+          <Route path="/login/callback"><LoginCallback /></Route>
           <Route path="/profile" component={Profile} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/hoops"><Hoops /></Route>
