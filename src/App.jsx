@@ -72,8 +72,8 @@ const App = () => {
           <Route path="/hoops"><Hoops /></Route>
           <Route path="/hoop"><HoopsEdit /></Route>
           <Route path="/hoop/:id" component={HoopsEdit} />
-          <Route path="/dispositions"><Dispositions /></Route>
-          <Route path="/disposition"><DispositionEdit /></Route>
+          <Route path="/dispositions" exact><Dispositions /></Route>
+          <Route path="/disposition" exact><DispositionEdit /></Route>
           <Route path="/disposition/:id" component={DispositionEdit} />
         </Switch>
       </ThemeProvider>

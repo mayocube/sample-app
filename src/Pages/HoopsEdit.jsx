@@ -77,8 +77,8 @@ const HoopsEdit = () => {
     if (hoopsId) {
       (async () => {
         try {
+          setLoading(true);
           const res = await getHoopsById(hoopsId);
-          console.log('first', res)
           if (res?.status === 'Success') {
             let data = res?.data;
             setFormData({
@@ -88,10 +88,12 @@ const HoopsEdit = () => {
               schedule: data?.schedule,
               closedHOOPFileName: data?.closedHOOPFileName,
             })
+            setLoading(false);
           }
 
         } catch (e) {
           setMessage(`Error occured while fetching hoops details!`);
+          setLoading(false);
           console.log('catch', e)
         }
       })();
@@ -102,6 +104,11 @@ const HoopsEdit = () => {
     <>
       <div className='hoops_edit'>
         <TopBar navbarTitle={'NEIMAN MARCUS Twilio Super Admin Dev'} />
+        {loading &&
+          <Box sx={{ opacity: 0.8, backgroundColor: '#fff' }} zIndex={99} justifyContent={"center"} alignItems={"center"} position={"fixed"} top={0} bottom={0} left={0} right={0} padding={20} width={'100%'} textAlign={"center"}>
+            <CircularProgress sx={{ width: '50px !important', height: '50px !important' }} />
+          </Box>
+        }
         <Box mx='20px'>
           <Box
             gap={'20px'}

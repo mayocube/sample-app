@@ -172,10 +172,16 @@ const Dispositions = () => {
             if (res?.status === 'Success') {
                 setData(res?.data ?? []);
 
-                const cats = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.category, value: item.category })))]];
-                const subCats = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.subCategory, value: item.subCategory })))]];
-                const gNames = [{ text: "Select one", value: "" }, ...[...new Set(data.map(item => ({ text: item.groupName, value: item.groupName })))]];
-                
+                const cats = [{ text: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.category))).map(nitem => ({ text: nitem, value: nitem }))
+                ]];
+                const subCats = [{ text: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.subCategory))).map(nitem => ({ text: nitem, value: nitem }))
+                ]];
+                const gNames = [{ text: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.groupName))).map(nitem => ({ text: nitem, value: nitem }))
+                ]];
+
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
                 localStorage.setItem('dis_sub_cats', JSON.stringify(subCats));
                 localStorage.setItem('dis_groups', JSON.stringify(gNames));
@@ -188,7 +194,7 @@ const Dispositions = () => {
             setDataLoading(false);
         } catch (error) {
             setDataLoading(false);
-            setMessage("Error: While fetching hoops")
+            setMessage("Error: While fetching dispositions")
         }
     }
 
@@ -275,7 +281,7 @@ const Dispositions = () => {
                     <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
                         <Button
                             className='actionBtn'
-                            onClick={() => history.push(`/dispostion`)}
+                            onClick={() => history.push('/disposition')}
                             startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
                         >
                             Add

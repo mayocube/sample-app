@@ -1,7 +1,7 @@
 import { Select, MenuItem, Grid, FormControl, Typography, Checkbox, ListItemText } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useState } from 'react';
-const CustomSelect = ({ isOpen=false,name, onChange, value = '', items, onClick,title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable }) => {
+const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onClick, title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable }) => {
   const [open, setOpen] = useState(false);
   const toggleSelect = () => {
     setOpen(open ? false : true);
@@ -10,7 +10,7 @@ const CustomSelect = ({ isOpen=false,name, onChange, value = '', items, onClick,
   return (
     <Grid item xs={width} marginTop={0}>
       <FormControl className='customSelects' sx={{ width: "100%" }} >
-        {title && <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""} {required && <span style={{color: "#bd1721"}}>*</span>}</Typography>}
+        {title && <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""} {required && <span style={{ color: "#bd1721" }}>*</span>}</Typography>}
         <Select
           multiple={multiple}
           displayEmpty
@@ -18,7 +18,7 @@ const CustomSelect = ({ isOpen=false,name, onChange, value = '', items, onClick,
           open={open}
           onClose={toggleSelect}
           onOpen={toggleSelect}
-          onClick={()=>{isOpen}}
+          onClick={() => { isOpen }}
           value={value}
           onChange={onChange}
           input={createable}

@@ -53,7 +53,7 @@ const DispositionEdit = () => {
 
     setLoading(true);
     try {
-      const res = await createUpdateDisposition(formData, dispostionId);
+      const res = createUpdateDisposition(formData, dispostionId);
       if (res?.status === 'Success') {
         setMessage(res?.message ?? `DISPOSITION ${dispostionId ? 'updated' : 'created'} successfully.`);
         setLoading(false);
@@ -72,7 +72,7 @@ const DispositionEdit = () => {
     if (dispostionId) {
       (async () => {
         try {
-          console.log('first', dispostionId)
+          setLoading(true);
           const res = await getDispositionById(dispostionId);
           if (res?.status === 'Success') {
             let data = res?.data[0];
@@ -85,10 +85,11 @@ const DispositionEdit = () => {
               groupName: data?.groupName,
             })
           }
-
+          setLoading(false);
         } catch (e) {
           setMessage(`Error occured while fetching disposition details!`);
           console.log('catch', e)
+          setLoading(false);
         }
       })();
     }
@@ -98,6 +99,11 @@ const DispositionEdit = () => {
     <>
       <div className='dispositions_edit'>
         <TopBar navbarTitle={'NEIMAN MARCUS Twilio Super Admin Dev'} />
+        {loading &&
+          <Box sx={{ opacity: 0.8, backgroundColor: '#fff' }} zIndex={99} justifyContent={"center"} alignItems={"center"} position={"fixed"} top={0} bottom={0} left={0} right={0} padding={20} width={'100%'} textAlign={"center"}>
+            <CircularProgress sx={{ width: '50px !important', height: '50px !important' }} />
+          </Box>
+        }
         <Box mx='20px'>
           <Box
             gap={'20px'}
@@ -132,9 +138,8 @@ const DispositionEdit = () => {
             </Box>
           </Box>
           <Grid container spacing={2} paddingBottom={1} paddingTop={0}>
-
             {
-              dispostionId ?
+              !dispostionId ?
                 <Grid item xs={6} marginTop={0} >
                   <FormControl className='customSelects' sx={{ width: "100%" }} >
                     <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
@@ -147,13 +152,8 @@ const DispositionEdit = () => {
                       onChange={(e) => setFormData({ target: { name: 'category', value: e } })}
                       value={formData["category"]}
                       isClearable
-                      options={[
-                        { label: "Select one", value: "" },
-                        { label: "Neiman Marcus", value: "Neiman Marcus" },
-                        { label: "Bergdorf Goodman", value: "Bergdorf Goodman" },
-                        { label: "Horchow", value: "Horchow" }
-                      ]}
-                    //options={categories}
+                      getOptionLabel={e => e["text"]}
+                      options={categories}
                     />
                   </FormControl>
                 </Grid>
@@ -191,6 +191,7 @@ const DispositionEdit = () => {
               title={'Sub Category Description'}
               name={'descriptions'}
               width={6}
+              type='textarea'
               value={formData["descriptions"]}
               id="descriptions"
               onChange={setFormData}
