@@ -172,14 +172,14 @@ const Dispositions = () => {
             if (res?.status === 'Success') {
                 setData(res?.data ?? []);
 
-                const cats = [{ text: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.category))).map(nitem => ({ text: nitem, value: nitem }))
+                const cats = [{ label: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.category))).map(nitem => ({ label: nitem, value: nitem }))
                 ]];
-                const subCats = [{ text: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.subCategory))).map(nitem => ({ text: nitem, value: nitem }))
+                const subCats = [{ label: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.subCategory))).map(nitem => ({ label: nitem, value: nitem }))
                 ]];
-                const gNames = [{ text: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.groupName))).map(nitem => ({ text: nitem, value: nitem }))
+                const gNames = [{ label: "Select one", value: "" }, ...[
+                    ...Array.from(new Set( res?.data.map(item => item.groupName))).map(nitem => ({ label: nitem, value: nitem }))
                 ]];
 
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
@@ -236,6 +236,7 @@ const Dispositions = () => {
                         onChange={setFormData}
                         id="category"
                         items={categories}
+                        getOptionLabel='label'
                     />
 
                     <CustomSelect
@@ -245,6 +246,7 @@ const Dispositions = () => {
                         value={formData["subCategory"]}
                         onChange={setFormData}
                         items={subCategories}
+                        getOptionLabel='label'
                     />
 
                     <CustomInput
@@ -262,6 +264,7 @@ const Dispositions = () => {
                         onChange={setFormData}
                         id="groupName"
                         items={groups}
+                        getOptionLabel='label'
                     />
 
                     <RadioButtonsGroup

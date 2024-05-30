@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { AppBar, Container, IconButton, Toolbar, Typography, Drawer, Box, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import DocumentScannerTwoToneIcon from '@mui/icons-material/DocumentScannerTwoTone';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import { useHistory } from 'react-router-dom';
 
@@ -39,7 +40,7 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
             </ListItemButton>
             <ListItemButton onClick={(event) => handleListItemClick(event, 'dispositions')} >
               <ListItemIcon>
-                <WatchLaterIcon />
+                <DocumentScannerTwoToneIcon />
               </ListItemIcon>
               <ListItemText primary="Disposition" />
             </ListItemButton>

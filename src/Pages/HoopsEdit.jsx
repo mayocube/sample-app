@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import SnackAlert from '../components/SnackAlert'
 import { createUpdateHoops, getHoopsById } from '../apiService/EndPoints'
 import { timezones } from '../utils'
+import moment from 'moment'
 
 const HoopsEdit = () => {
   const history = useHistory();
@@ -51,12 +52,39 @@ const HoopsEdit = () => {
         setMessage(`Error: Please enter valid time for ${x}!`);
         return;
       }
+
+      // Check if both times are provided
+      if (temp.open && temp.close) {
+        const openTime = moment(temp.open, 'HH:mm');
+        const closeTime = moment(temp.close, 'HH:mm');
+
+        // Check if Start Time is 12:00 PM
+        console.log(openTime.format('HH:mm'));
+        if (openTime.format('HH:mm') === '12:00') {
+          setMessage(`Error: Start Time cannot be 12:00 PM for ${x}!`);
+          return;
+        }
+
+        // Check if End Time is greater than 11:59 PM
+        if (closeTime.format('HH:mm') > '23:59') {
+          setMessage(`Error: End Time cannot be greater than 11:59 PM for ${x}!`);
+          return;
+        }
+
+        // Check if End Time is greater than Start Time
+        if (!closeTime.isAfter(openTime)) {
+          setMessage(`Error: End Time must be greater than Start Time for ${x}!`);
+          return;
+        }
+      }
+
       if (Object.keys(formData.schedule).filter(x => formData.schedule[x].open || formData.schedule[x].close)?.length === 0) {
         setMessage(`Error: Please select time for atleast one day!`);
         return;
       }
     }
     setLoading(true);
+
     try {
       const res = await createUpdateHoops(formData, hoopsId);
       if (res?.status === 'Success') {
@@ -204,35 +232,17 @@ const HoopsEdit = () => {
               return (
                 <Box className='body_row' key={i}>
                   <Typography className='body_text'>
-                    <CustomSelect
-                      name='day'
-                      value={val}
-                      onChange={() => { }}
-                      items={[
-                        { text: "Monday", value: "Monday" },
-                        { text: "Tuesday", value: "Tuesday" },
-                        { text: "Wednesday", value: "Wednesday" },
-                        { text: "Thursday", value: "Thursday" },
-                        { text: "Friday", value: "Friday" },
-                        { text: "Saturday", value: "Saturday" },
-                        { text: "Sunday", value: "Sunday" },
-                      ]}
-                    />
+                    <div className='custom-textarea'>{val}</div>
                   </Typography>
                   <Typography className='body_text'>
                     <CustomTimePicker
                       value={formData.schedule[val].open}
                       onChange={(e) => {
+                        const startTime = e ? (e.isValid() ? e.format('HH:mm') : null) : null;
                         let item = {
                           target: {
                             name: 'schedule',
-                            value: {
-                              ...formData.schedule,
-                              [val]: {
-                                ...formData.schedule[val],
-                                open: e ? (e.isValid() ? e.format('HH:mm') : null) : null
-                              }
-                            }
+                            value: { ...formData.schedule, [val]: { ...formData.schedule[val], open: startTime } }
                           }
                         }
                         setFormData(item);
@@ -243,16 +253,11 @@ const HoopsEdit = () => {
                     <CustomTimePicker
                       value={formData.schedule[val].close}
                       onChange={(e) => {
+                        const closeTime = e ? (e.isValid() ? e.format('HH:mm') : null) : null;
                         let item = {
                           target: {
                             name: 'schedule',
-                            value: {
-                              ...formData.schedule,
-                              [val]: {
-                                ...formData.schedule[val],
-                                close: e ? (e.isValid() ? e.format('HH:mm') : null) : null
-                              }
-                            }
+                            value: { ...formData.schedule, [val]: { ...formData.schedule[val], close: closeTime } }
                           }
                         }
                         setFormData(item);

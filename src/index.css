@@ -113,9 +113,15 @@ code {
 .custom-Input {
   min-height: 34px !important;
   gap: 10px !important;
-  padding: 8px, 12px, 8px, 12px !important;
 }
-
+.custom-textarea {
+  min-height: 34px !important;
+  padding: 8px 12px;
+  font-family: Inter, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  outline-color: #1976d2;
+  border: 1px solid #ebebeb;
+  border-radius: 4px;
+}
 .actionBtn {
   font-weight: 400 !important;
   font-size: 14px !important;

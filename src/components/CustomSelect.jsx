@@ -1,7 +1,7 @@
 import { Select, MenuItem, Grid, FormControl, Typography, Checkbox, ListItemText } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useState } from 'react';
-const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onClick, title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable }) => {
+const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onClick, title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable, getOptionLabel = 'text' }) => {
   const [open, setOpen] = useState(false);
   const toggleSelect = () => {
     setOpen(open ? false : true);
@@ -46,7 +46,7 @@ const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onCli
           {items.map((item, index) => (
             <MenuItem key={index} value={item.value}>
               {checkboxSelect && <Checkbox checked={value.includes(item.value)} />}
-              <ListItemText primary={item.text} />
+              <ListItemText primary={item[getOptionLabel]} />
             </MenuItem>
           ))}
         </Select>

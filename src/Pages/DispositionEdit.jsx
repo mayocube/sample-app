@@ -23,8 +23,11 @@ const DispositionEdit = () => {
   }
 
   const categories = prepareDropdownData('dis_cats');
+  const [categoriesAll, setCategories] = useState(categories);
   const subCategories = prepareDropdownData('dis_sub_cats');
+  const [subCategoriesAll, setSubCategories] = useState(subCategories);
   const groups = prepareDropdownData('dis_groups');
+  const [groupsAll, setGroups] = useState(groups);
 
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -93,7 +96,17 @@ const DispositionEdit = () => {
         }
       })();
     }
-  }, [dispostionId])
+  }, [dispostionId]);
+
+  const handleCreate = (value, name, setOption = () => { }) => {
+    const newOption = { label: value, value };
+    setOption((prev) => [...prev, newOption]);
+    setFormData({ target: { name, value } })
+  }
+
+  const handleChange = (e, name) => {
+    setFormData({ target: { name, value: e ? e.value : '' } })
+  }
 
   return (
     <>
@@ -144,16 +157,12 @@ const DispositionEdit = () => {
                   <FormControl className='customSelects' sx={{ width: "100%" }} >
                     <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
                     <CreatableSelect
-                      className={"createable custom-select"}
-                      name={'category'}
-                      width={2}
-                      id="category"
-                      placeholder=""
-                      onChange={(e) => setFormData({ target: { name: 'category', value: e } })}
-                      value={formData["category"]}
                       isClearable
-                      getOptionLabel={e => e["text"]}
-                      options={categories}
+                      className={"createable custom-select"}
+                      onCreateOption={(e) => handleCreate(e, 'category', setCategories)}
+                      onChange={(e) => handleChange(e, 'category')}
+                      value={{ label: formData["category"], value: formData["category"] }}
+                      options={categoriesAll}
                     />
                   </FormControl>
                 </Grid>
@@ -169,24 +178,70 @@ const DispositionEdit = () => {
                 />
             }
 
+            {
+              !dispostionId ?
+                <Grid item xs={6} marginTop={0} >
+                  <FormControl className='customSelects' sx={{ width: "100%" }} >
+                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>GROUP NAME {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                    <CreatableSelect
+                      isClearable
+                      className={"createable custom-select"}
+                      onCreateOption={(e) => handleCreate(e, 'groupName', setGroups)}
+                      onChange={(e) => handleChange(e, 'groupName')}
+                      value={{ label: formData["groupName"], value: formData["groupName"] }}
+                      options={groupsAll}
+                    />
+                  </FormControl>
+                </Grid>
+                :
+                <CustomInput
+                  title={'Group Name'}
+                  name={'groupName'}
+                  width={6}
+                  value={formData["groupName"]}
+                  id="groupName"
+                  onChange={setFormData}
+                  required={true}
+                />
+            }
+
+            {
+              !dispostionId ?
+                <Grid item xs={6} marginTop={0} >
+                  <FormControl className='customSelects' sx={{ width: "100%" }} >
+                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                    <CreatableSelect
+                      isClearable
+                      className={"createable custom-select"}
+                      onCreateOption={(e) => handleCreate(e, 'subCategory', setSubCategories)}
+                      onChange={(e) => handleChange(e, 'subCategory')}
+                      value={{ label: formData["subCategory"], value: formData["subCategory"] }}
+                      options={subCategoriesAll}
+                    />
+                  </FormControl>
+                </Grid>
+                :
+                <CustomInput
+                  title={'Sub Category'}
+                  name={'subCategory'}
+                  id="subCategory"
+                  width={6}
+                  value={formData["subCategory"]}
+                  onChange={setFormData}
+                  required={true}
+                />
+            }
+
             <CustomInput
-              title={'Group Name'}
-              name={'groupName'}
               width={6}
-              value={formData["groupName"]}
-              id="groupName"
+              title={'Order'}
+              name={'order'}
+              value={formData["order"]}
+              id="order"
               onChange={setFormData}
-              required={true}
+              required={false}
             />
-            <CustomInput
-              title={'Sub Category'}
-              name={'subCategory'}
-              id="subCategory"
-              width={6}
-              value={formData["subCategory"]}
-              onChange={setFormData}
-              required={true}
-            />
+
             <CustomInput
               title={'Sub Category Description'}
               name={'descriptions'}
@@ -197,15 +252,7 @@ const DispositionEdit = () => {
               onChange={setFormData}
               required={true}
             />
-            <CustomInput
-              width={6}
-              title={'Order'}
-              name={'order'}
-              value={formData["order"]}
-              id="order"
-              onChange={setFormData}
-              required={false}
-            />
+
             <RadioButtonsGroup
               title={"Send Survey"}
               name='sendSurvey'
