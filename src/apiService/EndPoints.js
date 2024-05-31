@@ -26,8 +26,8 @@ export const createUpdateHoops = async (data, hoopsId) => {
   }
 }
 export const getDisposition = (data) => Post('get-cdt-records', data);
-export const getDispositionById = (id) => Post(`disposition/${encodeURIComponent(id)}`);
-export const deleteDisposition = (id) => Delete(`disposition/${encodeURIComponent(id)}`);
+export const getDispositionById = (id) => Post(`disposition?pk=${encodeURIComponent(id)}`);
+export const deleteDisposition = (id) => Delete(`disposition?pk=${encodeURIComponent(id)}`);
 export const createUpdateDisposition = async (data, dispositionId) => {
   try {
     if (dispositionId) {

@@ -11,8 +11,7 @@ import CreatableSelect from 'react-select/creatable';
 
 const DispositionEdit = () => {
   const history = useHistory();
-  const dispostionId = history.location.state?.name;
-
+  const dispostionId = history.location.state?.name ? decodeURIComponent(history.location.state?.name) : undefined;
   const prepareDropdownData = (key) => {
     const ls = localStorage.getItem(key);
     if (ls !== null && ls !== undefined && ls !== '') {

@@ -144,7 +144,7 @@ const Dispositions = () => {
                         >
                             <Button
                                 className='actionBtn'
-                                onClick={() => history.push(`/disposition/${row.original.pk}`, { name: row.original.pk })}
+                                onClick={() => history.push(`/disposition/${encodeURIComponent(row.original.pk)}`, { name: encodeURIComponent(row.original.pk) })}
                                 startIcon={<EditNoteIcon className='actionIcon' fontSize="large" />}
                             >
                                 Edit
