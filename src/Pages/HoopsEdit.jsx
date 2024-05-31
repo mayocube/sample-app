@@ -144,7 +144,7 @@ const HoopsEdit = () => {
             justifyContent={'space-between'}
           >
             <Typography className='heading'>
-              Hoops
+              {hoopsId ? "Update" : "Add"} Hoops
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button

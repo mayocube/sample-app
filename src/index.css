@@ -121,6 +121,7 @@ code {
   outline-color: #1976d2;
   border: 1px solid #ebebeb;
   border-radius: 4px;
+  font-size: 14px;
 }
 .actionBtn {
   font-weight: 400 !important;

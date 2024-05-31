@@ -123,7 +123,7 @@ const DispositionEdit = () => {
             justifyContent={'space-between'}
           >
             <Typography className='heading'>
-              Disposition
+              {dispostionId ? "Update" : "Add"} Disposition
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button
