@@ -59,7 +59,6 @@ const HoopsEdit = () => {
         const closeTime = moment(temp.close, 'HH:mm');
 
         // Check if Start Time is 12:00 PM
-        console.log(openTime.format('HH:mm'));
         if (openTime.format('HH:mm') === '12:00') {
           setMessage(`Error: Start Time cannot be 12:00 PM for ${x}!`);
           return;

@@ -35,7 +35,7 @@ const DispositionEdit = () => {
     descriptions: "",
     order: "",
     groupName: "",
-    sendSurvey: "",
+    sendSurvey: false,
   });
 
   const handleAddUpdate = async () => {
@@ -207,7 +207,7 @@ const DispositionEdit = () => {
               !dispostionId ?
                 <Grid item xs={6} marginTop={0} >
                   <FormControl className='customSelects' sx={{ width: "100%" }} >
-                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Sub Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
                     <CreatableSelect
                       isClearable
                       className={"createable custom-select"}
