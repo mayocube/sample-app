@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useState } from 'react'
 import TopBar from '../components/TopBar'
 import { Box, Button, CircularProgress, FormControl, Grid, Typography } from '@mui/material'
 import CustomInput from '../components/CustomInput'
-import CustomSelect from '../components/CustomSelect'
 import { formReducer } from '../utils/RequestHandler'
 import { useHistory } from 'react-router-dom'
 import SnackAlert from '../components/SnackAlert'
@@ -56,14 +55,14 @@ const DispositionEdit = () => {
 
     setLoading(true);
     try {
-      const res = createUpdateDisposition(formData, dispostionId);
+      const res = await createUpdateDisposition(formData, dispostionId);
       if (res?.status === 'Success') {
         setMessage(res?.message ?? `DISPOSITION ${dispostionId ? 'updated' : 'created'} successfully.`);
-        setLoading(false);
         setTimeout(() => {
           history.goBack();
         }, 1500);
       }
+      setLoading(false);
     } catch (e) {
       setMessage(`Error occured please try again!`);
       setLoading(false);
