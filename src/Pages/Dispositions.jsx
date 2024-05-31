@@ -226,7 +226,7 @@ const Dispositions = () => {
         <>
             <TopBar navbarTitle={<> NM Twilio Super Admin <span style={{ color: 'yellow' }}>{` ${environmentName(window.location.origin)}`}</span> </>} />
             <Container maxWidth={"100%"} sx={{ position: "relative" }}>
-                <Header headerTitle={"Disposition"} handleReset={handleResetClick} />
+                <Header headerTitle={"Dispositions"} handleReset={handleResetClick} />
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
 
                     <CustomSelect

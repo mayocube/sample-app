@@ -42,7 +42,7 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
               <ListItemIcon>
                 <DocumentScannerTwoToneIcon />
               </ListItemIcon>
-              <ListItemText primary="Disposition" />
+              <ListItemText primary="Dispositions" />
             </ListItemButton>
           </List>
         </Box>
