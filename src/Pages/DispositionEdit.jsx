@@ -45,7 +45,7 @@ const DispositionEdit = () => {
       setMessage('Error: Name is required!');
       return;
     }
-    if (!formData.subCategoryDescription) {
+    if (!formData.descriptions) {
       setMessage('Error: Description is required!');
       return;
     }
