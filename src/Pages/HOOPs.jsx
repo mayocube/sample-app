@@ -31,18 +31,34 @@ const Hoops = () => {
   const [selectedRowId, setSelectedRowId] = useState([]);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const onRefresh = () => { 
-     getHoopsData();
-}
+  useEffect(() => {
+    var uname = JSON.parse(localStorage.getItem('name'));
+    var desc = JSON.parse(localStorage.getItem('description'));
+    if (uname) {
+      setName(uname)
+    }
+    if (desc) {
+      setDescription(desc)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('name', JSON.stringify(name));
+    localStorage.setItem('description', JSON.stringify(description));
+  }, [name, description])
+
+  const onRefresh = () => {
+    getHoopsData();
+  }
   const updateLastUpdatedText = () => {
     setLastUpdatedText(moment(fetchTime).fromNow());
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     updateLastUpdatedText();
     const intervalId = setInterval(updateLastUpdatedText, 30000);
     return () => clearInterval(intervalId);
-}, [fetchTime]);
+  }, [fetchTime]);
 
   const environmentName = (origin) => {
     if (origin.includes('localhost')) {
@@ -60,6 +76,8 @@ useEffect(() => {
 
   const handleResetClick = () => {
     setResetData(true);
+    localStorage.removeItem("name")
+    localStorage.removeItem("description")
   }
 
   const handleReset = () => {
@@ -96,7 +114,7 @@ useEffect(() => {
             >
               <Button
                 className='actionBtn'
-                onClick={() => history.push(`/hoop/${row.original.name}`, { name: row.original.name } )}
+                onClick={() => { history.push(`/hoop/${row.original.name}`, { name: row.original.name }) }}
                 startIcon={<EditNoteIcon className='actionIcon' fontSize="large" />}
               >
                 Edit
@@ -124,7 +142,6 @@ useEffect(() => {
       const res = await getHoops()
       if (res?.status === 'Success') {
         setData(res?.data ?? []);
-      
       }
       setFetchTime(date)
       setDataLoading(false);
@@ -177,29 +194,29 @@ useEffect(() => {
           />
         </Grid>
         <Grid item xs={12} lg={12} marginTop={1} display={"flex"} alignItems={"center"} justifyContent={"space-between"} paddingBottom={0} marginBottom={0} paddingLeft={0} paddingRight={0}>
-        <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
-          <Button
-            className='actionBtn'
-            onClick={() => history.push(`/hoop`)}
-            startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
-          >
-            Add
-          </Button>
-        </Box>
-        <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={2}>
-                        <Typography sx={{ fontFamily: "Inter", fontSize: "14px", color: "#394762", lineHeight: "21px", fontWeight: "400" }} variant="filterText" marginBottom={0} gutterBottom>Last updated {lastUpdatedText}</Typography>
-                        <Button
-                            color='default'
-                            sx={{ color: "#606B85" }}
-                            className='actionBtn refresh'
-                            startIcon={dataLoading ? null : <CachedIcon className='actionIcon' fontSize="large" />}
-                            onClick={onRefresh}
-                            disabled={dataLoading}
-                        >
-                            {dataLoading ? <CircularProgress size={20} /> : "Refresh"}
-                        </Button>
-                    </Box>
-                    </Grid>
+          <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
+            <Button
+              className='actionBtn'
+              onClick={() => { history.push(`/hoop`) }}
+              startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
+            >
+              Add
+            </Button>
+          </Box>
+          <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={2}>
+            <Typography sx={{ fontFamily: "Inter", fontSize: "14px", color: "#394762", lineHeight: "21px", fontWeight: "400" }} variant="filterText" marginBottom={0} gutterBottom>Last updated {lastUpdatedText}</Typography>
+            <Button
+              color='default'
+              sx={{ color: "#606B85" }}
+              className='actionBtn refresh'
+              startIcon={dataLoading ? null : <CachedIcon className='actionIcon' fontSize="large" />}
+              onClick={onRefresh}
+              disabled={dataLoading}
+            >
+              {dataLoading ? <CircularProgress size={20} /> : "Refresh"}
+            </Button>
+          </Box>
+        </Grid>
         <DataTable
           columns={columns}
           resetData={resetData}

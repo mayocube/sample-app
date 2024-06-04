@@ -33,6 +33,18 @@ const Dispositions = () => {
         sendSurvey: "",
     });
 
+    useEffect(() => {
+        var obj = JSON.parse(localStorage.getItem('form'));
+        if (obj) {
+            setFormData(obj)
+        }
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem('form', JSON.stringify(formData));
+
+    }, [formData])
+
     const updateLastUpdatedText = () => {
         setLastUpdatedText(moment(fetchTime).fromNow());
     };
@@ -71,6 +83,7 @@ const Dispositions = () => {
 
     const handleResetClick = () => {
         setResetData(true);
+        localStorage.removeItem("form")
     }
 
     const handleResetTable = () => {
@@ -144,7 +157,7 @@ const Dispositions = () => {
                         >
                             <Button
                                 className='actionBtn'
-                                onClick={() => history.push(`/disposition/${encodeURIComponent(row.original.pk)}`, { name: encodeURIComponent(row.original.pk) })}
+                                onClick={() => { history.push(`/disposition/${encodeURIComponent(row.original.pk)}`, { name: encodeURIComponent(row.original.pk) }) }}
                                 startIcon={<EditNoteIcon className='actionIcon' fontSize="large" />}
                             >
                                 Edit
@@ -173,13 +186,13 @@ const Dispositions = () => {
                 setData(res?.data ?? []);
 
                 const cats = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.category))).map(nitem => ({ label: nitem, value: nitem }))
+                    ...Array.from(new Set(res?.data.map(item => item.category))).map(nitem => ({ label: nitem, value: nitem }))
                 ]];
                 const subCats = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.subCategory))).map(nitem => ({ label: nitem, value: nitem }))
+                    ...Array.from(new Set(res?.data.map(item => ({sub: item.subCategory, cat: item.category})))).map(nitem => ({ label: nitem.sub, value: nitem.sub, cat: nitem.cat }))
                 ]];
                 const gNames = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set( res?.data.map(item => item.groupName))).map(nitem => ({ label: nitem, value: nitem }))
+                    ...Array.from(new Set(res?.data.map(item => item.groupName))).map(nitem => ({ label: nitem, value: nitem }))
                 ]];
 
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
@@ -274,9 +287,9 @@ const Dispositions = () => {
                         value={formData["sendSurvey"]}
                         onChange={setFormData}
                         options={[
-                            {label: "All", value: ''},
-                            {label: "True", value: true},
-                            {label: "False", value: false},
+                            { label: "All", value: '' },
+                            { label: "True", value: true },
+                            { label: "False", value: false },
                         ]}
                     />
                 </Grid>
@@ -284,7 +297,7 @@ const Dispositions = () => {
                     <Box display={"flex"} alignItems={"center"} alignContent={"center"} gap={1} my={1}>
                         <Button
                             className='actionBtn'
-                            onClick={() => history.push('/disposition')}
+                            onClick={() => { history.push('/disposition') }}
                             startIcon={<PermIdentityOutlinedIcon className='actionIcon' fontSize="large" />}
                         >
                             Add

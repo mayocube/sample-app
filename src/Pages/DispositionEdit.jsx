@@ -23,7 +23,7 @@ const DispositionEdit = () => {
   const categories = prepareDropdownData('dis_cats');
   const [categoriesAll, setCategories] = useState(categories);
   const subCategories = prepareDropdownData('dis_sub_cats');
-  const [subCategoriesAll, setSubCategories] = useState(subCategories);
+  const [subCategoriesAll, setSubCategories] = useState([{ text: "Select one", value: "" }]);
   const groups = prepareDropdownData('dis_groups');
   const [groupsAll, setGroups] = useState(groups);
 
@@ -37,6 +37,14 @@ const DispositionEdit = () => {
     groupName: "",
     sendSurvey: false,
   });
+  
+  useEffect(() => {
+    const filtered = subCategories.filter(item => item.cat === formData["category"]);
+    setSubCategories(filtered);
+    if (!filtered.some(item => item.value === formData["subCategory"])) {
+      setFormData({ target: { name: 'subCategory', value: '' } });
+    }
+  }, [formData.category]);
 
   const handleAddUpdate = async () => {
     if (!formData.category) {
