@@ -18,7 +18,6 @@ const MenuSider = ({ openSideBar, setOpenSidebar }) => {
 
   return (
     <Drawer
-      hideBackdrop={true}
       anchor={'left'}
       open={openSideBar}
       onClose={toggleDrawer()}
