@@ -187,13 +187,13 @@ const Dispositions = () => {
 
                 const cats = [{ label: "Select one", value: "" }, ...[
                     ...Array.from(new Set(res?.data.map(item => item.category))).map(nitem => ({ label: nitem, value: nitem }))
-                ]];
+                ]].sort((a,b)=>a.value.localeCompare(b.value));
                 const subCats = [{ label: "Select one", value: "" }, ...[
                     ...Array.from(new Set(res?.data.map(item => ({sub: item.subCategory, cat: item.category})))).map(nitem => ({ label: nitem.sub, value: nitem.sub, cat: nitem.cat }))
-                ]];
+                ]].sort((a,b)=>a.value.localeCompare(b.value));
                 const gNames = [{ label: "Select one", value: "" }, ...[
                     ...Array.from(new Set(res?.data.map(item => item.groupName))).map(nitem => ({ label: nitem, value: nitem }))
-                ]];
+                ]].sort((a,b)=>a.value.localeCompare(b.value));
 
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
                 localStorage.setItem('dis_sub_cats', JSON.stringify(subCats));
