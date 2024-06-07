@@ -12,7 +12,7 @@ const RadioButtonsGroup = ({ title = "", name, onChange, value = false, required
         {title && <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""} {required && <span style={{ color: "#bd1721" }}>*</span>}</Typography>}
         <RadioGroup row name={name} value={value} onChange={onChange}>
           {options.map((x, i) => (
-            <FormControlLabel key={`radio_${i}`} control={<Radio />} value={x.value} label={x.label} style={{ color: "grey" }} />
+            <FormControlLabel key={`radio_${i}`} control={<Radio style={{zIndex:0}} />} value={x.value} label={x.label} style={{ color: "grey" }} />
           ))}
         </RadioGroup>
       </FormControl>

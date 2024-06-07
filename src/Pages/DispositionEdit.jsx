@@ -242,6 +242,7 @@ const DispositionEdit = () => {
               width={6}
               title={'Order'}
               name={'order'}
+              type='number'
               value={formData["order"]}
               id="order"
               onChange={setFormData}
