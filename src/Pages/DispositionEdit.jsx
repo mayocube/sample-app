@@ -37,11 +37,19 @@ const DispositionEdit = () => {
     groupName: "",
     sendSurvey: false,
   });
-  
+
   useEffect(() => {
-    const filtered = subCategories.filter(item => item.cat === formData["category"]);
-    setSubCategories(filtered);
-    if (!filtered.some(item => item.value === formData["subCategory"])) {
+    const filteredCats = categories.filter(item => item.gname === formData["groupName"]);
+    setCategories(filteredCats);
+    if (!filteredCats.some(item => item.value === formData["category"])) {
+      setFormData({ target: { name: 'category', value: '' } });
+    }
+  }, [formData.groupName]);
+
+  useEffect(() => {
+    const filteredSubs = subCategories.filter(item => item.cat === formData["category"]);
+    setSubCategories(filteredSubs);
+    if (!filteredSubs.some(item => item.value === formData["subCategory"])) {
       setFormData({ target: { name: 'subCategory', value: '' } });
     }
   }, [formData.category]);
@@ -161,6 +169,44 @@ const DispositionEdit = () => {
               !dispostionId ?
                 <Grid item xs={6} marginTop={0} >
                   <FormControl className='customSelects' sx={{ width: "100%" }} >
+                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>GROUP NAME {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                    <CreatableSelect
+                      isClearable
+                      className={"createable custom-select"}
+                      onCreateOption={(e) => handleCreate(e, 'groupName', setGroups)}
+                      onChange={(e) => handleChange(e, 'groupName')}
+                      value={{ label: formData["groupName"], value: formData["groupName"] }}
+                      options={groupsAll}
+                    />
+                  </FormControl>
+                </Grid>
+                :
+                <CustomInput
+                  title={'Group Name'}
+                  name={'groupName'}
+                  width={6}
+                  value={formData["groupName"]}
+                  id="groupName"
+                  onChange={setFormData}
+                  required={true}
+                />
+            }
+
+            <CustomInput
+              width={6}
+              title={'Order'}
+              name={'order'}
+              type='number'
+              value={formData["order"]}
+              id="order"
+              onChange={setFormData}
+              required={false}
+            />
+
+            {
+              !dispostionId ?
+                <Grid item xs={6} marginTop={0} >
+                  <FormControl className='customSelects' sx={{ width: "100%" }} >
                     <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>Category {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
                     <CreatableSelect
                       isClearable
@@ -184,32 +230,17 @@ const DispositionEdit = () => {
                 />
             }
 
-            {
-              !dispostionId ?
-                <Grid item xs={6} marginTop={0} >
-                  <FormControl className='customSelects' sx={{ width: "100%" }} >
-                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>GROUP NAME {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
-                    <CreatableSelect
-                      isClearable
-                      className={"createable custom-select"}
-                      onCreateOption={(e) => handleCreate(e, 'groupName', setGroups)}
-                      onChange={(e) => handleChange(e, 'groupName')}
-                      value={{ label: formData["groupName"], value: formData["groupName"] }}
-                      options={groupsAll}
-                    />
-                  </FormControl>
-                </Grid>
-                :
-                <CustomInput
-                  title={'Group Name'}
-                  name={'groupName'}
-                  width={6}
-                  value={formData["groupName"]}
-                  id="groupName"
-                  onChange={setFormData}
-                  required={true}
-                />
-            }
+            <RadioButtonsGroup
+              title={"Send Survey"}
+              name='sendSurvey'
+              id="sendSurvey"
+              value={formData["sendSurvey"]}
+              onChange={setFormData}
+              options={[
+                { label: "True", value: true },
+                { label: "False", value: false },
+              ]}
+            />
 
             {
               !dispostionId ?
@@ -239,17 +270,6 @@ const DispositionEdit = () => {
             }
 
             <CustomInput
-              width={6}
-              title={'Order'}
-              name={'order'}
-              type='number'
-              value={formData["order"]}
-              id="order"
-              onChange={setFormData}
-              required={false}
-            />
-
-            <CustomInput
               title={'Sub Category Description'}
               name={'descriptions'}
               width={6}
@@ -258,18 +278,6 @@ const DispositionEdit = () => {
               id="descriptions"
               onChange={setFormData}
               required={true}
-            />
-
-            <RadioButtonsGroup
-              title={"Send Survey"}
-              name='sendSurvey'
-              id="sendSurvey"
-              value={formData["sendSurvey"]}
-              onChange={setFormData}
-              options={[
-                { label: "True", value: true },
-                { label: "False", value: false },
-              ]}
             />
           </Grid>
         </Box>

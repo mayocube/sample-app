@@ -32,17 +32,26 @@ const Dispositions = () => {
         groupName: "",
         sendSurvey: "",
     });
+    const [disabledFields, setDisabledFields] = useState({
+        category: false,
+        subCategory: false,
+        groupName: false,
+    });
 
     useEffect(() => {
         var obj = JSON.parse(localStorage.getItem('form'));
         if (obj) {
-            setFormData(obj)
+            setFormData(obj);
+        }
+        var obj2 = JSON.parse(localStorage.getItem('disabledFields'));
+        if (obj2) {
+            setDisabledFields(obj2);
         }
     }, [])
 
     useEffect(() => {
         localStorage.setItem('form', JSON.stringify(formData));
-
+        localStorage.setItem('disabledFields', JSON.stringify(disabledFields));
     }, [formData])
 
     const updateLastUpdatedText = () => {
@@ -63,9 +72,9 @@ const Dispositions = () => {
     const [selectedRowId, setSelectedRowId] = useState([]);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
-    const [categories, setCategories] = useState([{ text: "Select one", value: "" }]);
-    const [subCategories, setSubCategories] = useState([{ text: "Select one", value: "" }]);
-    const [groups, setGroups] = useState([{ text: "Select one", value: "" }]);
+    const [categories, setCategories] = useState([{ label: "Select one", value: "" }]);
+    const [subCategories, setSubCategories] = useState([{ label: "Select one", value: "", gname: "" }]);
+    const [groups, setGroups] = useState([{ label: "Select one", value: "", cat: "" }]);
 
     const environmentName = (origin) => {
         if (origin.includes('localhost')) {
@@ -120,12 +129,16 @@ const Dispositions = () => {
             }
         ];
         temp.map(x => setFormData(x));
+        setDisabledFields({ category: false, subCategory: false, groupName: false });
         setResetData(false);
     }
 
     const columnHelper = createColumnHelper();
     const columns = useMemo(
         () => [
+            columnHelper.accessor("groupName", {
+                header: () => "Group Name",
+            }),
             columnHelper.accessor("category", {
                 header: () => "Category",
             }),
@@ -134,9 +147,6 @@ const Dispositions = () => {
             }),
             columnHelper.accessor("descriptions", {
                 header: () => "Sub Category Description",
-            }),
-            columnHelper.accessor("groupName", {
-                header: () => "Group Name",
             }),
             columnHelper.accessor("sendSurvey", {
                 header: () => "Send Survey",
@@ -185,15 +195,32 @@ const Dispositions = () => {
             if (res?.status === 'Success') {
                 setData(res?.data ?? []);
 
-                const cats = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set(res?.data.map(item => item.category))).map(nitem => ({ label: nitem, value: nitem }))
-                ]].sort((a,b)=>a.value.localeCompare(b.value));
-                const subCats = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set(res?.data.map(item => ({sub: item.subCategory, cat: item.category})))).map(nitem => ({ label: nitem.sub, value: nitem.sub, cat: nitem.cat }))
-                ]].sort((a,b)=>a.value.localeCompare(b.value));
-                const gNames = [{ label: "Select one", value: "" }, ...[
-                    ...Array.from(new Set(res?.data.map(item => item.groupName))).map(nitem => ({ label: nitem, value: nitem }))
-                ]].sort((a,b)=>a.value.localeCompare(b.value));
+                const gNames = [
+                    { label: "Select one", value: "" },
+                    ...Array.from(
+                        new Map(
+                            res?.data.map(item => [item.groupName, { label: item.groupName, value: item.groupName }])
+                        ).values()
+                    )
+                ].sort((a, b) => a.value.localeCompare(b.value));
+
+                const cats = [
+                    { label: "Select one", value: "" },
+                    ...Array.from(
+                        new Map(
+                            res?.data.map(item => [item.category, { label: item.category, value: item.category, gname: item.groupName }])
+                        ).values()
+                    )
+                ].sort((a, b) => a.value.localeCompare(b.value));
+
+                const subCats = [
+                    { label: "Select one", value: "" },
+                    ...Array.from(
+                        new Map(
+                            res?.data.map(item => [item.subCategory, { label: item.subCategory, value: item.subCategory, cat: item.category }])
+                        ).values()
+                    )
+                ].sort((a, b) => a.value.localeCompare(b.value));
 
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
                 localStorage.setItem('dis_sub_cats', JSON.stringify(subCats));
@@ -209,6 +236,37 @@ const Dispositions = () => {
             setDataLoading(false);
             setMessage("Error: While fetching dispositions")
         }
+    }
+
+    const onFilterChange = (e) => {
+        let decide = { category: false, subCategory: false, groupName: false };
+        switch (e.target.name) {
+            case 'groupName':
+                if (e.target.value != "") {
+                    setFormData({ target: { name: 'category', value: '' } });
+                    setFormData({ target: { name: 'subCategory', value: '' } });
+                }
+                break;
+            case 'category':
+                if (formData["groupName"] == "" && e.target.value != "") {
+                    decide.groupName = true;
+                }
+                setFormData({ target: { name: 'subCategory', value: '' } });
+                break;
+            case 'subCategory':
+                if (e.target.value != "") {
+                    if (formData["groupName"] == "") {
+                        decide.groupName = true;
+                    }
+                    if (formData["category"] == "") {
+                        decide.category = true;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        setDisabledFields(decide);
     }
 
     const onRefresh = () => {
@@ -243,13 +301,25 @@ const Dispositions = () => {
                 <Grid container spacing={1} paddingBottom={1} paddingTop={0}>
 
                     <CustomSelect
+                        title={"Group Name"}
+                        name='groupName'
+                        value={formData["groupName"]}
+                        onChange={(e) => { setFormData(e); onFilterChange(e); }}
+                        id="groupName"
+                        items={groups}
+                        getOptionLabel='label'
+                        disabled={disabledFields.groupName}
+                    />
+
+                    <CustomSelect
                         title={'Category'}
                         name='category'
                         value={formData["category"]}
-                        onChange={setFormData}
+                        onChange={(e) => { setFormData(e); onFilterChange(e); }}
                         id="category"
-                        items={categories}
+                        items={formData["groupName"] === '' ? categories : [...categories.filter(x => x.gname === formData["groupName"])]}
                         getOptionLabel='label'
+                        disabled={disabledFields.category}
                     />
 
                     <CustomSelect
@@ -257,9 +327,10 @@ const Dispositions = () => {
                         name='subCategory'
                         id="subCategory"
                         value={formData["subCategory"]}
-                        onChange={setFormData}
-                        items={subCategories}
+                        onChange={(e) => { setFormData(e); onFilterChange(e); }}
+                        items={formData["category"] === '' ? subCategories : [...subCategories.filter(x => x.cat === formData["category"])]}
                         getOptionLabel='label'
+                        disabled={disabledFields.subCategory}
                     />
 
                     <CustomInput
@@ -268,19 +339,11 @@ const Dispositions = () => {
                         value={formData["descriptions"]}
                         onChange={setFormData}
                         id="descriptions"
-                    />
-
-                    <CustomSelect
-                        title={"Group Name"}
-                        name='groupName'
-                        value={formData["groupName"]}
-                        onChange={setFormData}
-                        id="groupName"
-                        items={groups}
-                        getOptionLabel='label'
+                        width={3}
                     />
 
                     <RadioButtonsGroup
+                        width={3}
                         title={"Send Survey"}
                         name='sendSurvey'
                         id="sendSurvey"

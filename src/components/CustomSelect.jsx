@@ -1,7 +1,7 @@
 import { Select, MenuItem, Grid, FormControl, Typography, Checkbox, ListItemText } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useState } from 'react';
-const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onClick, title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable, getOptionLabel = 'text' }) => {
+const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onClick, title, multiple = false, checkboxSelect = false, MenuStyle = {}, required = false, width = 2, createable, getOptionLabel = 'text', disabled = false }) => {
   const [open, setOpen] = useState(false);
   const toggleSelect = () => {
     setOpen(open ? false : true);
@@ -13,6 +13,7 @@ const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onCli
         {title && <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>{title ?? ""} {required && <span style={{ color: "#bd1721" }}>*</span>}</Typography>}
         <Select
           multiple={multiple}
+          disabled={disabled}
           displayEmpty
           name={name}
           open={open}
@@ -32,7 +33,7 @@ const CustomSelect = ({ isOpen = false, name, onChange, value = '', items, onCli
             }
             return selected
           }}
-          IconComponent={() => <KeyboardArrowDownIcon onClick={toggleSelect}
+          IconComponent={() => <KeyboardArrowDownIcon style={{ cursor: "pointer"}} onClick={ !disabled ? toggleSelect : () => {}}
           />}
           MenuProps={{
             sx: MenuStyle
