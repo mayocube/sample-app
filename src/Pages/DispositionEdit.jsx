@@ -8,6 +8,7 @@ import SnackAlert from '../components/SnackAlert'
 import { createUpdateDisposition, getDispositionById } from '../apiService/EndPoints';
 import RadioButtonsGroup from '../components/RadioButton'
 import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select'
 
 const DispositionEdit = () => {
   const history = useHistory();
@@ -41,7 +42,7 @@ const DispositionEdit = () => {
   useEffect(() => {
     const filteredCats = categories.filter(item => item.gname === formData["groupName"]);
     setCategories(filteredCats);
-    if (!filteredCats.some(item => item.value === formData["category"])) {
+    if (!dispostionId && !filteredCats.some(item => item.value === formData["category"])) {
       setFormData({ target: { name: 'category', value: '' } });
     }
   }, [formData.groupName]);
@@ -49,7 +50,7 @@ const DispositionEdit = () => {
   useEffect(() => {
     const filteredSubs = subCategories.filter(item => item.cat === formData["category"]);
     setSubCategories(filteredSubs);
-    if (!filteredSubs.some(item => item.value === formData["subCategory"])) {
+    if (!dispostionId && !filteredSubs.some(item => item.value === formData["subCategory"])) {
       setFormData({ target: { name: 'subCategory', value: '' } });
     }
   }, [formData.category]);
@@ -165,32 +166,19 @@ const DispositionEdit = () => {
             </Box>
           </Box>
           <Grid container spacing={2} paddingBottom={1} paddingTop={0}>
-            {
-              !dispostionId ?
-                <Grid item xs={6} marginTop={0} >
-                  <FormControl className='customSelects' sx={{ width: "100%" }} >
-                    <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>GROUP NAME {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
-                    <CreatableSelect
-                      isClearable
-                      className={"createable custom-select"}
-                      onCreateOption={(e) => handleCreate(e, 'groupName', setGroups)}
-                      onChange={(e) => handleChange(e, 'groupName')}
-                      value={{ label: formData["groupName"], value: formData["groupName"] }}
-                      options={groupsAll}
-                    />
-                  </FormControl>
-                </Grid>
-                :
-                <CustomInput
-                  title={'Group Name'}
-                  name={'groupName'}
-                  width={6}
-                  value={formData["groupName"]}
-                  id="groupName"
-                  onChange={setFormData}
-                  required={true}
+            
+            <Grid item xs={6} marginTop={0} >
+              <FormControl className='customSelects' sx={{ width: "100%" }} >
+                <Typography className='customSelectTitle' variant="textLabel" sx={{ textTransform: "uppercase", fontFamily: "Inter" }}>GROUP NAME {<span style={{ color: "#bd1721" }}>*</span>}</Typography>
+                <Select
+                  isClearable
+                  className={"createable custom-select"}
+                  onChange={(e) => handleChange(e, 'groupName')}
+                  value={{ label: formData["groupName"], value: formData["groupName"] }}
+                  options={groupsAll}
                 />
-            }
+              </FormControl>
+            </Grid>
 
             <CustomInput
               width={6}
