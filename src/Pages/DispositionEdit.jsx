@@ -56,6 +56,14 @@ const DispositionEdit = () => {
   }, [formData.category]);
 
   const handleAddUpdate = async () => {
+    if (!formData.order) {
+      setMessage('Error: Order is required!');
+      return;
+    }
+    if (formData.order.length > 3) {
+      setMessage('Error: Order max should be 3 digits!');
+      return;
+    }
     if (!formData.category) {
       setMessage('Error: Name is required!');
       return;
