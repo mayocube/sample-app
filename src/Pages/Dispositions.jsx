@@ -74,6 +74,8 @@ const Dispositions = () => {
 
     const [categories, setCategories] = useState([{ label: "Select one", value: "" }]);
     const [subCategories, setSubCategories] = useState([{ label: "Select one", value: "", gname: "" }]);
+    const [allCategories, setAllCategories] = useState([{ label: "Select one", value: "" }]);
+    const [allSubCategories, setAllSubCategories] = useState([{ label: "Select one", value: "", gname: "" }]);
     const [groups, setGroups] = useState([{ label: "Select one", value: "", cat: "" }]);
 
     const environmentName = (origin) => {
@@ -193,6 +195,16 @@ const Dispositions = () => {
             setDataLoading(true);
             const res = await getDisposition()
             if (res?.status === 'Success') {
+                res.data = [{
+                    "pk": "RETURNS_Health of Business",
+                    "category": "RETURNS",
+                    "subCategory": "Health of Business",
+                    "descriptions": "Customer contact is regarding NMG concerns including store closures, financial stability, or other business issues.",
+                    "groupName": "Core",
+                    "groupCategory": "CoreRETURNS",
+                    "sendSurvey": true,
+                    "order": 5
+                }, ...res?.data];
                 setData(res?.data ?? []);
 
                 const gNames = [
@@ -222,17 +234,40 @@ const Dispositions = () => {
                     )
                 ].sort((a, b) => a.value.localeCompare(b.value));
 
+                const allCats = [
+                    { label: "Select one", value: "" },
+                    ...Array.from(
+                        new Map(
+                            res?.data.map(item => [item.groupName + '_' + item.category, { label: item.category, value: item.category, gname: item.groupName }])
+                        ).values()
+                    )
+                ].sort((a, b) => a.value.localeCompare(b.value));
+
+                const allSubCats = [
+                    { label: "Select one", value: "" },
+                    ...Array.from(
+                        new Map(
+                            res?.data.map(item => [item.category + '_' + item.subCategory, { label: item.subCategory, value: item.subCategory, cat: item.category }])
+                        ).values()
+                    )
+                ].sort((a, b) => a.value.localeCompare(b.value));
+                
                 localStorage.setItem('dis_cats', JSON.stringify(cats));
                 localStorage.setItem('dis_sub_cats', JSON.stringify(subCats));
+                localStorage.setItem('dis_all_cats', JSON.stringify(allCats));
+                localStorage.setItem('dis_all_sub_cats', JSON.stringify(allSubCats));
                 localStorage.setItem('dis_groups', JSON.stringify(gNames));
 
                 setCategories(cats);
                 setSubCategories(subCats);
+                setAllCategories(allCats); 
+                setAllSubCategories(allSubCats);
                 setGroups(gNames);
                 setFetchTime(date);
             }
             setDataLoading(false);
         } catch (error) {
+            console.log(error);
             setDataLoading(false);
             setMessage("Error: While fetching dispositions")
         }
@@ -317,7 +352,7 @@ const Dispositions = () => {
                         value={formData["category"]}
                         onChange={(e) => { setFormData(e); onFilterChange(e); }}
                         id="category"
-                        items={formData["groupName"] === '' ? categories : [...categories.filter(x => x.gname === formData["groupName"])]}
+                        items={formData["groupName"] === '' ? categories : [...allCategories.filter(x => x.gname === formData["groupName"])]}
                         getOptionLabel='label'
                         disabled={disabledFields.category}
                     />
@@ -328,7 +363,7 @@ const Dispositions = () => {
                         id="subCategory"
                         value={formData["subCategory"]}
                         onChange={(e) => { setFormData(e); onFilterChange(e); }}
-                        items={formData["category"] === '' ? subCategories : [...subCategories.filter(x => x.cat === formData["category"])]}
+                        items={formData["category"] === '' ? subCategories : [...allSubCategories.filter(x => x.cat === formData["category"])]}
                         getOptionLabel='label'
                         disabled={disabledFields.subCategory}
                     />

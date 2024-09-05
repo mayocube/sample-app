@@ -21,9 +21,9 @@ const DispositionEdit = () => {
     return [{ text: "Select one", value: "" }];
   }
 
-  const categories = prepareDropdownData('dis_cats');
+  const categories = prepareDropdownData('dis_all_cats');
   const [categoriesAll, setCategories] = useState(categories);
-  const subCategories = prepareDropdownData('dis_sub_cats');
+  const subCategories = prepareDropdownData('dis_all_sub_cats');
   const [subCategoriesAll, setSubCategories] = useState([{ text: "Select one", value: "" }]);
   const groups = prepareDropdownData('dis_groups');
   const [groupsAll, setGroups] = useState(groups);
